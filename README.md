@@ -1,4 +1,4 @@
-# .NET Basic Project
+# .NET Tribes Project
 
 ## Game logic parameters
 |        |Building time   ||Building cost       ||HP     |Effect                                                         |

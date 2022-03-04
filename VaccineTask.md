@@ -96,7 +96,7 @@ You need to find a way to store the following information:
 ```json
 {
     "vaccine_name": "Pfizer",
-    "num_of_applicants: 3112
+    "num_of_applicants": 3112
 }
 ```
 

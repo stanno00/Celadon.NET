@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using VaccineTask.DTOs;
 using VaccineTask.Models;
 using VaccineTask.Services;
 
@@ -21,6 +22,13 @@ namespace VaccineTask.Controllers
         {
             var hospitals = _hospitalService.Hospitals();
             return new OkObjectResult(hospitals);
+        }
+
+        [HttpPost]
+        public ActionResult<Hospital> GetHospital([FromBody] HospitalDto hospitalDto)
+        {
+            var hospital = _hospitalService.AddHospital(hospitalDto);
+            return new CreatedResult("", hospital);
         }
     }
 }

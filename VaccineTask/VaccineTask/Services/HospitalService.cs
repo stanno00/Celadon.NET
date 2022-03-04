@@ -21,7 +21,15 @@ namespace VaccineTask.Services
 
         public Hospital AddHospital(HospitalDto hospitalDto)
         {
-            throw new System.NotImplementedException();
+            var hospital = new Hospital()
+            {
+                Name = hospitalDto.Name,
+                Budget = hospitalDto.Budget
+            };
+
+            _applicationContext.Hospitals.Add(hospital);
+            _applicationContext.SaveChanges();
+            return hospital;
         }
 
         public Hospital GetHospital(int hospitalId)

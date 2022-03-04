@@ -28,6 +28,8 @@ namespace VaccineTask
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IApplicantService, ApplicantService>();
+            services.AddTransient<IHospitalService, HospitalService>();
+            
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;

@@ -31,5 +31,37 @@ namespace VaccineTask.Services
             _applicationContext.SaveChanges();
             return vaccine;
         }
+
+        public Vaccine GetVaccine(int vaccineId)
+        {
+            return _applicationContext.Vaccines.FirstOrDefault(v => v.VaccineId == vaccineId);
+        }
+
+        public Vaccine UpdateVaccine(VaccineDto vaccineDto, int vaccineId)
+        {
+            var vaccine = GetVaccine(vaccineId);
+            if (vaccine == null)
+            {
+                return null;
+            }
+
+            vaccine.Name = vaccineDto.Name;
+            _applicationContext.Vaccines.Update(vaccine);
+            _applicationContext.SaveChanges();
+            return vaccine;
+        }
+
+        public Vaccine DeleteVaccine(int vaccineId)
+        {
+            var vaccine = GetVaccine(vaccineId);
+            if (vaccine == null)
+            {
+                return null;
+            }
+            
+            _applicationContext.Vaccines.Remove(vaccine);
+            _applicationContext.SaveChanges();
+            return vaccine;
+        }
     }
 }

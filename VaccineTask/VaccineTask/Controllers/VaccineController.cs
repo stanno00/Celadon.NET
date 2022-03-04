@@ -26,5 +26,24 @@ namespace VaccineTask.Controllers
             }
             return new CreatedResult("", vaccine);
         }
+
+        [HttpPut("{vaccineId}")]
+        public ActionResult<Vaccine> UpdateVaccine([FromBody] VaccineDto vaccineDto, [FromRoute] int vaccineId)
+        {
+            var vaccine = _vaccineService.UpdateVaccine(vaccineDto, vaccineId);
+            if (vaccine == null)
+            {
+                return new NotFoundObjectResult("Vaccine does not exist!");
+            }
+
+            return new OkObjectResult(vaccine);
+        }
+
+        [HttpDelete("{vaccineId}")]
+        public ActionResult<Vaccine> DeleteVaccine([FromRoute] int vaccineId)
+        {
+            _vaccineService.DeleteVaccine(vaccineId);
+            return new OkObjectResult("Vaccine deleted");
+        }
     }
 }

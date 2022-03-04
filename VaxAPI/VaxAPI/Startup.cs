@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using VaxAPI.Models;
+using VaxAPI.Services;
 
 namespace VaxAPI
 {
@@ -25,7 +28,15 @@ namespace VaxAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddDbContext<ApplicationContext>(builder =>
+                {
+                    builder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                });
+            services.AddTransient<IHospitalService, HospitalService>();
+            services.AddTransient<IVaccineService, VaccineService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

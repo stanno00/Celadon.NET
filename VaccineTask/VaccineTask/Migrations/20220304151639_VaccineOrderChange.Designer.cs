@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VaccineTask;
 
 namespace VaccineTask.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220304151639_VaccineOrderChange")]
+    partial class VaccineOrderChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,8 +109,14 @@ namespace VaccineTask.Migrations
                     b.Property<int>("VaccineId")
                         .HasColumnType("int");
 
+                    b.Property<string>("HospitalName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("NumberOfVaccines")
                         .HasColumnType("int");
+
+                    b.Property<string>("VaccineName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("HospitalId", "VaccineId");
 
@@ -175,13 +183,13 @@ namespace VaccineTask.Migrations
 
             modelBuilder.Entity("VaccineTask.Models.HospitalVaccine", b =>
                 {
-                    b.HasOne("VaccineTask.Models.Hospital", "Hospital")
+                    b.HasOne("VaccineTask.Models.Hospital", null)
                         .WithMany("HospitalVaccines")
                         .HasForeignKey("HospitalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VaccineTask.Models.Vaccine", "Vaccine")
+                    b.HasOne("VaccineTask.Models.Vaccine", null)
                         .WithMany("HospitalVaccines")
                         .HasForeignKey("VaccineId")
                         .OnDelete(DeleteBehavior.Cascade)

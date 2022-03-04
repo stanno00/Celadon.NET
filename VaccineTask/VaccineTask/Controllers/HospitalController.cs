@@ -24,11 +24,35 @@ namespace VaccineTask.Controllers
             return new OkObjectResult(hospitals);
         }
 
+        [HttpGet("{hospitalId}")]
+        public ActionResult<Hospital> GetHospital([FromRoute] int hospitalId)
+        {
+            var hospital = _hospitalService.GetHospital(hospitalId);
+            if (hospital == null)
+            {
+                return new NotFoundObjectResult("Hospital not found");
+            }
+
+            return new OkObjectResult(hospital);
+        }
+
         [HttpPost]
         public ActionResult<Hospital> GetHospital([FromBody] HospitalDto hospitalDto)
         {
             var hospital = _hospitalService.AddHospital(hospitalDto);
             return new CreatedResult("", hospital);
+        }
+
+        [HttpPut]
+        public ActionResult<Hospital> OrderVaccines([FromBody] VaccineOrderDto vaccineOrderDto)
+        {
+            var hospital = _hospitalService.VaccineOrder(vaccineOrderDto);
+            if (hospital == null)
+            {
+                return new BadRequestObjectResult("Bad request");
+            }
+
+            return new OkObjectResult(hospital);
         }
     }
 }

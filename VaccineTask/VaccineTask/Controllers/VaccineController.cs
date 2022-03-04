@@ -20,6 +20,10 @@ namespace VaccineTask.Controllers
         public ActionResult<Vaccine> AddVaccine([FromBody] VaccineDto vaccineDto)
         {
             var vaccine = _vaccineService.AddVaccine(vaccineDto);
+            if (vaccine == null)
+            {
+                return new BadRequestObjectResult("Vaccine already exists!");
+            }
             return new CreatedResult("", vaccine);
         }
     }

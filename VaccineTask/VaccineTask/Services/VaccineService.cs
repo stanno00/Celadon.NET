@@ -1,4 +1,6 @@
-﻿using VaccineTask.DTOs;
+﻿using System.Collections.Generic;
+using System.Linq;
+using VaccineTask.DTOs;
 using VaccineTask.Models;
 
 namespace VaccineTask.Services
@@ -15,6 +17,10 @@ namespace VaccineTask.Services
 
         public Vaccine AddVaccine(VaccineDto vaccineDto)
         {
+            if (_applicationContext.Vaccines.Any(x => x.Name == vaccineDto.Name))
+            {
+                return null;
+            }
             var vaccine = new Vaccine()
             {
                 Name = vaccineDto.Name,

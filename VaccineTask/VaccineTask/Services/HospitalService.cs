@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using VaccineTask.DTOs;
 using VaccineTask.Models;
 
@@ -34,7 +35,10 @@ namespace VaccineTask.Services
 
         public Hospital GetHospital(int hospitalId)
         {
-            throw new System.NotImplementedException();
+            var hospital = _applicationContext.Hospitals
+                .Include(h => h.VaccineOrders)
+                .FirstOrDefault(h => h.HospitalId == hospitalId);
+            return hospital;
         }
 
         public Hospital UpdateHospital(int hospitalId, HospitalDto hospitalDto)
@@ -47,23 +51,32 @@ namespace VaccineTask.Services
             throw new System.NotImplementedException();
         }
 
-        public Hospital VaccineOrder(VaccineOrder vaccineOrder)
+        public Hospital VaccineOrder(VaccineOrderDto vaccineOrderDto)
         {
-            var hospital = GetHospital(vaccineOrder.HospitalId);
-            var vaccine = _applicationContext.Vaccines.FirstOrDefault(v => v.VaccineId == vaccineOrder.VaccineId);
+            var hospital = _applicationContext.Hospitals.FirstOrDefault(h => h.Name == vaccineOrderDto.HospitalName);
+            var vaccine = _applicationContext.Vaccines.FirstOrDefault(v => v.Name == vaccineOrderDto.VaccineName);
             if (hospital == null || vaccine == null)
             {
                 return null;
             }
 
-            vaccineOrder.TotalPriceOfVaccines = vaccineOrder.NumberOfVaccinesBeingOrdered * vaccine.Price;
+            var vaccineOrder = new VaccineOrder()
+            {
+                HospitalName = vaccineOrderDto.HospitalName,
+                VaccineName = vaccineOrderDto.VaccineName,
+                NumberOfVaccinesBeingOrdered = vaccineOrderDto.NumberOfVaccinesBeingOrdered,
+                TotalPriceOfVaccines = vaccine.Price * vaccineOrderDto.NumberOfVaccinesBeingOrdered
+            };
+            
             if (hospital.Budget < vaccineOrder.TotalPriceOfVaccines)
             {
                 return null;
             }
+            
+            hospital.Budget -= vaccineOrder.TotalPriceOfVaccines;
+            hospital.VaccineOrders.Add(vaccineOrder);
 
             _applicationContext.VaccineOrders.Add(vaccineOrder);
-            hospital.VaccineOrders.Add(vaccineOrder);
             _applicationContext.Hospitals.Update(hospital);
             _applicationContext.SaveChanges();
             return hospital;

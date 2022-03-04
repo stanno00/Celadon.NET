@@ -9,9 +9,5 @@ namespace VaccineTask.Models
         public string HospitalName { get; set; }
         public int NumberOfVaccinesBeingOrdered { get; set; }
         public int TotalPriceOfVaccines { get; set; }
-        
-        public int HospitalId { get; set; }
-        
-        public int VaccineId { get; set; }
     }
 }

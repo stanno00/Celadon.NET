@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace VaccineTask.Models
+namespace VaccineTask.DTOs
 {
-    public class Applicant
+    public class ApplicantDto
     {
-        public int ApplicantId { get; set; }
         public string Name { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string SocialSecurityNumber { get; set; }
         public string Gender { get; set; }
-
-        public List<Application> Applications { get; set; }
     }
 }

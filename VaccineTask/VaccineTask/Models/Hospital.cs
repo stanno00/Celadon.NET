@@ -7,5 +7,7 @@ namespace VaccineTask.Models
         public int HospitalId { get; set; }
         public string Name { get; set; }
         public int Budget { get; set; }
+
+        public List<VaccineOrder> VaccineOrders { get; set; }
     }
 }

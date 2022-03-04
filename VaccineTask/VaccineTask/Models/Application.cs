@@ -14,5 +14,7 @@ namespace VaccineTask.Models
         public int HospitalId { get; set; }
 
         public int ApplicantId { get; set; }
+        
+        public int VaccineId { get; set; }
     }
 }

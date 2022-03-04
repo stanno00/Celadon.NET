@@ -5833,11 +5833,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\kocka\\OneDrive\\DevProjects\\Celadon.NET\\VaccineTask\\VaccineTask\\VaccineTask.csproj",
+      "projectUniqueName": "C:\\Users\\kocka\\Desktop\\DevProjects\\Celadon.NET\\VaccineTask\\VaccineTask\\VaccineTask.csproj",
       "projectName": "VaccineTask",
-      "projectPath": "C:\\Users\\kocka\\OneDrive\\DevProjects\\Celadon.NET\\VaccineTask\\VaccineTask\\VaccineTask.csproj",
+      "projectPath": "C:\\Users\\kocka\\Desktop\\DevProjects\\Celadon.NET\\VaccineTask\\VaccineTask\\VaccineTask.csproj",
       "packagesPath": "C:\\Users\\kocka\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\kocka\\OneDrive\\DevProjects\\Celadon.NET\\VaccineTask\\VaccineTask\\obj\\",
+      "outputPath": "C:\\Users\\kocka\\Desktop\\DevProjects\\Celadon.NET\\VaccineTask\\VaccineTask\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "zvJ3/0HCYNMrA4B0NuHovqw5uImID5b85F+E3gDGb8aP8tAWTDl2hAUt795odw7GlSLLuSXjL/c79XjOMAhpdQ==",
+  "dgSpecHash": "COi2/2858LPq3CzUzdeHGK6/pdZHUi2LQeeoQf0BC+t0xjI8WTyIkMjhkBdKGXJonSBJ3s0P5HHKwc8JHnzUOA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\kocka\\OneDrive\\DevProjects\\Celadon.NET\\VaccineTask\\VaccineTask\\VaccineTask.csproj",
+  "projectFilePath": "C:\\Users\\kocka\\Desktop\\DevProjects\\Celadon.NET\\VaccineTask\\VaccineTask\\VaccineTask.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kocka\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
     "C:\\Users\\kocka\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\3.1.22\\microsoft.aspnetcore.jsonpatch.3.1.22.nupkg.sha512",

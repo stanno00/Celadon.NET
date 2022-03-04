@@ -10,8 +10,6 @@ namespace VaccineTask.Services
         Hospital AddHospital(HospitalDto hospitalDto);
         Hospital GetHospital(int hospitalId);
         Hospital UpdateHospital(int hospitalId, HospitalDto hospitalDto);
-        Hospital DeleteHospital(int hospitalId);
-
         Hospital VaccineOrder(VaccineOrderDto vaccineOrderDto);
     }
 }

@@ -43,12 +43,16 @@ namespace VaccineTask.Services
 
         public Hospital UpdateHospital(int hospitalId, HospitalDto hospitalDto)
         {
-            throw new System.NotImplementedException();
-        }
+            var hospital = GetHospital(hospitalId);
+            if (hospital == null)
+            {
+                return null;
+            }
 
-        public Hospital DeleteHospital(int hospitalId)
-        {
-            throw new System.NotImplementedException();
+            hospital.Name = hospitalDto.Name;
+            _applicationContext.Hospitals.Update(hospital);
+            _applicationContext.SaveChanges();
+            return hospital;
         }
 
         public Hospital VaccineOrder(VaccineOrderDto vaccineOrderDto)

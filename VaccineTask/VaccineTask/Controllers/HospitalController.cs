@@ -54,5 +54,17 @@ namespace VaccineTask.Controllers
 
             return new OkObjectResult(hospital);
         }
+
+        [HttpPut("{hospitalId}")]
+        public ActionResult<Hospital> UpdateHospital([FromBody] HospitalDto hospitalDto, [FromRoute] int hospitalId)
+        {
+            var hospital = _hospitalService.UpdateHospital(hospitalId, hospitalDto);
+            if (hospital == null)
+            {
+                return new NotFoundObjectResult("Hospital does not exist!");
+            }
+
+            return new OkObjectResult(hospital);
+        }
     }
 }

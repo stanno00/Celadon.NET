@@ -78,6 +78,13 @@ namespace VaccineTask.Services
             var regex = new Regex("\\d{3}-\\d{3}-\\d{3}");
             if (!regex.IsMatch(applicantDto.SocialSecurityNumber)) { return false; }
 
+            var applicants = Applicants();
+            if (applicants.Any(applicant => applicant.SocialSecurityNumber == applicantDto.SocialSecurityNumber))
+            {
+                return false;
+            }
+            
+
             if (applicantDto.Gender.ToLower() != "male" && applicantDto.Name.ToLower() != "female" && applicantDto.Name.ToLower() != "other")
             {
                 return false;

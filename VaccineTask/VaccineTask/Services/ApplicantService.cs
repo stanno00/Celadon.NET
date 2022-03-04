@@ -24,6 +24,7 @@ namespace VaccineTask.Services
         public Applicant AddApplicant(ApplicantDto applicantDto)
         {
             if (!CheckIfDtoIsCorrect(applicantDto)) return null;
+            
             var applicant = new Applicant()
             {
                 Name = applicantDto.Name,
@@ -83,7 +84,6 @@ namespace VaccineTask.Services
             {
                 return false;
             }
-            
 
             if (applicantDto.Gender.ToLower() != "male" && applicantDto.Name.ToLower() != "female" && applicantDto.Name.ToLower() != "other")
             {

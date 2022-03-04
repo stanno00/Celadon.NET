@@ -46,5 +46,27 @@ namespace VaccineTask.Services
         {
             throw new System.NotImplementedException();
         }
+
+        public Hospital VaccineOrder(VaccineOrder vaccineOrder)
+        {
+            var hospital = GetHospital(vaccineOrder.HospitalId);
+            var vaccine = _applicationContext.Vaccines.FirstOrDefault(v => v.VaccineId == vaccineOrder.VaccineId);
+            if (hospital == null || vaccine == null)
+            {
+                return null;
+            }
+
+            vaccineOrder.TotalPriceOfVaccines = vaccineOrder.NumberOfVaccinesBeingOrdered * vaccine.Price;
+            if (hospital.Budget < vaccineOrder.TotalPriceOfVaccines)
+            {
+                return null;
+            }
+
+            _applicationContext.VaccineOrders.Add(vaccineOrder);
+            hospital.VaccineOrders.Add(vaccineOrder);
+            _applicationContext.Hospitals.Update(hospital);
+            _applicationContext.SaveChanges();
+            return hospital;
+        }
     }
 }

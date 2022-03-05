@@ -45,19 +45,19 @@ namespace VaxAPI.Controllers
         [HttpPost("orderVaccines")]
         public ActionResult OrderVaccinesForHospital([FromBody] VaccineOrderDTO incoming)
         {
-            //I legit have no idea what I was thinking when writing this, but am too afraid of breaking it now.
+            // the next two lines have in-built checks for exceptions.   
             long? orderId = _vs.AddNewVaccineOrder(incoming);
-            
-            var order = _vs.GetOrderById(orderId.Value);
+            VaccineOrder order = _vs.GetOrderById(orderId.Value);
 
             if (order == null)
             {
+                
                 return new BadRequestObjectResult(new ErrorJSON("The order could not be created"));
             }
 
             return _hs.OrderVaccines(order) switch
             {
-                1 => new BadRequestObjectResult(new ErrorJSON("Hospital not found")),
+                1 => new NotFoundObjectResult(new ErrorJSON("Hospital not found")),
                 2 => new BadRequestObjectResult(new ErrorJSON("The hospital does not have enough money.")),
                 3 => new OkObjectResult(new SuccessJSON("Vaccines successfully ordered.")),
                 _ => new BadRequestObjectResult(new ErrorJSON("Unknown error. Please contact the administrator."))

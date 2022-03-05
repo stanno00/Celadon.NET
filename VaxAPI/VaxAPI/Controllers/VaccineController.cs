@@ -9,12 +9,10 @@ namespace VaxAPI.Controllers
     [Route("vaccine")]
     public class VaccineController
     {
-        private readonly IHospitalService _hs;
         private readonly IVaccineService _vs;
 
-        public VaccineController(IHospitalService hs, IVaccineService vs)
+        public VaccineController(IVaccineService vs)
         {
-            _hs = hs;
             _vs = vs;
         }
         

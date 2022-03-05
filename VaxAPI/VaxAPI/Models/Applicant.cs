@@ -8,24 +8,23 @@ namespace VaxAPI.Models
         public string Name { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string SocialSecurityNo { get; set; }
-
-        // the same could also be achieved by using an enum
+        private string _gender;
         public string Gender
         {
-            get { return Gender; }
+            get => _gender;
             set
             {
-                if (value == "Male" || value == "male")
+                if (value == "Male" || value == "male" || value.ToLower() == "m")
                 {
-                    Gender = "Male";
+                    _gender = "Male";
                 }
-                else if (value == "Female" || value == "female")
+                else if (value == "Female" || value == "female" || value.ToLower() == "f")
                 {
-                    Gender = "Female";
+                    _gender = "Female";
                 }
                 else
                 {
-                    Gender = "Other";
+                    _gender = "Other";
                 }
             }
         }

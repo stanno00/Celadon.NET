@@ -36,6 +36,7 @@ namespace VaxAPI
                 });
             services.AddTransient<IHospitalService, HospitalService>();
             services.AddTransient<IVaccineService, VaccineService>();
+            services.AddTransient<IApplicantService, ApplicantService>();
 
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VaxAPI.Models
 {
@@ -6,6 +7,7 @@ namespace VaxAPI.Models
     {
         public long ApplicantId { get; set; }
         public string Name { get; set; }
+        [Column(TypeName="date")]
         public DateTime DateOfBirth { get; set; }
         public string SocialSecurityNo { get; set; }
         private string _gender;

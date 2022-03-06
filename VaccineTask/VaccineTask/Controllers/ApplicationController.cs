@@ -7,7 +7,7 @@ using VaccineTask.Services;
 namespace VaccineTask.Controllers
 {
     [ApiController]
-    [Route("{applicantId}/[controller]")]
+    [Route("/applicant/{applicantId}/[controller]")]
     public class ApplicationController
     {
         private readonly IApplicationService _applicationService;

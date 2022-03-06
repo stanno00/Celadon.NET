@@ -25,6 +25,7 @@ namespace VaccineTask
             services.AddTransient<IVaccineService, VaccineService>();
             services.AddTransient<IApplicantService, ApplicantService>();
             services.AddTransient<IHospitalService, HospitalService>();
+            services.AddTransient<IApplicationService, ApplicationService>();
             
             services.AddControllers().AddNewtonsoftJson(options =>
             {

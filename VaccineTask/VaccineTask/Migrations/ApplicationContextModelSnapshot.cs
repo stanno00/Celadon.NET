@@ -136,7 +136,7 @@ namespace VaccineTask.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("HospitalId")
+                    b.Property<int>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<string>("HospitalName")
@@ -146,6 +146,9 @@ namespace VaccineTask.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TotalPriceOfVaccines")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VaccineId")
                         .HasColumnType("int");
 
                     b.Property<string>("VaccineName")
@@ -184,7 +187,9 @@ namespace VaccineTask.Migrations
                 {
                     b.HasOne("VaccineTask.Models.Hospital", null)
                         .WithMany("VaccineOrders")
-                        .HasForeignKey("HospitalId");
+                        .HasForeignKey("HospitalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

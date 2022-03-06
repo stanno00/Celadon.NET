@@ -10,6 +10,6 @@ namespace VaccineTask.Models
 
         public List<VaccineOrder> VaccineOrders { get; set; } = new List<VaccineOrder>();
 
-        public List<HospitalVaccine> HospitalVaccines { get; set; }
+        public List<HospitalVaccine> HospitalVaccines { get; set; } = new List<HospitalVaccine>();
     }
 }

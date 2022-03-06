@@ -75,51 +75,5 @@ namespace VaccineTask.Controllers
             return new NotFoundObjectResult("Applicant not found!");
         }
 
-        [HttpGet("{applicantId}/application/{applicationId}")]
-        public ActionResult<Application> GetApplication([FromRoute] int applicantId, [FromRoute] int applicationId)
-        {
-            var applicant = _applicantService.GetApplicant(applicantId);
-
-            if (applicant == null)
-            {
-                return new NotFoundObjectResult("Applicant not found!");
-            }
-            
-            var application = _applicantService.GetApplicant(applicantId).Applications
-                .FirstOrDefault(a => a.ApplicationId == applicationId);
-
-            if (application == null)
-            {
-                return new NotFoundObjectResult("Application not found!");
-            }
-
-            return new OkObjectResult(application);
-        }
-
-        [HttpPost("{applicantId}/application")]
-        public ActionResult<Application> PostApplication([FromBody] ApplicationDto applicationDto, [FromRoute] int applicantId)
-        {
-            var applicant = _applicantService.GetApplicant(applicantId);
-            if (applicant == null)
-            {
-                return new NotFoundObjectResult("Applicant not found!");
-            }
-            
-            var numberOfApplications = applicant.Applications.Count;
-            if (numberOfApplications == 3)
-            {
-                return new BadRequestObjectResult("Applicant has already 3 applications");
-            }
-
-            var application = _applicantService.PostApplication(applicantId, applicationDto);
-            if (application == null)
-            {
-                return new BadRequestObjectResult("Wrong input!");
-            }
-
-            return new CreatedResult("", application);
-
-        }
-
     }
 }

@@ -8,6 +8,6 @@ namespace VaccineTask.Models
         public string Name { get; set; }
         public int Price { get; set; }
 
-        public List<HospitalVaccine> HospitalVaccines { get; set; }
+        public List<HospitalVaccine> HospitalVaccines { get; set; } = new List<HospitalVaccine>();
     }
 }

@@ -93,32 +93,5 @@ namespace VaccineTask.Services
 
             return true;
         }
-
-        public Application PostApplication(int applicantId, ApplicationDto applicationDto)
-        {
-            var hospital = _applicationContext.Hospitals.FirstOrDefault(h => h.Name == applicationDto.HospitalName);
-            var vaccine = _applicationContext.Vaccines.FirstOrDefault(v => v.Name == applicationDto.VaccineName);
-
-            if (hospital == null || vaccine == null)
-            {
-                return null;
-            }
-            
-            var application = new Application
-            {
-                ApplicantName = applicationDto.ApplicantName,
-                HospitalName = applicationDto.HospitalName,
-                VaccineName = applicationDto.VaccineName,
-                DateOfApplication = DateTime.Now
-            };
-
-            var applicant = GetApplicant(applicantId);
-            
-            applicant.Applications.Add(application);
-            _applicationContext.Applicants.Update(applicant);
-            _applicationContext.SaveChanges();
-            
-            return application;
-        }
     }
 }

@@ -79,8 +79,6 @@ namespace VaccineTask.Services
             
             hospital.Budget -= vaccineOrder.TotalPriceOfVaccines;
             hospital.VaccineOrders.Add(vaccineOrder);
-
-            _applicationContext.VaccineOrders.Add(vaccineOrder);
             _applicationContext.Hospitals.Update(hospital);
             _applicationContext.SaveChanges();
             return hospital;

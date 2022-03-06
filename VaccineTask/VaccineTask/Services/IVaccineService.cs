@@ -1,4 +1,6 @@
-﻿using VaccineTask.DTOs;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using VaccineTask.DTOs;
 using VaccineTask.Models;
 
 namespace VaccineTask.Services
@@ -9,5 +11,6 @@ namespace VaccineTask.Services
         Vaccine UpdateVaccine(VaccineDto vaccineDto, int vaccineId);
         Vaccine GetVaccine(int vaccineId);
         Vaccine DeleteVaccine(int vaccineId);
+        List<Vaccine> GetAllVaccines();
     }
 }

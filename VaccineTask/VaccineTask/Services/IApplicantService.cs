@@ -11,6 +11,7 @@ namespace VaccineTask.Services
         Applicant GetApplicant(int applicantId);
         Applicant UpdateApplicant(int applicantId, ApplicantDto applicantDto);
         Applicant RemoveApplicant(int applicantId);
-        
+
+        Application PostApplication(int applicantId, ApplicationDto applicationDto);
     }
 }

@@ -15,6 +15,11 @@ namespace VaccineTask.Services
             _applicationContext = applicationContext;
         }
 
+        public List<Vaccine> GetAllVaccines()
+        {
+            return _applicationContext.Vaccines.AsEnumerable().ToList();
+        }
+
         public Vaccine AddVaccine(VaccineDto vaccineDto)
         {
             if (_applicationContext.Vaccines.Any(x => x.Name == vaccineDto.Name))

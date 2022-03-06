@@ -11,6 +11,6 @@ namespace VaccineTask.Models
         public string SocialSecurityNumber { get; set; }
         public string Gender { get; set; }
 
-        public List<Application> Applications { get; set; }
+        public List<Application> Applications { get; set; } = new List<Application>();
     }
 }

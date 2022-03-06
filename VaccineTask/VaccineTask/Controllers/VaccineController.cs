@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using VaccineTask.DTOs;
 using VaccineTask.Models;
 using VaccineTask.Services;
@@ -14,6 +15,12 @@ namespace VaccineTask.Controllers
         public VaccineController(IVaccineService vaccineService)
         {
             _vaccineService = vaccineService;
+        }
+
+        [HttpGet]
+        public ActionResult<List<Vaccine>> Vaccines()
+        {
+            return _vaccineService.GetAllVaccines();
         }
 
         [HttpPost]

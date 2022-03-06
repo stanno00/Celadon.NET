@@ -37,7 +37,7 @@ namespace VaccineTask.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Hospital> GetHospital([FromBody] HospitalDto hospitalDto)
+        public ActionResult<Hospital> PostHospital([FromBody] HospitalDto hospitalDto)
         {
             var hospital = _hospitalService.AddHospital(hospitalDto);
             return new CreatedResult("", hospital);

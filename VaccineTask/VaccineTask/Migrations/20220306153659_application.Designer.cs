@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VaccineTask;
 
 namespace VaccineTask.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220306153659_application")]
+    partial class application
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +52,7 @@ namespace VaccineTask.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ApplicantId")
+                    b.Property<int>("ApplicantId")
                         .HasColumnType("int");
 
                     b.Property<string>("ApplicantName")
@@ -59,11 +61,17 @@ namespace VaccineTask.Migrations
                     b.Property<DateTime>("DateOfApplication")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateOfVaccineApplication")
+                    b.Property<DateTime>("DateOfVaccineApplication")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("HospitalId")
+                        .HasColumnType("int");
 
                     b.Property<string>("HospitalName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VaccineId")
+                        .HasColumnType("int");
 
                     b.Property<string>("VaccineName")
                         .HasColumnType("nvarchar(max)");
@@ -162,7 +170,9 @@ namespace VaccineTask.Migrations
                 {
                     b.HasOne("VaccineTask.Models.Applicant", null)
                         .WithMany("Applications")
-                        .HasForeignKey("ApplicantId");
+                        .HasForeignKey("ApplicantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VaccineTask.Models.HospitalVaccine", b =>

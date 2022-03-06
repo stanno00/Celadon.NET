@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VaccineTask;
 
 namespace VaccineTask.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220305105941_modelBuilder")]
+    partial class modelBuilder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,6 +37,9 @@ namespace VaccineTask.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NumberOfVaccines")
+                        .HasColumnType("int");
+
                     b.Property<string>("SocialSecurityNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -50,7 +55,7 @@ namespace VaccineTask.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ApplicantId")
+                    b.Property<int>("ApplicantId")
                         .HasColumnType("int");
 
                     b.Property<string>("ApplicantName")
@@ -59,18 +64,22 @@ namespace VaccineTask.Migrations
                     b.Property<DateTime>("DateOfApplication")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateOfVaccineApplication")
+                    b.Property<DateTime>("DateOfVaccineApplication")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("HospitalId")
+                        .HasColumnType("int");
 
                     b.Property<string>("HospitalName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VaccineId")
+                        .HasColumnType("int");
 
                     b.Property<string>("VaccineName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ApplicationId");
-
-                    b.HasIndex("ApplicantId");
 
                     b.ToTable("Applications");
                 });
@@ -156,13 +165,6 @@ namespace VaccineTask.Migrations
                     b.HasIndex("HospitalId");
 
                     b.ToTable("VaccineOrders");
-                });
-
-            modelBuilder.Entity("VaccineTask.Models.Application", b =>
-                {
-                    b.HasOne("VaccineTask.Models.Applicant", null)
-                        .WithMany("Applications")
-                        .HasForeignKey("ApplicantId");
                 });
 
             modelBuilder.Entity("VaccineTask.Models.HospitalVaccine", b =>

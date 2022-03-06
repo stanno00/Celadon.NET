@@ -9,12 +9,6 @@ namespace VaccineTask.Models
         public string HospitalName { get; set; }
         public DateTime DateOfApplication { get; set; }
         public string VaccineName { get; set; }
-        public DateTime DateOfVaccineApplication { get; set; }
-
-        public int HospitalId { get; set; }
-
-        public int ApplicantId { get; set; }
-        
-        public int VaccineId { get; set; }
+        public DateTime? DateOfVaccineApplication { get; set; } = null;
     }
 }

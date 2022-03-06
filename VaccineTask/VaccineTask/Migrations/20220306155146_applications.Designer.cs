@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VaccineTask;
 
 namespace VaccineTask.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220306155146_applications")]
+    partial class applications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,7 +61,7 @@ namespace VaccineTask.Migrations
                     b.Property<DateTime>("DateOfApplication")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateOfVaccineApplication")
+                    b.Property<DateTime>("DateOfVaccineApplication")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("HospitalName")

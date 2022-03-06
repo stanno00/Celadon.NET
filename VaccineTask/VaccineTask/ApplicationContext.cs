@@ -17,8 +17,16 @@ namespace VaccineTask
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<HospitalVaccine>().HasKey(hv => new {hv.HospitalId, hv.VaccineId});
             modelBuilder.Entity<HospitalVaccine>()
-                .HasKey(hv => new {hv.HospitalId, hv.VaccineId});
+                .HasOne(h => h.Hospital)
+                .WithMany(hv => hv.HospitalVaccines)
+                .HasForeignKey(v => v.VaccineId);
+            
+            modelBuilder.Entity<HospitalVaccine>()
+                .HasOne(h => h.Vaccine)
+                .WithMany(hv => hv.HospitalVaccines)
+                .HasForeignKey(v => v.HospitalId);
         }
     }
 }

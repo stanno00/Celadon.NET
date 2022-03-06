@@ -104,6 +104,12 @@ namespace VaccineTask.Controllers
             {
                 return new NotFoundObjectResult("Applicant not found!");
             }
+            
+            var numberOfApplications = applicant.Applications.Count;
+            if (numberOfApplications == 3)
+            {
+                return new BadRequestObjectResult("Applicant has already 3 applications");
+            }
 
             var application = _applicantService.PostApplication(applicantId, applicationDto);
             if (application == null)

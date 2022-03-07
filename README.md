@@ -30,7 +30,7 @@
 
 Jira board:
 
-- <Link comming soon>
+- https://greenfoxacademy.atlassian.net/jira/software/projects/CDT/boards/44
 
 
 Contribution:

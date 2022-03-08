@@ -1,5 +1,5 @@
-﻿using DotNetTribes.DTOs;
-using DotNetTribes.Models;
+﻿using System;
+using DotNetTribes.DTOs;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,12 +16,22 @@ namespace DotNetTribes.Controllers
             _registerService = registerService;
         }
 
-        // TODO: change the return type (ActionResult?)
-        // TODO: add service (+ its interface) for registration
+        /*
+         * If post request has invalid field/fields, it will return JSON object with corresponding
+         * error message (see RegistrationExceptions folder).
+         */
         [HttpPost]
-        public RegisterUserResponseDTO RegisterNewUser([FromBody] RegisterUserRequestDTO userRequestCredentials)
+        public ActionResult RegisterNewUser([FromBody] RegisterUserRequestDTO userRequestCredentials)
         {
-            return _registerService.RegisterUser(userRequestCredentials);
+            try
+            {
+                return new CreatedResult("", _registerService.RegisterUser(userRequestCredentials));
+            }
+
+            catch (Exception exception)
+            {
+                return new BadRequestObjectResult( new { error = exception.Message});
+            }
         }
     }
 }

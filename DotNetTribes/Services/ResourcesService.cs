@@ -28,13 +28,13 @@ namespace DotNetTribes.Services
             var kingdomResources = new ResourcesDto();
             foreach (var resource in kingdom.Resources)
             {
-
                 var resourceDto = new ResourceDto
                 {
-                    Type = resource.Type,
                     Amount = resource.Amount,
-                    UpdatedAt = resource.UpdatedAt
+                    Type = resource.Type,
+                    UpdatedAt = DateTimeOffset.Now.ToUnixTimeSeconds()
                 };
+                
                 kingdomResources.Resources.Add(resourceDto);
             }
 

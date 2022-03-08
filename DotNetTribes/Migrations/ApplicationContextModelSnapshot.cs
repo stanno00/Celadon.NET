@@ -50,9 +50,6 @@ namespace DotNetTribes.Migrations
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UpdatedAt")
-                        .HasColumnType("int");
-
                     b.HasKey("ResourceId");
 
                     b.HasIndex("KingdomId");

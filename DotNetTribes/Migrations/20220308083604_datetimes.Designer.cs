@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220307164240_kingdomss")]
-    partial class kingdomss
+    [Migration("20220308083604_datetimes")]
+    partial class datetimes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,9 +51,6 @@ namespace DotNetTribes.Migrations
 
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UpdatedAt")
-                        .HasColumnType("int");
 
                     b.HasKey("ResourceId");
 

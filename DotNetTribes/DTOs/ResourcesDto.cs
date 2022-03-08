@@ -5,6 +5,6 @@ namespace DotNetTribes.DTOs
 {
     public class ResourcesDto
     {
-        public List<ResourceDto> Resources { get; set; } = new List<ResourceDto>();
+        public ICollection<ResourceDto> Resources { get; set; } = new List<ResourceDto>();
     }
 }

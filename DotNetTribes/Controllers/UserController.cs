@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetTribes.Controllers
 {
-    [Route("[controller]")]
+    [Route("/register")]
     [ApiController]
-    public class RegisterController
+    public class UserController
     {
         private readonly IUserService _userService;
 
-        public RegisterController(IUserService userService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
         }

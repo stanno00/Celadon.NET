@@ -1,4 +1,6 @@
-﻿using DotNetTribes.Services;
+﻿using DotNetTribes.DTOs;
+using DotNetTribes.Models;
+using DotNetTribes.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetTribes.Controllers
@@ -17,9 +19,9 @@ namespace DotNetTribes.Controllers
         // TODO: change the return type (ActionResult?)
         // TODO: add service (+ its interface) for registration
         [HttpPost]
-        public void RegisterNewUser()
+        public RegisterUserResponseDTO RegisterNewUser([FromBody] RegisterUserRequestDTO userRequestCredentials)
         {
-            
+            return _registerService.RegisterUser(userRequestCredentials);
         }
     }
 }

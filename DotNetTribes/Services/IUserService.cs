@@ -2,7 +2,7 @@
 
 namespace DotNetTribes.Services
 {
-    public interface IRegisterService
+    public interface IUserService
     {
         RegisterUserResponseDTO RegisterUser(RegisterUserRequestDTO userCredentials);
         string HashString(string input);

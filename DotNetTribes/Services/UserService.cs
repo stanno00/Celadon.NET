@@ -7,11 +7,11 @@ using DotNetTribes.RegistrationExceptions;
 
 namespace DotNetTribes.Services
 {
-    public class RegisterService : IRegisterService
+    public class UserService : IUserService
     {
         private ApplicationContext _applicationContext;
 
-        public RegisterService(ApplicationContext applicationContext)
+        public UserService(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
         }

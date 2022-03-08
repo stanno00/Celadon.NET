@@ -9,11 +9,11 @@ namespace DotNetTribes.Controllers
     [ApiController]
     public class RegisterController
     {
-        private IRegisterService _registerService;
+        private readonly IUserService _userService;
 
-        public RegisterController(IRegisterService registerService)
+        public RegisterController(IUserService userService)
         {
-            _registerService = registerService;
+            _userService = userService;
         }
 
         /*
@@ -25,7 +25,7 @@ namespace DotNetTribes.Controllers
         {
             try
             {
-                return new CreatedResult("", _registerService.RegisterUser(userRequestCredentials));
+                return new CreatedResult("", _userService.RegisterUser(userRequestCredentials));
             }
 
             catch (Exception exception)

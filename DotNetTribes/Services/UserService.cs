@@ -9,16 +9,16 @@ namespace DotNetTribes.Services
 {
     public class UserService : IUserService
     {
-        private ApplicationContext _applicationContext;
+        private readonly ApplicationContext _applicationContext;
 
         public UserService(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
         }
 
-        public string HashString(string input)
+        public string HashPassword(string password)
         {
-            return BCrypt.Net.BCrypt.HashPassword(input);
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
         
         public RegisterUserResponseDTO RegisterUser(RegisterUserRequestDTO userCredentials)
@@ -35,7 +35,7 @@ namespace DotNetTribes.Services
             var user = new User()
             {
                 Username = userCredentials.Username,
-                HashedPassword = HashString(userCredentials.Password),
+                HashedPassword = HashPassword(userCredentials.Password),
                 Email = userCredentials.Email,
                 Kingdom = new Kingdom() { Name = kingdomName}
             };

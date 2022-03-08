@@ -5,7 +5,7 @@ namespace DotNetTribes.Services
     public interface IUserService
     {
         RegisterUserResponseDTO RegisterUser(RegisterUserRequestDTO userCredentials);
-        string HashString(string input);
+        string HashPassword(string password);
         void HandleMissingFields(RegisterUserRequestDTO userCredentials);
         void CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials);
         void CheckIfPasswordIsLongEnough(string password, int minLength);

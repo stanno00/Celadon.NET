@@ -21,16 +21,17 @@ namespace DotNetTribes.Controllers
          * error message (see RegistrationExceptions folder).
          */
         [HttpPost]
-        public ActionResult RegisterNewUser([FromBody] RegisterUserRequestDTO userRequestCredentials)
+        public ActionResult RegisterNewUser([FromBody] RegisterUserRequestDTO registerUserRequestDTO)
         {
             try
             {
-                return new CreatedResult("", _userService.RegisterUser(userRequestCredentials));
+                var newUser = _userService.RegisterUser(registerUserRequestDTO);
+                return new CreatedResult("", newUser);
             }
 
             catch (Exception exception)
             {
-                return new BadRequestObjectResult( new { error = exception.Message});
+                return new BadRequestObjectResult( new { error = exception.Message });
             }
         }
     }

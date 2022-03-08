@@ -5,10 +5,14 @@ namespace DotNetTribes.Services
     public interface IRegisterService
     {
         RegisterUserResponseDTO RegisterUser(RegisterUserRequestDTO userCredentials);
-        public void HandleMissingFields(RegisterUserRequestDTO userCredentials);
-        public bool UsernameIsTaken(string username);
-        public bool PasswordIsShort(int minLength, string password);
-        public bool KingdomNameIsTaken(string kingdomName);
-        public bool EmailIsTaken(string email);
+        string HashString(string input);
+        void HandleMissingFields(RegisterUserRequestDTO userCredentials);
+        void CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials);
+        void CheckIfPasswordIsLongEnough(string password, int minLength);
+        bool UsernameIsTaken(string username);
+        bool PasswordIsShort(int minLength, string password);
+        bool KingdomNameIsTaken(string name);
+        bool EmailIsTaken(string email);
+        string SetKingdomNameIfMissing(string kingdomName, string userName);
     }
 }

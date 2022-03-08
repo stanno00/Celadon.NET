@@ -21,18 +21,13 @@ namespace DotNetTribes.Services
             return BCrypt.Net.BCrypt.HashPassword(input);
         }
         
-        // TODO: check if kingdom is unique
-        // TODO: check if email is unique
         public RegisterUserResponseDTO RegisterUser(RegisterUserRequestDTO userCredentials)
         {
             
             HandleMissingFields(userCredentials);
+            CheckIfFieldsAreNotTaken(userCredentials);
+            CheckIfPasswordIsLongEnough(userCredentials.Password, 8);
             
-            if (UsernameIsTaken(userCredentials.Username))
-            {
-                throw new UsernameAlreadyTakenException();
-            }
-
             var minPasswordLength = 8;
             var password = userCredentials.Password;
             
@@ -44,16 +39,6 @@ namespace DotNetTribes.Services
             var kingdomName = SetKingdomNameIfMissing(
                 userCredentials.Kingdomname, userCredentials.Username
                 );
-
-            if (KingdomNameIsTaken(kingdomName))
-            {
-                throw new KingdomNameAlreadyTakenException();
-            }
-
-            if (EmailIsTaken(userCredentials.Email))
-            {
-                throw new EmailAlreadyTakenException();
-            }
             
             var user = new User()
             {
@@ -74,7 +59,7 @@ namespace DotNetTribes.Services
             };
         }
 
-        // If one or more required fields are missing, it will throw exception.
+        // If one or more required fields is missing, it will throw exception.
         public void HandleMissingFields(RegisterUserRequestDTO userCredentials)
         {
             var errorMessages = new List<string>();
@@ -98,6 +83,33 @@ namespace DotNetTribes.Services
             {
                 var errorOutput = String.Join(" ", errorMessages);
                 throw new MissingFieldException(errorOutput);
+            }
+        }
+
+        // throws an error if one of the fields is already taken
+        public void CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials)
+        {
+            if (UsernameIsTaken(userCredentials.Username))
+            {
+                throw new UsernameAlreadyTakenException();
+            }
+            
+            if (KingdomNameIsTaken(userCredentials.Kingdomname))
+            {
+                throw new KingdomNameAlreadyTakenException();
+            }
+            
+            if (EmailIsTaken(userCredentials.Email))
+            {
+                throw new EmailAlreadyTakenException();
+            }
+        }
+
+        public void CheckIfPasswordIsLongEnough(string password, int minLength)
+        {
+            if (password.Length < minLength)
+            {
+                throw new ShortPasswordException(minLength);
             }
         }
         

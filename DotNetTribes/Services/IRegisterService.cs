@@ -5,6 +5,7 @@ namespace DotNetTribes.Services
     public interface IRegisterService
     {
         RegisterUserResponseDTO RegisterUser(RegisterUserRequestDTO userCredentials);
-        
+        public void HandleMissingFields(RegisterUserRequestDTO userCredentials);
+        public bool UsernameIsTaken(string username);
     }
 }

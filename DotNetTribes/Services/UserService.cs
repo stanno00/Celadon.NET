@@ -37,7 +37,7 @@ namespace DotNetTribes.Services
                 Username = userCredentials.Username,
                 HashedPassword = HashPassword(userCredentials.Password),
                 Email = userCredentials.Email,
-                Kingdom = new Kingdom() { Name = kingdomName}
+                Kingdom = new Kingdom() { Name = kingdomName }
             };
 
             _applicationContext.Add(user);
@@ -56,17 +56,17 @@ namespace DotNetTribes.Services
         {
             var errorMessages = new List<string>();
             
-            if (userCredentials.Password == null)
+            if (FieldIsNullOrEmpty(userCredentials.Password))
             {
                 errorMessages.Add("Password is required.");
             }
 
-            if (userCredentials.Username == null)
+            if (FieldIsNullOrEmpty(userCredentials.Username))
             {
                 errorMessages.Add("Username is required");
             }
             
-            if (userCredentials.Email == null)
+            if (FieldIsNullOrEmpty(userCredentials.Email))
             {
                 errorMessages.Add("Email is required");
             }
@@ -76,6 +76,11 @@ namespace DotNetTribes.Services
                 var errorOutput = String.Join(" ", errorMessages);
                 throw new MissingFieldException(errorOutput);
             }
+        }
+        
+        public bool FieldIsNullOrEmpty(string field)
+        {
+            return String.IsNullOrEmpty(field.Trim());
         }
 
         // throws an error if one of the fields is already taken

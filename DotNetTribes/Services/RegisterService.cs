@@ -15,6 +15,11 @@ namespace DotNetTribes.Services
         {
             _applicationContext = applicationContext;
         }
+
+        public string HashString(string input)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(input);
+        }
         
         // TODO: check if kingdom is unique
         // TODO: check if email is unique
@@ -28,12 +33,10 @@ namespace DotNetTribes.Services
                 throw new UsernameAlreadyTakenException();
             }
             
-            string HashedPassword = BCrypt.Net.BCrypt.HashPassword(userCredentials.Password);
-
             var user = new User()
             {
                 Username = userCredentials.Username,
-                HashedPassword = HashedPassword,
+                HashedPassword = HashString(userCredentials.Password),
                 Email = userCredentials.Email,
                 Kingdom = new Kingdom() { Name = userCredentials.Kingdomname}
             };

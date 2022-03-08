@@ -1,4 +1,5 @@
-﻿using DotNetTribes.DTOs;
+﻿using System.Collections.Generic;
+using DotNetTribes.DTOs;
 
 namespace DotNetTribes.Services
 {

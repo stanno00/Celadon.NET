@@ -26,7 +26,7 @@ namespace DotNetTribes
             var connectionString = Environment.GetEnvironmentVariable("DB_URL");
             services.AddDbContext<ApplicationContext>(options =>
             {
-                options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(connectionString);
             });
             
             services.AddControllers().AddNewtonsoftJson(options =>

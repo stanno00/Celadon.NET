@@ -1,4 +1,5 @@
-﻿using DotNetTribes.DTOs;
+﻿using System.Collections.Generic;
+using DotNetTribes.DTOs;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,12 +17,12 @@ namespace DotNetTribes.Controllers
         }
 
         [HttpGet("{kingdomId}")]
-        public ActionResult<ResourcesDto> GetKingdomResources([FromRoute] int kingdomId)
+        public ActionResult<List<ResourceDto>> GetKingdomResources([FromRoute] int kingdomId)
         {
             var kingdomResources = _resourcesService.GetKingdomResources(kingdomId);
-            if (kingdomResources == null)
+            if (kingdomResources.Resources.Count == 0)
             {
-                return new NotFoundObjectResult("Kingdom not found!");
+                return new BadRequestObjectResult("Bad request!");
             }
 
             return new OkObjectResult(kingdomResources);

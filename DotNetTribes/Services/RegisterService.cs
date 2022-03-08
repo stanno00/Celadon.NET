@@ -28,14 +28,6 @@ namespace DotNetTribes.Services
             CheckIfFieldsAreNotTaken(userCredentials);
             CheckIfPasswordIsLongEnough(userCredentials.Password, 8);
             
-            var minPasswordLength = 8;
-            var password = userCredentials.Password;
-            
-            if (PasswordIsShort(minPasswordLength, password))
-            {
-                throw new ShortPasswordException(minPasswordLength);
-            }
-
             var kingdomName = SetKingdomNameIfMissing(
                 userCredentials.Kingdomname, userCredentials.Username
                 );
@@ -121,10 +113,6 @@ namespace DotNetTribes.Services
             
             return (user != null);
 
-        }
-        public bool PasswordIsShort(int minLength, string password)
-        {
-            return password.Length < minLength;
         }
 
         public bool KingdomNameIsTaken(string name)

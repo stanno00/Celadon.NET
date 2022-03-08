@@ -2,7 +2,7 @@
 
 namespace DotNetTribes.Migrations
 {
-    public partial class KingdomAndUser : Migration
+    public partial class UserAndKingdom : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -25,9 +25,10 @@ namespace DotNetTribes.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    KingdomId = table.Column<int>(type: "int", nullable: true)
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    KingdomId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,7 +38,7 @@ namespace DotNetTribes.Migrations
                         column: x => x.KingdomId,
                         principalTable: "Kingdoms",
                         principalColumn: "KingdomId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

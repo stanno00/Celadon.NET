@@ -32,6 +32,14 @@ namespace DotNetTribes.Services
             {
                 throw new UsernameAlreadyTakenException();
             }
+
+            var minPasswordLength = 8;
+            var password = userCredentials.Password;
+            
+            if (PasswordIsShort(minPasswordLength, password))
+            {
+                throw new ShortPasswordException(minPasswordLength);
+            }
             
             var user = new User()
             {
@@ -87,6 +95,10 @@ namespace DotNetTribes.Services
             
             return (user != null);
 
+        }
+        public bool PasswordIsShort(int minLength, string password)
+        {
+            return password.Length < minLength;
         }
     }
 }

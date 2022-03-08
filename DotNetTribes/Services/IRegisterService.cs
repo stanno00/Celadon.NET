@@ -7,5 +7,6 @@ namespace DotNetTribes.Services
         RegisterUserResponseDTO RegisterUser(RegisterUserRequestDTO userCredentials);
         public void HandleMissingFields(RegisterUserRequestDTO userCredentials);
         public bool UsernameIsTaken(string username);
+        public bool PasswordIsShort(int minLength, string password);
     }
 }

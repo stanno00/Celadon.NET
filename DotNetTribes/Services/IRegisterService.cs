@@ -9,5 +9,6 @@ namespace DotNetTribes.Services
         public bool UsernameIsTaken(string username);
         public bool PasswordIsShort(int minLength, string password);
         public bool KingdomNameIsTaken(string kingdomName);
+        public bool EmailIsTaken(string email);
     }
 }

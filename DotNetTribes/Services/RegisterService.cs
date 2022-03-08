@@ -49,6 +49,11 @@ namespace DotNetTribes.Services
             {
                 throw new KingdomNameAlreadyTakenException();
             }
+
+            if (EmailIsTaken(userCredentials.Email))
+            {
+                throw new EmailAlreadyTakenException();
+            }
             
             var user = new User()
             {
@@ -117,6 +122,15 @@ namespace DotNetTribes.Services
                 .FirstOrDefault(kingdom => kingdom.Name == name);
 
             return (kingdomName != null);
+        }
+
+        public bool EmailIsTaken(string email)
+        {
+            var emailAddress = _applicationContext
+                .Users
+                .FirstOrDefault(user => user.Email == email);
+
+            return (emailAddress != null);
         }
 
         public string SetKingdomNameIfMissing(string kingdomName, string userName)

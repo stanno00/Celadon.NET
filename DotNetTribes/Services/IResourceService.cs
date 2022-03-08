@@ -2,7 +2,7 @@
 
 namespace DotNetTribes.Services
 {
-    public interface IResourcesService
+    public interface IResourceService
     {
         ResourcesDto GetKingdomResources(int kingdomId);
     }

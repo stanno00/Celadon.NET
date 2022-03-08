@@ -6,13 +6,13 @@ namespace DotNetTribes.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ResourcesController
+    public class ResourceController
     {
-        private readonly IResourcesService _resourcesService;
+        private readonly IResourceService _resourcesService;
 
-        public ResourcesController(IResourcesService resourcesService)
+        public ResourceController(IResourceService resourceService)
         {
-            _resourcesService = resourcesService;
+            _resourcesService = resourceService;
         }
 
         [HttpGet("{kingdomId}")]
@@ -21,7 +21,7 @@ namespace DotNetTribes.Controllers
             var kingdomResources = _resourcesService.GetKingdomResources(kingdomId);
             if (kingdomResources == null)
             {
-                return new BadRequestObjectResult("Bad request!");
+                return new NotFoundObjectResult("Kingdom not found!");
             }
 
             return new OkObjectResult(kingdomResources);

@@ -6,6 +6,6 @@ namespace DotNetTribes.Models
     {
         public int KingdomId { get; set; }
         public string Name { get; set; }
-        public List<Resource> Resources { get; set; }
+        public ICollection<Resource> Resources { get; set; }
     }
 }

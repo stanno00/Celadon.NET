@@ -40,13 +40,22 @@ namespace DotNetTribes.Services
             {
                 throw new ShortPasswordException(minPasswordLength);
             }
+
+            var kingdomName = SetKingdomNameIfMissing(
+                userCredentials.Kingdomname, userCredentials.Username
+                );
+
+            if (KingdomNameIsTaken(kingdomName))
+            {
+                throw new KingdomNameAlreadyTakenException();
+            }
             
             var user = new User()
             {
                 Username = userCredentials.Username,
                 HashedPassword = HashString(userCredentials.Password),
                 Email = userCredentials.Email,
-                Kingdom = new Kingdom() { Name = userCredentials.Kingdomname}
+                Kingdom = new Kingdom() { Name = kingdomName}
             };
 
             _applicationContext.Add(user);
@@ -99,6 +108,20 @@ namespace DotNetTribes.Services
         public bool PasswordIsShort(int minLength, string password)
         {
             return password.Length < minLength;
+        }
+
+        public bool KingdomNameIsTaken(string name)
+        {
+            var kingdomName = _applicationContext
+                .Kingdoms
+                .FirstOrDefault(kingdom => kingdom.Name == name);
+
+            return (kingdomName != null);
+        }
+
+        public string SetKingdomNameIfMissing(string kingdomName, string userName)
+        {
+            return kingdomName ?? $"{userName}'s kingdom";
         }
     }
 }

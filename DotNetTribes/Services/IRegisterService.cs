@@ -8,5 +8,6 @@ namespace DotNetTribes.Services
         public void HandleMissingFields(RegisterUserRequestDTO userCredentials);
         public bool UsernameIsTaken(string username);
         public bool PasswordIsShort(int minLength, string password);
+        public bool KingdomNameIsTaken(string kingdomName);
     }
 }

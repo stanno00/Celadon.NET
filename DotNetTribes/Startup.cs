@@ -1,5 +1,10 @@
 using System;
 using DotNetTribes.Services;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using DotNetTribes.Services;
+using DotNetTribes.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +40,7 @@ namespace DotNetTribes
             });
 
             services.AddTransient<IResourceService, ResourceService>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +52,8 @@ namespace DotNetTribes
             }
 
             app.UseRouting();
+
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

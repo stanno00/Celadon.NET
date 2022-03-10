@@ -28,12 +28,14 @@ namespace DotNetTribes
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        
+        
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Environment.GetEnvironmentVariable("DB_URL");
             services.AddDbContext<ApplicationContext>(options =>
             {
-                options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(connectionString);
             });
 
             services.AddAuthentication(x =>
@@ -49,7 +51,7 @@ namespace DotNetTribes
                     ValidateIssuerSigningKey = true,
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes("TW9zaGVFcmV6UHJpdmF0ZUtleQ=="))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("VG9wIFNlY3JldA=="))
                 };
             });
             
@@ -71,8 +73,7 @@ namespace DotNetTribes
 
             app.UseRouting();
 
-            app.UseAuthentication();
-
+            app.UseAuthentication(); //netreba
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -1,20 +1,25 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using DotNetTribes.DTOs;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DotNetTribes.Services
 {
     public class LoginService : ILoginService
     {
         private readonly ApplicationContext _applicationContext;
+        //private readonly string SECRET_KEY;
 
         public LoginService(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
+            //SECRET_KEY = Environment.GetEnvironmentVariable("SECRET_KEY");
         }
 
-        public LoginDto VerifiUsernameAndPassword(UsernamePassowrdDto usernamePasswordDto)
+        public LoginResponseDto VerifyUsernameAndPassword(LoginRequestDto usernamePasswordDto)
         {
             if (usernamePasswordDto == null)
             {
@@ -36,20 +41,40 @@ namespace DotNetTribes.Services
             }
             var user = _applicationContext.Users.SingleOrDefault(u => u.Username == usernamePasswordDto.username);
 
-            IAuthContainerService model = getJwtContainerService(user.Username, user.KingdomId.ToString());
-            IAuthService authService = new JWTService(model.SecretKey);
-
-            string token = authService.GenerateToken(model);
+            string token = CreateToken(user.Username, user.KingdomId.ToString());
             
             
-            return new LoginDto()
+            return new LoginResponseDto()
             {
                 status = "ok",
                 token = token
             };
         }
+        
+        private string CreateToken(string name, string kingdomId)
+        {
+            var symmetricKey = Encoding.ASCII.GetBytes("VG9wIFNlY3JldA==");
+            
+            SecurityTokenDescriptor securityTokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(
+                    new Claim[]
+                    {//here are the information that the token stores and their names
+                        new Claim("username", name),
+                        new Claim("kindomId", kingdomId)
+                    }),
+                Expires = DateTime.UtcNow.AddHours(3),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(symmetricKey), SecurityAlgorithms.HmacSha256Signature)
+            };
 
-        private bool isUsernameAndPasswordCorrect(UsernamePassowrdDto usernamePasswordDto)
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken = tokenHandler.CreateToken(securityTokenDescriptor);
+            string token = tokenHandler.WriteToken(securityToken);
+
+            return token;
+        }
+
+        private bool isUsernameAndPasswordCorrect(LoginRequestDto usernamePasswordDto)
         {
             var user = _applicationContext.Users.SingleOrDefault(u => u.Username == usernamePasswordDto.username);
             if (user == null)
@@ -63,18 +88,6 @@ namespace DotNetTribes.Services
             }
 
             return true;
-        }
-        //here are the information that the token stores
-        private static JWTContainerService getJwtContainerService(string username, string kinfomId)
-        {
-            return new JWTContainerService()
-            {
-                Claims = new Claim[]
-                {
-                    new Claim("username", username),
-                    new Claim("kindomID", kinfomId)
-                }
-            };
         }
     }
 }

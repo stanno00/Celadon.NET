@@ -17,6 +17,58 @@ namespace DotNetTribes.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.14")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("DotNetTribes.Models.Kingdom", b =>
+                {
+                    b.Property<int>("KingdomId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("KingdomId");
+
+                    b.ToTable("Kingdoms");
+                });
+
+            modelBuilder.Entity("DotNetTribes.Models.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HashedPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("KingdomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("KingdomId");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("DotNetTribes.Models.User", b =>
+                {
+                    b.HasOne("DotNetTribes.Models.Kingdom", "Kingdom")
+                        .WithMany()
+                        .HasForeignKey("KingdomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Kingdom");
+                });
 #pragma warning restore 612, 618
         }
     }

@@ -7,7 +7,6 @@ namespace DotNetTribes
     {
         public DbSet<Resource> Resources { get; set; }
         public DbSet<Kingdom> Kingdoms { get; set; }
-        public DbSet<Kingdom> Kingdoms { get; set; }
         public DbSet<User> Users { get; set; }
         
         public ApplicationContext(DbContextOptions options) : base(options)

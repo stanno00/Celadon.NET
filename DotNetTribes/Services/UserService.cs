@@ -25,12 +25,12 @@ namespace DotNetTribes.Services
         {
             
             HandleMissingFields(userCredentials);
-            CheckIfFieldsAreNotTaken(userCredentials);
-            CheckIfPasswordIsLongEnough(userCredentials.Password, 8);
             
-            var kingdomName = SetKingdomNameIfMissing(
-                userCredentials.Kingdomname, userCredentials.Username
-                );
+            // if all fields are not taken -> returns kingdom name that will be saved in database
+            // throws corresponding error otherwise
+            var kingdomName = CheckIfFieldsAreNotTaken(userCredentials);
+            
+            CheckIfPasswordIsLongEnough(userCredentials.Password, 8);
             
             var user = new User()
             {
@@ -51,7 +51,7 @@ namespace DotNetTribes.Services
             };
         }
 
-        // If one or more required fields is missing, it will throw exception.
+        // If one or more required fields are missing, it will throw exception.
         public void HandleMissingFields(RegisterUserRequestDTO userCredentials)
         {
             var errorMessages = new List<string>();
@@ -84,14 +84,18 @@ namespace DotNetTribes.Services
         }
 
         // throws an error if one of the fields is already taken
-        public void CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials)
+        public string CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials)
         {
+            var kingdomName = SetKingdomNameIfMissing(
+                userCredentials.Kingdomname, userCredentials.Username
+            );
+            
             if (UsernameIsTaken(userCredentials.Username))
             {
                 throw new UsernameAlreadyTakenException();
             }
             
-            if (KingdomNameIsTaken(userCredentials.Kingdomname))
+            if (KingdomNameIsTaken(kingdomName))
             {
                 throw new KingdomNameAlreadyTakenException();
             }
@@ -100,6 +104,8 @@ namespace DotNetTribes.Services
             {
                 throw new EmailAlreadyTakenException();
             }
+
+            return kingdomName;
         }
 
         public void CheckIfPasswordIsLongEnough(string password, int minLength)
@@ -137,10 +143,12 @@ namespace DotNetTribes.Services
 
             return (emailAddress != null);
         }
-
+        
         public string SetKingdomNameIfMissing(string kingdomName, string userName)
         {
-            return kingdomName ?? $"{userName}'s kingdom";
+            return (FieldIsNullOrEmpty(kingdomName))
+                ? $"{userName}'s kingdom"
+                : kingdomName;
         }
     }
 }

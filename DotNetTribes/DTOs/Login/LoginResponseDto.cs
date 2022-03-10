@@ -2,7 +2,7 @@ namespace DotNetTribes.DTOs
 {
     public class LoginResponseDto
     {
-        public string status { get; set; }
-        public string token { get; set; }
+        public string Status { get; set; }
+        public string Token { get; set; }
     }
 }

@@ -27,9 +27,9 @@ namespace DotNetTribes.Controllers
         public ActionResult Login([FromBody] LoginRequestDto loginRequestDto)
         {
            
-                var token = _loginService.VerifyUsernameAndPassword(loginRequestDto);
+                var loginResponseDto = _loginService.VerifyUsernameAndPassword(loginRequestDto);
 
-                return new CreatedResult("", token);
+                return new CreatedResult("", loginResponseDto);
         }
 
         [HttpPost]

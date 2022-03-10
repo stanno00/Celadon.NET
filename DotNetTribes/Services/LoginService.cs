@@ -1,9 +1,11 @@
 using System;
+using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using DotNetTribes.DTOs;
+using DotNetTribes.Exceptions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DotNetTribes.Services
@@ -23,22 +25,21 @@ namespace DotNetTribes.Services
         {
             if (usernamePasswordDto == null)
             {
-                throw new ArgumentException("All fields are required.");
+                throw new LoginException("All fields are required.");
             }
 
-            if (usernamePasswordDto.password == null)
+            if (string.IsNullOrEmpty(usernamePasswordDto.password))
             {
-                throw new ArgumentException("Password is required.");
+                throw new LoginException("Password is required.");
             }
-            if (usernamePasswordDto.username == null)
+            
+            if (string.IsNullOrEmpty(usernamePasswordDto.username))
             {
-                throw new ArgumentException("Username is required.");
+                throw new LoginException("Username is required.");
             }
 
-            if (isUsernameAndPasswordCorrect(usernamePasswordDto) == false)
-            {
-                throw new ArgumentException("Username or password is incorrect.");
-            }
+            isUsernameAndPasswordCorrect(usernamePasswordDto);
+            
             var user = _applicationContext.Users.SingleOrDefault(u => u.Username == usernamePasswordDto.username);
 
             string token = CreateToken(user.Username, user.KingdomId.ToString());
@@ -46,8 +47,8 @@ namespace DotNetTribes.Services
             
             return new LoginResponseDto()
             {
-                status = "ok",
-                token = token
+                Status = "ok",
+                Token = token
             };
         }
         
@@ -60,8 +61,8 @@ namespace DotNetTribes.Services
                 Subject = new ClaimsIdentity(
                     new Claim[]
                     {//here are the information that the token stores and their names
-                        new Claim("username", name),
-                        new Claim("kindomId", kingdomId)
+                        new Claim("Username", name),
+                        new Claim("KindomId", kingdomId)
                     }),
                 Expires = DateTime.UtcNow.AddHours(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(symmetricKey), SecurityAlgorithms.HmacSha256Signature)
@@ -74,20 +75,19 @@ namespace DotNetTribes.Services
             return token;
         }
 
-        private bool isUsernameAndPasswordCorrect(LoginRequestDto usernamePasswordDto)
+        private void isUsernameAndPasswordCorrect(LoginRequestDto usernamePasswordDto)
         {
             var user = _applicationContext.Users.SingleOrDefault(u => u.Username == usernamePasswordDto.username);
             if (user == null)
             {
-                return false;
+                throw new LoginException("Username or password is incorrect.");
             }
             bool verified = BCrypt.Net.BCrypt.Verify(usernamePasswordDto.password, user.HashedPassword);
             if (verified == false)
             {
-                return false;
+                throw new LoginException("Username or password is incorrect.");
             }
-
-            return true;
+            
         }
     }
 }

@@ -63,12 +63,12 @@ namespace DotNetTribes.Services
 
             if (FieldIsNullOrEmpty(userCredentials.Username))
             {
-                errorMessages.Add("Username is required");
+                errorMessages.Add("Username is required.");
             }
             
             if (FieldIsNullOrEmpty(userCredentials.Email))
             {
-                errorMessages.Add("Email is required");
+                errorMessages.Add("Email is required.");
             }
             
             if (errorMessages.Count > 0)

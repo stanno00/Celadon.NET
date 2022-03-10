@@ -3,14 +3,16 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220308153751_updatedResource")]
+    partial class updatedResource
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,26 +35,15 @@ namespace DotNetTribes.Migrations
                     b.ToTable("Kingdoms");
                 });
 
-
             modelBuilder.Entity("DotNetTribes.Models.Resource", b =>
                 {
                     b.Property<int>("ResourceId")
-
-            modelBuilder.Entity("DotNetTribes.Models.User", b =>
-                {
-                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
-                        
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HashedPassword")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
@@ -71,21 +62,6 @@ namespace DotNetTribes.Migrations
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", "Kingdom")
                         .WithMany("Resources")
-                        
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId");
-
-                    b.HasIndex("KingdomId");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("DotNetTribes.Models.User", b =>
-                {
-                    b.HasOne("DotNetTribes.Models.Kingdom", "Kingdom")
-                        .WithMany()
                         .HasForeignKey("KingdomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -97,7 +73,6 @@ namespace DotNetTribes.Migrations
                 {
                     b.Navigation("Resources");
                 });
-
 #pragma warning restore 612, 618
         }
     }

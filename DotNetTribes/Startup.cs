@@ -1,4 +1,5 @@
 using System;
+using DotNetTribes.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,7 +7,6 @@ using DotNetTribes.Services;
 using DotNetTribes.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,13 +31,15 @@ namespace DotNetTribes
             var connectionString = Environment.GetEnvironmentVariable("DB_URL");
             services.AddDbContext<ApplicationContext>(options =>
             {
-                options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(connectionString);
             });
             
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
+
+            services.AddTransient<IResourceService, ResourceService>();
             services.AddTransient<IUserService, UserService>();
         }
 

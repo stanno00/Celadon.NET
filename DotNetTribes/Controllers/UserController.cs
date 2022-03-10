@@ -18,7 +18,7 @@ namespace DotNetTribes.Controllers
 
         /*
          * If post request has invalid field/fields, it will return JSON object with corresponding
-         * error message (see RegistrationExceptions folder).
+         * error message (see Exceptions/RegistrationExceptions folder).
          */
         [HttpPost]
         public ActionResult RegisterNewUser([FromBody] RegisterUserRequestDTO registerUserRequestDTO)

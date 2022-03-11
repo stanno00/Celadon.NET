@@ -7,19 +7,19 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DotNetTribes.Services
-{
+{//Use to get username and kingdomId
     public class AuthService : IAuthService
     {
         public string GetNameFromJwt(string jwt)
         {
-            string name = GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "username").Value;
+            string name = GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "Username").Value;
             
             return name;
         }
 
         public string GetKingdomIdFromJwt(string jwt)
         {
-            return GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "kingdomId").Value;
+            return GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "KingdomId").Value;
         }
         
         private JwtSecurityToken GetClaimsPrincipal(string jwtToken)
@@ -27,7 +27,7 @@ namespace DotNetTribes.Services
             var handler = new JwtSecurityTokenHandler();
             var jsonToken = handler.ReadToken(jwtToken);
             var tokenS = jsonToken as JwtSecurityToken;
-            
+
             return tokenS;
         }
     }

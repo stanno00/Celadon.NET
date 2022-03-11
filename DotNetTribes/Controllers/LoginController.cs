@@ -23,7 +23,7 @@ namespace DotNetTribes.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [AllowAnonymous]//use this tag if anyone can enter this endpoint
         public ActionResult Login([FromBody] LoginRequestDto loginRequestDto)
         {
            
@@ -34,10 +34,10 @@ namespace DotNetTribes.Controllers
 
         [HttpPost]
         [Route("/test")]
-        // [Authorize]
+        [Authorize]//use this tag to require the jwt to access this endpoint
         public string test([FromBody] LoginResponseDto token)
         {
-            string name = _authService.GetNameFromJwt(token.token);
+            string name = _authService.GetNameFromJwt(token.Token);
             Console.WriteLine(name);
             return name;
         }

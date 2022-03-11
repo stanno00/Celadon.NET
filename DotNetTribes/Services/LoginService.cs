@@ -13,12 +13,12 @@ namespace DotNetTribes.Services
     public class LoginService : ILoginService
     {
         private readonly ApplicationContext _applicationContext;
-        //private readonly string SECRET_KEY;
+        private readonly string SECRET_KEY;
 
         public LoginService(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
-            //SECRET_KEY = Environment.GetEnvironmentVariable("SECRET_KEY");
+            SECRET_KEY = Environment.GetEnvironmentVariable("SECRET_KEY");
         }
 
         public LoginResponseDto VerifyUsernameAndPassword(LoginRequestDto usernamePasswordDto)
@@ -54,7 +54,7 @@ namespace DotNetTribes.Services
         
         private string CreateToken(string name, string kingdomId)
         {
-            var symmetricKey = Encoding.ASCII.GetBytes("VG9wIFNlY3JldA==");
+            var symmetricKey = Encoding.ASCII.GetBytes(SECRET_KEY);
             
             SecurityTokenDescriptor securityTokenDescriptor = new SecurityTokenDescriptor
             {

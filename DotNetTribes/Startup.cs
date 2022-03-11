@@ -33,6 +33,7 @@ namespace DotNetTribes
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Environment.GetEnvironmentVariable("DB_URL");
+            var SECRET_KEY = Environment.GetEnvironmentVariable("SECRET_KEY");
             services.AddDbContext<ApplicationContext>(options =>
             {
                 options.UseSqlServer(connectionString);
@@ -51,7 +52,7 @@ namespace DotNetTribes
                     ValidateIssuerSigningKey = true,
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("VG9wIFNlY3JldA=="))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SECRET_KEY))
                 };
             });
             

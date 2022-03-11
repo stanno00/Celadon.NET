@@ -33,7 +33,7 @@ namespace DotNetTribes.Services
                 Username = userCredentials.Username,
                 HashedPassword = HashPassword(userCredentials.Password),
                 Email = userCredentials.Email,
-                Kingdom = new Kingdom() { Name = userCredentials.Kingdomname }
+                Kingdom = new Kingdom() { Name = userCredentials.KingdomName }
             };
 
             _applicationContext.Add(user);
@@ -83,7 +83,7 @@ namespace DotNetTribes.Services
         public void CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials)
         {
             var kingdomName = SetKingdomNameIfMissing(
-                userCredentials.Kingdomname, userCredentials.Username
+                userCredentials.KingdomName, userCredentials.Username
             );
 
             if (UsernameIsTaken(userCredentials.Username))
@@ -96,7 +96,7 @@ namespace DotNetTribes.Services
                 throw new KingdomNameAlreadyTakenException();
             }
             
-            userCredentials.Kingdomname = kingdomName;
+            userCredentials.KingdomName = kingdomName;
             
             
             if (EmailIsTaken(userCredentials.Email))

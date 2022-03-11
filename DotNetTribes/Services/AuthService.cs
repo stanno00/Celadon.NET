@@ -12,14 +12,27 @@ namespace DotNetTribes.Services
     {
         public string GetNameFromJwt(string jwt)
         {
-            string name = GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "Username").Value;
+            string name;
+            if (!jwt.Contains("Bearer "))
+            {
+                name = GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "Username").Value;
+            
+                return name;
+            }
+            string jwtClean = jwt.Replace("Bearer ", "");
+            name = GetClaimsPrincipal(jwtClean).Claims.First(claim => claim.Type == "Username").Value;
             
             return name;
         }
 
         public string GetKingdomIdFromJwt(string jwt)
         {
-            return GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "KingdomId").Value;
+            if (!jwt.Contains("Bearer "))
+            {
+                return GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "KingdomId").Value;
+            }
+            string jwtClean = jwt.Replace("Bearer ", "");
+            return GetClaimsPrincipal(jwtClean).Claims.First(claim => claim.Type == "KingdomId").Value;
         }
         
         private JwtSecurityToken GetClaimsPrincipal(string jwtToken)

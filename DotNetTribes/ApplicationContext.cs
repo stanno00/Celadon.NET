@@ -1,5 +1,4 @@
-﻿using DotNetTribes.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DotNetTribes
 {

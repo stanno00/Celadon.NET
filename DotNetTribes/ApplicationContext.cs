@@ -9,6 +9,8 @@ namespace DotNetTribes
         public DbSet<Resource> Resources { get; set; }
         public DbSet<Troop> Troops { get; set; }
         public DbSet<Building> Buildings { get; set; }
+        public DbSet<User> Users { get; set; }
+        
         public ApplicationContext(DbContextOptions options) : base(options)
         {
             

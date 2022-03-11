@@ -40,7 +40,6 @@ namespace DotNetTribes.Services
             isUsernameAndPasswordCorrect(usernamePasswordDto);
             
             
-            
             var user = _applicationContext.Users.SingleOrDefault(u => u.Username == usernamePasswordDto.Username);
 
             JwtService jwtService = new JwtService();

@@ -1,10 +1,13 @@
 
+using DotNetTribes.DTOs;
+
 namespace DotNetTribes.Services
 {
     public interface IAuthService
     {
-        public string GetNameFromJwt(string Jwt);
+        public LoginResponseDto Login(LoginRequestDto usernamePasswordDto);
+        public string getNameFromJwt(string Jwt);
 
-        public string GetKingdomIdFromJwt(string Jwt);
+        public string getKingdomIdFromJwt(string Jwt);
     }
 }

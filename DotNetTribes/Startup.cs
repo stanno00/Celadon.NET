@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,7 +56,7 @@ namespace DotNetTribes
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
-            services.AddTransient<ILoginService, LoginService>();
+            services.AddTransient<IJwtService, JwtService>();
             services.AddTransient<IAuthService, AuthService>();
         }
 
@@ -73,8 +69,7 @@ namespace DotNetTribes
             }
 
             app.UseRouting();
-
-            app.UseAuthentication(); //netreba
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

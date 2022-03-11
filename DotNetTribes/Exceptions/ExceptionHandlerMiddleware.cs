@@ -2,6 +2,7 @@
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using DotNetTribes.RegistrationExceptions;
 using Microsoft.AspNetCore.Http;
 
 namespace DotNetTribes.Exceptions
@@ -40,9 +41,33 @@ namespace DotNetTribes.Exceptions
                         //Replace the BadRequest with your own desired status.
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
+
                     case KingdomDoesNotExistException e:
                         response.StatusCode = (int) HttpStatusCode.NotFound;
                         break;
+                    
+                    // User registrations exceptions - BEGIN
+                    case UsernameAlreadyTakenException e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
+                    
+                    case KingdomNameAlreadyTakenException e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
+                    
+                    case MissingFieldException e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
+                    
+                    case ShortPasswordException e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
+                    
+                    case EmailAlreadyTakenException e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
+                    // User registrations exceptions - END
+                    
                     default:
                         // unhandled error
                         response.StatusCode = (int) HttpStatusCode.InternalServerError;

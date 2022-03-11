@@ -10,20 +10,16 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DB_URL" : "Server=MUJ;Database=Tribes;Trusted_Connection=True"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "DotNetTribes": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
-      "launchBrowser": true,
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DB_URL" : "Server=MUJ;Database=Tribes;Trusted_Connection=True"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

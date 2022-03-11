@@ -19,26 +19,36 @@ namespace DotNetTribes.Migrations
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("DotNetTribes.Models.Kingdom", b =>
-                {
-                    b.Property<int>("KingdomId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+            {
+                b.Property<int>("KingdomId")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int")
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy",
+                        SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Name")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("KingdomId");
+                b.HasKey("KingdomId");
 
-                    b.ToTable("Kingdoms");
-                });
+                b.ToTable("Kingdoms");
+            });
 
-            modelBuilder.Entity("DotNetTribes.Models.User", b =>
+
+            modelBuilder.Entity("DotNetTribes.Models.Resource", b =>
+            {
+                b.Property<int>("ResourceId");
+
+                modelBuilder.Entity("DotNetTribes.Models.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy",
+                            SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -48,6 +58,21 @@ namespace DotNetTribes.Migrations
 
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ResourceId");
+
+                    b.HasIndex("KingdomId");
+
+                    b.ToTable("Resources");
+                });
+
+                modelBuilder.Entity("DotNetTribes.Models.Resource", b =>
+                {
+                    b.HasOne("DotNetTribes.Models.Kingdom", "Kingdom")
+                        .WithMany("Resources");
 
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
@@ -59,7 +84,7 @@ namespace DotNetTribes.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DotNetTribes.Models.User", b =>
+                modelBuilder.Entity("DotNetTribes.Models.User", b =>
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", "Kingdom")
                         .WithMany()
@@ -69,7 +94,11 @@ namespace DotNetTribes.Migrations
 
                     b.Navigation("Kingdom");
                 });
+
+                modelBuilder.Entity("DotNetTribes.Models.Kingdom", b => { b.Navigation("Resources"); });
+
 #pragma warning restore 612, 618
+            });
         }
     }
 }

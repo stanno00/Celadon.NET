@@ -76,7 +76,7 @@ namespace DotNetTribes.Services
         
         public bool FieldIsNullOrEmpty(string field)
         {
-            return String.IsNullOrEmpty(field.Trim());
+            return (field is null || field.Trim().Length == 0);
         }
 
         // throws an error if one of the fields is already taken

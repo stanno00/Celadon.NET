@@ -1,5 +1,4 @@
-namespace DotNetTribes.Models
-using Newtonsoft.Json;
+﻿namespace DotNetTribes.Models
 
 {
     public class Resource

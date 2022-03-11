@@ -25,11 +25,7 @@ namespace DotNetTribes.Services
         {
             
             HandleMissingFields(userCredentials);
-            
-            // if all fields are not taken -> returns kingdom name that will be saved in database
-            // throws corresponding error otherwise
-            var kingdomName = CheckIfFieldsAreNotTaken(userCredentials);
-            
+            CheckIfFieldsAreNotTaken(userCredentials);
             CheckIfPasswordIsLongEnough(userCredentials.Password, 8);
             
             var user = new User()
@@ -37,7 +33,7 @@ namespace DotNetTribes.Services
                 Username = userCredentials.Username,
                 HashedPassword = HashPassword(userCredentials.Password),
                 Email = userCredentials.Email,
-                Kingdom = new Kingdom() { Name = kingdomName }
+                Kingdom = new Kingdom() { Name = userCredentials.Kingdomname }
             };
 
             _applicationContext.Add(user);
@@ -84,12 +80,12 @@ namespace DotNetTribes.Services
         }
 
         // throws an error if one of the fields is already taken
-        public string CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials)
+        public void CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials)
         {
             var kingdomName = SetKingdomNameIfMissing(
                 userCredentials.Kingdomname, userCredentials.Username
             );
-            
+
             if (UsernameIsTaken(userCredentials.Username))
             {
                 throw new UsernameAlreadyTakenException();
@@ -100,12 +96,13 @@ namespace DotNetTribes.Services
                 throw new KingdomNameAlreadyTakenException();
             }
             
+            userCredentials.Kingdomname = kingdomName;
+            
+            
             if (EmailIsTaken(userCredentials.Email))
             {
                 throw new EmailAlreadyTakenException();
             }
-
-            return kingdomName;
         }
 
         public void CheckIfPasswordIsLongEnough(string password, int minLength)

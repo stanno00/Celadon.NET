@@ -7,7 +7,7 @@ namespace DotNetTribes.Services
         RegisterUserResponseDTO RegisterUser(RegisterUserRequestDTO userCredentials);
         string HashPassword(string password);
         void HandleMissingFields(RegisterUserRequestDTO userCredentials);
-        string CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials);
+        void CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials);
         void CheckIfPasswordIsLongEnough(string password, int minLength);
         bool UsernameIsTaken(string username);
         bool KingdomNameIsTaken(string name);

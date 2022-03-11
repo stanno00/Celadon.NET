@@ -24,17 +24,17 @@ namespace DotNetTribes.Services
         {
             if (usernamePasswordDto == null)
             {
-                throw new LoginException("All fields are required.");
+                throw new ArgumentException("All fields are required.");
             }
 
             if (string.IsNullOrEmpty(usernamePasswordDto.Password))
             {
-                throw new LoginException("Password is required.");
+                throw new ArgumentException("Password is required.");
             }
             
             if (string.IsNullOrEmpty(usernamePasswordDto.Username))
             {
-                throw new LoginException("Username is required.");
+                throw new ArgumentException("Username is required.");
             }
 
             isUsernameAndPasswordCorrect(usernamePasswordDto);
@@ -92,12 +92,12 @@ namespace DotNetTribes.Services
             var user = _applicationContext.Users.SingleOrDefault(u => u.Username == usernamePasswordDto.Username);
             if (user == null)
             {
-                throw new LoginException("Username or password is incorrect.");
+                throw new ArgumentException("Username or password is incorrect.");
             }
             bool verified = BCrypt.Net.BCrypt.Verify(usernamePasswordDto.Password, user.HashedPassword);
             if (verified == false)
             {
-                throw new LoginException("Username or password is incorrect.");
+                throw new ArgumentException("Username or password is incorrect.");
             }
             
         }

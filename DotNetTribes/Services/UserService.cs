@@ -28,16 +28,12 @@ namespace DotNetTribes.Services
             CheckIfFieldsAreNotTaken(userCredentials);
             CheckIfPasswordIsLongEnough(userCredentials.Password, 8);
             
-            var kingdomName = SetKingdomNameIfMissing(
-                userCredentials.Kingdomname, userCredentials.Username
-                );
-            
             var user = new User()
             {
                 Username = userCredentials.Username,
                 HashedPassword = HashPassword(userCredentials.Password),
                 Email = userCredentials.Email,
-                Kingdom = new Kingdom() { Name = kingdomName }
+                Kingdom = new Kingdom() { Name = userCredentials.KingdomName }
             };
 
             _applicationContext.Add(user);
@@ -51,7 +47,7 @@ namespace DotNetTribes.Services
             };
         }
 
-        // If one or more required fields is missing, it will throw exception.
+        // If one or more required fields are missing, it will throw exception.
         public void HandleMissingFields(RegisterUserRequestDTO userCredentials)
         {
             var errorMessages = new List<string>();
@@ -63,12 +59,12 @@ namespace DotNetTribes.Services
 
             if (FieldIsNullOrEmpty(userCredentials.Username))
             {
-                errorMessages.Add("Username is required");
+                errorMessages.Add("Username is required.");
             }
             
             if (FieldIsNullOrEmpty(userCredentials.Email))
             {
-                errorMessages.Add("Email is required");
+                errorMessages.Add("Email is required.");
             }
             
             if (errorMessages.Count > 0)
@@ -80,21 +76,28 @@ namespace DotNetTribes.Services
         
         public bool FieldIsNullOrEmpty(string field)
         {
-            return String.IsNullOrEmpty(field.Trim());
+            return (field is null || field.Trim().Length == 0);
         }
 
         // throws an error if one of the fields is already taken
         public void CheckIfFieldsAreNotTaken(RegisterUserRequestDTO userCredentials)
         {
+            var kingdomName = SetKingdomNameIfMissing(
+                userCredentials.KingdomName, userCredentials.Username
+            );
+
             if (UsernameIsTaken(userCredentials.Username))
             {
                 throw new UsernameAlreadyTakenException();
             }
             
-            if (KingdomNameIsTaken(userCredentials.Kingdomname))
+            if (KingdomNameIsTaken(kingdomName))
             {
                 throw new KingdomNameAlreadyTakenException();
             }
+            
+            userCredentials.KingdomName = kingdomName;
+            
             
             if (EmailIsTaken(userCredentials.Email))
             {
@@ -137,10 +140,12 @@ namespace DotNetTribes.Services
 
             return (emailAddress != null);
         }
-
+        
         public string SetKingdomNameIfMissing(string kingdomName, string userName)
         {
-            return kingdomName ?? $"{userName}'s kingdom";
+            return (FieldIsNullOrEmpty(kingdomName))
+                ? $"{userName}'s kingdom"
+                : kingdomName;
         }
     }
 }

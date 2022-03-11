@@ -15,24 +15,12 @@ namespace DotNetTribes.Controllers
         {
             _userService = userService;
         }
-
-        /*
-         * If post request has invalid field/fields, it will return JSON object with corresponding
-         * error message (see RegistrationExceptions folder).
-         */
+        
         [HttpPost]
         public ActionResult RegisterNewUser([FromBody] RegisterUserRequestDTO registerUserRequestDTO)
         {
-            try
-            {
-                var newUser = _userService.RegisterUser(registerUserRequestDTO);
-                return new CreatedResult("", newUser);
-            }
-
-            catch (Exception exception)
-            {
-                return new BadRequestObjectResult( new { error = exception.Message });
-            }
+            var newUser = _userService.RegisterUser(registerUserRequestDTO);
+            return new CreatedResult("", newUser);
         }
     }
 }

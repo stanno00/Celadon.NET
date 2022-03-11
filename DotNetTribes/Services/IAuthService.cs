@@ -4,6 +4,6 @@
     {
         public string GetNameFromJwt(string Jwt);
 
-        public string GetKingdomIdFromJwt(string Jwt);
+        public int GetKingdomIdFromJwt(string Jwt);
     }
 } 

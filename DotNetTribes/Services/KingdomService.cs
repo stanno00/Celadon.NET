@@ -1,7 +1,7 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs;
-using DotNetTribes.Models;
+using DotNetTribes.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotNetTribes.Service
@@ -17,32 +17,33 @@ namespace DotNetTribes.Service
 
         public KingdomDto KingdomInfo(int kingdomId)
         {
-            Kingdom kingdom = null;
+
+            IdIsNullOrDoesNotExist(kingdomId);
             
-            try
-            {
-                kingdom = _applicationContext.Kingdoms
+            var kingdom = _applicationContext.Kingdoms
                     .Include(k => k.Buildings)
                     .Include(k => k.Resources)
                     .Include(k => k.Troops)
                     .Single(k => k.KingdomId == kingdomId);
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
 
             KingdomDto kingdomDto = new KingdomDto()
             {
                 KingdomName = kingdom.Name,
-                UserName = kingdom.User.Username,
+                Username = kingdom.User.Username,
                 Buildings = kingdom.Buildings,
                 Resources = kingdom.Resources,
                 Troops = kingdom.Troops
             };
             
             return kingdomDto;
-            
+        }
+        
+        private void IdIsNullOrDoesNotExist(int kingdomId)
+        {
+            if (kingdomId == 0 || _applicationContext.Kingdoms.Last().KingdomId > kingdomId)
+            {
+               throw new KingdomDoesNotExistException();
+            }
         }
     }
 }

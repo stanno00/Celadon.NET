@@ -1,10 +1,6 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DotNetTribes.Services
 {//Use to get username and kingdomId
@@ -17,9 +13,10 @@ namespace DotNetTribes.Services
             return name;
         }
 
-        public string GetKingdomIdFromJwt(string jwt)
+        public int GetKingdomIdFromJwt(string jwt)
         {
-            return GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "KingdomId").Value;
+            var result =GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "KingdomId").Value;
+            return Convert.ToInt32(result);
         }
 
         private JwtSecurityToken GetClaimsPrincipal(string jwtToken)

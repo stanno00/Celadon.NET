@@ -23,9 +23,9 @@ namespace DotNetTribes.Controllers
         public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
         {
 
-            string kingdomId = _authService.GetKingdomIdFromJwt(authorization);
+            int kingdomId = _authService.GetKingdomIdFromJwt(authorization);
             
-            KingdomDto kingdom = _kingdomService.KingdomInfo(Convert.ToInt32(kingdomId));
+            KingdomDto kingdom = _kingdomService.KingdomInfo(kingdomId);
 
             if (kingdom == null)
             {

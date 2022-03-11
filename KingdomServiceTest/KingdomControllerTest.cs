@@ -1,12 +1,9 @@
 using System.Collections.Generic;
 using DotNetTribes.Controllers;
 using DotNetTribes.DTOs;
-using DotNetTribes.Migrations;
 using DotNetTribes.Models;
 using DotNetTribes.Service;
 using DotNetTribes.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
@@ -32,12 +29,12 @@ public class KingdomControllerTest
         iKingdomServiceMock.Setup(k => k.KingdomInfo(1)).Returns(new KingdomDto()
         {
             KingdomName = "Benq",
-            UserName = "Hrnik",
+            Username = "Hrnik",
             Buildings = buildingsTest,
             Resources = resourceTest,
             Troops = troopsTest
         });
-        iAuthServiceMock.Setup(k => k.GetKingdomIdFromJwt(token)).Returns("1");
+        iAuthServiceMock.Setup(k => k.GetKingdomIdFromJwt(token)).Returns(1);
 
         var kingdomDtoResult =
             new KingdomController(iKingdomServiceMock.Object, iAuthServiceMock.Object).KingdomInfo(token);
@@ -45,6 +42,6 @@ public class KingdomControllerTest
         //Assert
         var kingdom = Assert.IsType<KingdomDto>(kingdomDtoResult.Value);
         Assert.Equal("Benq", kingdom.KingdomName);
-        Assert.Equal("Hrnik", kingdom.UserName);
+        Assert.Equal("Hrnik", kingdom.Username);
     }
 }

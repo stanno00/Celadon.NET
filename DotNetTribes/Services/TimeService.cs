@@ -1,4 +1,4 @@
-﻿namespace DotNetTribes.Migrations.Services
+﻿namespace DotNetTribes.Services
 {
     public class TimeService : ITimeService
     {

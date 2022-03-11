@@ -2,7 +2,7 @@
 {
     public class Troop
     {
-        public long? TroopId { get; set; }
+        public long TroopId { get; set; }
 
     }
 }

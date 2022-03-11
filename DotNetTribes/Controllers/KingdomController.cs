@@ -1,23 +1,30 @@
-﻿using DotNetTribes.DTOs;
+﻿using System;
+using DotNetTribes.DTOs;
 using DotNetTribes.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetTribes.Controllers
 {
     public class KingdomController
     {
-        private readonly IKingdomService KingdomService;
+        private readonly IKingdomService _kingdomService;
+        private readonly IAuthService _authService;
 
-        public KingdomController(IKingdomService kingdomService)
+        public KingdomController(IKingdomService kingdomService, IAuthService authService)
         {
-            KingdomService = kingdomService;
+            _kingdomService = kingdomService;
+            _authService = authService;
         }
         
         [HttpGet("kingdom")]
-        public ActionResult<KingdomDto> KingdomInfo([FromBody] UserDto userDto)
+        [Authorize]
+        public ActionResult<KingdomDto> KingdomInfo([FromBody] LoginResponseDto token)
         {
 
-            KingdomDto kingdom = KingdomService.KingdomInfo(userDto);
+            string kingdomId = _authService.GetKingdomIdFromJwt(token.Token);
+            
+            KingdomDto kingdom = _kingdomService.KingdomInfo(Convert.ToInt32(kingdomId));
 
             if (kingdom == null)
             {

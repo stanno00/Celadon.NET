@@ -1,6 +1,7 @@
 ﻿using System;
 using DotNetTribes.DTOs;
 using DotNetTribes.Service;
+using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,10 +20,10 @@ namespace DotNetTribes.Controllers
         
         [HttpGet("kingdom")]
         [Authorize]
-        public ActionResult<KingdomDto> KingdomInfo([FromBody] LoginResponseDto token)
+        public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
         {
 
-            string kingdomId = _authService.GetKingdomIdFromJwt(token.Token);
+            string kingdomId = _authService.GetKingdomIdFromJwt(authorization);
             
             KingdomDto kingdom = _kingdomService.KingdomInfo(Convert.ToInt32(kingdomId));
 

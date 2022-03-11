@@ -4,6 +4,6 @@ namespace DotNetTribes.Service
 {
     public interface IKingdomService
     {
-        KingdomDto KingdomInfo(UserDto userDto);
+        KingdomDto KingdomInfo(int kingdomId);
     }
 }

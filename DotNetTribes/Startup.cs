@@ -1,7 +1,13 @@
 using System;
+
 using System.Text;
-using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using DotNetTribes.Services;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using DotNetTribes.Services;
+using DotNetTribes.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -56,8 +62,10 @@ namespace DotNetTribes
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
+
             services.AddTransient<IJwtService, JwtService>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IResourceService, ResourceService>();
             services.AddTransient<IUserService, UserService>();
         }
 
@@ -72,6 +80,8 @@ namespace DotNetTribes
             app.UseRouting();
             
             app.UseAuthorization();
+
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

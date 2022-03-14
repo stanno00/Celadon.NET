@@ -2,6 +2,6 @@
 {
     public interface ITimeService
     {
-        
+        int TimeSince(int lastUpdate);
     }
 }

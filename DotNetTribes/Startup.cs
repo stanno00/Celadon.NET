@@ -41,6 +41,7 @@ namespace DotNetTribes
 
             services.AddTransient<IResourceService, ResourceService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ITimeService, TimeService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

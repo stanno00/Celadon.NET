@@ -1,7 +1,9 @@
-using System.Collections.Generic;
 using System.Linq;
-using DotNetTribes.DTOs;
+using DotNetTribes;
+using DotNetTribes.Enums;
+using DotNetTribes.Models;
 using DotNetTribes.Services;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
@@ -11,45 +13,62 @@ namespace ResourceServiceTest;
 public class ResourceServiceTest
 {
     [Fact]
-    public void Kingdom_without_any_resources_returns_empty_list()
+    public void GetKingdomResources_returns_empty_list()
     {
-        Mock<IResourceService> iResourceServiceMock = new Mock<IResourceService>();
+        var options = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ResourceDatabase")
+            .Options;
 
-        ICollection<ResourceDto> resources = new List<ResourceDto>();
-
-        iResourceServiceMock.Setup(s => s.GetKingdomResources(1)).Returns(new ResourcesDto()
+        using var context = new ApplicationContext(options);
+        context.Resources.Add(new Resource()
         {
-            Resources = resources
+            Amount = 80,
+            Generation = 5,
+            Type = ResourceType.Food,
+            KingdomId = 1,
+            CreatedAt = 69857,
+            ResourceId = 1
         });
+            
+        Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+
+        var resourceService = new ResourceService(context, timeServiceMock.Object);
+
+        var resources = resourceService.GetKingdomResources(0);
         
-        Assert.Empty(resources);
-        Assert.NotNull(resources);
+        Assert.Empty(resources.Resources);
+        Assert.NotNull(resources.Resources);
+
     }
     
     [Fact]
-    public void Service_returns_correct_values()
+    public void GetKingdomResources_correct_values()
     {
-        Mock<IResourceService> iResourceServiceMock = new Mock<IResourceService>();
+        var options = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ResourceDatabase")
+            .Options;
 
-        
-        ICollection<ResourceDto> resources = new List<ResourceDto>();
-        var resource = new ResourceDto()
+        using var context = new ApplicationContext(options);
+        context.Resources.Add(new Resource()
         {
             Amount = 80,
-            Type = "Food",
-            UpdatedAt = 545877
-        };
-        
-        resources.Add(resource);
-
-        iResourceServiceMock.Setup(s => s.GetKingdomResources(1)).Returns(new ResourcesDto()
-        {
-            Resources = resources
+            Generation = 5,
+            Type = ResourceType.Food,
+            KingdomId = 1,
+            CreatedAt = 69857,
+            ResourceId = 1
         });
-        
-        Assert.NotEmpty(resources);
+            
+        Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+
+        var resourceService = new ResourceService(context, timeServiceMock.Object);
+
+        var resources = resourceService.GetKingdomResources(1);
+            
+        Assert.NotEmpty(resources.Resources);
         Assert.NotNull(resources);
-        Assert.Equal(80, resources.ToArray()[0].Amount);
-        Assert.Equal(1, resources.Count);
+        Assert.Equal(80, resources.Resources.ToArray()[0].Amount);
+        Assert.Equal(1, resources.Resources.Count);
+        Assert.Equal("Food", resources.Resources.ToArray()[0].Type);
     }
 }

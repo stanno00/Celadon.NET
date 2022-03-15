@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Exceptions;
@@ -42,48 +43,83 @@ namespace DotNetTribes.Service
 
         public BuildingResponseDTO CreateNewBuilding(int kingdomId, BuildingRequestDTO request)
         {
+            /* actual value
             var kingdom = _applicationContext.Kingdoms
                     .Include(b => b.Buildings)
                     .FirstOrDefault(k => k.KingdomId == kingdomId);
-           
-            var kingdomGold = kingdom.Resources.FirstOrDefault(r => r.Type == "gold");
+                    
+                    var kingdomGold = kingdom.Resources.FirstOrDefault(r => r.Type == ResourceType.Gold); */
             
-            //dummy values
-            int buildingPrice = 500;
+            //dummy kingdom
+            var user = new User
+            {
+                UserId = 1,
+                Username = "Yanari",
+                Email = "j@k.cz",
+            };
+
+            var kingdom = new Kingdom
+            {
+                KingdomId = 1,
+                Name = "Yanariland",
+                Buildings = new List<Building>(),
+                Resources = new List<Resource>(),
+                
+
+            };
+
+            kingdom.User = user;
+            user.Kingdom = kingdom;
+            kingdom.Resources.Add(new Resource
+            {
+                Amount = 500,
+                Kingdom = kingdom,
+                KingdomId = 1,
+                ResourceId = 1,
+                Type = ResourceType.Gold
+            });
+
+            var kingdomGold = kingdom.Resources.FirstOrDefault(r => r.Type.Equals(ResourceType.Gold));
+            int buildingPrice = 1000;
+            BuildingType btypes;
+
 
             if (request.Type == null)
             {
                 throw new BuildingCreationException("Building type required.");
             }
             
+            if (!Enum.TryParse(request.Type, true, out btypes))
+            {
+                throw new BuildingCreationException("Incorrect building type.");
+            }
+            
             if (buildingPrice > kingdomGold.Amount)
             {
                 throw new BuildingCreationException("Gold needed.");
             }
-             
-            //placeholder
-            if (request.Type == "incorrect")
-            {
-                throw new BuildingCreationException("Incorrect building type.");
-            }
+
+            var requested = btypes;
+
 
             Building toBeAdded = new Building
-            {
-                //placeholder values
-                Type = request.Type,
-                Level = 1,
-                Hp = 100,
-                Started_at = 1000000,
-                Finished_at = 1500000,
-                KingdomId = kingdomId
-            };
+                {
+                    //placeholder values
+                    Type = requested,
+                    Level = 1,
+                    Hp = 100,
+                    Started_at = 1000000,
+                    Finished_at = 1500000,
+                    KingdomId = kingdomId,
+                    BuildingId = 1 
+                };
             
             kingdomGold.Amount -= buildingPrice;
             kingdom.Buildings.Add(toBeAdded);
             
             return new BuildingResponseDTO
             {
-                Type = toBeAdded.Type,
+                Type = toBeAdded.Type.ToString(),
                 Level = toBeAdded.Level,
                 Hp = toBeAdded.Hp,
                 Started_at = toBeAdded.Started_at.ToString(),

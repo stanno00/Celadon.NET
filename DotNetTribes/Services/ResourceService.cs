@@ -22,7 +22,7 @@ namespace DotNetTribes.Services
                 .Select(r => new ResourceDto
             {
                 Amount = r.Amount,
-                Type = r.Type,
+                Type = r.Type.ToString(),
                 UpdatedAt = DateTimeOffset.Now.ToUnixTimeSeconds()
             })
                 .AsEnumerable()

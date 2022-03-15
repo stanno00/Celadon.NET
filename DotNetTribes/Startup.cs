@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNetTribes.Services;
 using DotNetTribes.Exceptions;
+using DotNetTribes.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,8 @@ namespace DotNetTribes
 
             services.AddTransient<IResourceService, ResourceService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IKingdomService, KingdomService>();
+            services.AddTransient<IAuthService, AuthService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

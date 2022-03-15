@@ -68,6 +68,10 @@ namespace DotNetTribes.Exceptions
                         break;
                     // User registrations exceptions - END
                     
+                    case BuildingCreationException e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
+                    
                     default:
                         // unhandled error
                         response.StatusCode = (int) HttpStatusCode.InternalServerError;

@@ -10,20 +10,20 @@ namespace DotNetTribes.Controllers
     public class KingdomController
     {
         private readonly IKingdomService _kingdomService;
-        private readonly IAuthService _authService;
+        private readonly IJwtService _jwtService;
 
-        public KingdomController(IKingdomService kingdomService, IAuthService authService)
+        public KingdomController(IKingdomService kingdomService, IJwtService jwtService)
         {
             _kingdomService = kingdomService;
-            _authService = authService;
+            _jwtService = jwtService;
         }
 
         [HttpGet]
         [Authorize]
         public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
         {
-            // int kingdomId = _authService.GetKingdomIdFromJwt(authorization);
-            int kingdomId = 1;
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            
             KingdomDto kingdom = _kingdomService.KingdomInfo(kingdomId);
 
             if (kingdom == null)

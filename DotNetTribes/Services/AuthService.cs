@@ -1,29 +1,66 @@
-﻿using System;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using DotNetTribes.DTOs;
+using DotNetTribes.Exceptions;
 
 namespace DotNetTribes.Services
-{//Use to get username and kingdomId
+{
     public class AuthService : IAuthService
     {
-        public string GetNameFromJwt(string jwt)
+        private readonly ApplicationContext _applicationContext;
+        private readonly IJwtService _jwtService;
+
+        public AuthService(ApplicationContext applicationContext, IJwtService jwtService)
         {
-            string name = GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "Username").Value;
-            return name;
+            _applicationContext = applicationContext;
+            _jwtService = jwtService;
         }
 
-        public int GetKingdomIdFromJwt(string jwt)
+        public LoginResponseDto Login(LoginRequestDto usernamePasswordDto)
         {
-            var result = GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "KingdomId").Value;
-            return Convert.ToInt32(result);
+            if (usernamePasswordDto == null || string.IsNullOrEmpty(usernamePasswordDto.Username) &&
+                string.IsNullOrEmpty(usernamePasswordDto.Password))
+            {
+                throw new LoginException("All fields are required.");
+            }
+
+            if (string.IsNullOrEmpty(usernamePasswordDto.Password))
+            {
+                throw new LoginException("Password is required.");
+            }
+            
+            if (string.IsNullOrEmpty(usernamePasswordDto.Username))
+            {
+                throw new LoginException("Username is required.");
+            }
+
+            isUsernameAndPasswordCorrect(usernamePasswordDto);
+            
+            var user = _applicationContext.Users.SingleOrDefault(u => u.Username == usernamePasswordDto.Username);
+
+            string token = _jwtService.CreateToken(user.Username, user.KingdomId.ToString());
+            
+            
+            return new LoginResponseDto()
+            {
+                Status = "ok",
+                Token = token
+            };
         }
 
-        private JwtSecurityToken GetClaimsPrincipal(string jwtToken)
+        private void isUsernameAndPasswordCorrect(LoginRequestDto usernamePasswordDto)
         {
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(jwtToken);
-            var tokenS = jsonToken as JwtSecurityToken;
-            return tokenS;
+            var user = _applicationContext.Users?.SingleOrDefault(u => u.Username == usernamePasswordDto.Username);
+            if (user == null)
+            {
+                throw new LoginException("Username or password is incorrect.");
+            }
+            bool verified = BCrypt.Net.BCrypt.Verify(usernamePasswordDto.Password, user.HashedPassword);
+            if (!verified)
+            {
+                throw new LoginException("Username or password is incorrect.");
+            }
         }
     }
 }

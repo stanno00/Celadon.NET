@@ -2,7 +2,7 @@
 
 namespace DotNetTribes.Migrations
 {
-    public partial class updateR : Migration
+    public partial class initialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,10 +44,8 @@ namespace DotNetTribes.Migrations
                 {
                     ResourceId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Type = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Amount = table.Column<int>(type: "int", nullable: false),
-                    Generation = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<int>(type: "int", nullable: false),
                     KingdomId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

@@ -18,21 +18,21 @@ namespace DotNetTribes.Controllers
             _authService = authService;
         }
         
-        [HttpGet("kingdom")]
-        [Authorize]
-        public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
-        {
-
-            int kingdomId = _authService.GetKingdomIdFromJwt(authorization);
-            
-            KingdomDto kingdom = _kingdomService.KingdomInfo(kingdomId);
-
-            if (kingdom == null)
-            {
-                return new BadRequestObjectResult("Ops something is wrong");
-            }
-
-            return kingdom;
-        }
+        // [HttpGet("kingdom")]
+        // [Authorize]
+        // public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
+        // {
+        //
+        //     int kingdomId = _authService.GetKingdomIdFromJwt(authorization);
+        //     
+        //     KingdomDto kingdom = _kingdomService.KingdomInfo(kingdomId);
+        //
+        //     if (kingdom == null)
+        //     {
+        //         return new BadRequestObjectResult("Ops something is wrong");
+        //     }
+        //
+        //     return kingdom;
+        // }
     }
 }

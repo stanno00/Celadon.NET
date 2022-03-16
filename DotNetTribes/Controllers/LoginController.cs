@@ -1,3 +1,4 @@
+using System;
 using DotNetTribes.DTOs;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -10,10 +11,12 @@ namespace DotNetTribes.Controllers
     public class LoginController
     {
         private readonly IAuthService _authService;
+        private readonly IJwtService _jwtService;
 
-        public LoginController(IAuthService authService)
+        public LoginController(IAuthService authService, IJwtService jwtService)
         {
             _authService = authService;
+            _jwtService = jwtService;
         }
 
         [HttpPost]
@@ -24,6 +27,13 @@ namespace DotNetTribes.Controllers
                 var loginResponseDto = _authService.Login(loginRequestDto);
 
                 return new CreatedResult("", loginResponseDto);
+        }
+
+        [HttpPost("/test")]
+        [Authorize]
+        public string test()
+        {
+            return "hello";
         }
     }
 }

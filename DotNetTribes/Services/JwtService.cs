@@ -26,7 +26,7 @@ namespace DotNetTribes.Services
                     new Claim[]
                     {
                         new Claim("Username", name),
-                        new Claim("KindomId", kingdomId)
+                        new Claim("KingdomId", kingdomId)
                     }),
                 Expires = DateTime.UtcNow.AddHours(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(symmetricKey), SecurityAlgorithms.HmacSha256Signature)

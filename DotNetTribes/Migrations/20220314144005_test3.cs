@@ -2,7 +2,7 @@
 
 namespace DotNetTribes.Migrations
 {
-    public partial class kingdom : Migration
+    public partial class test3 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,7 +11,8 @@ namespace DotNetTribes.Migrations
                 columns: table => new
                 {
                     KingdomId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -19,37 +20,38 @@ namespace DotNetTribes.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Resources",
+                name: "Users",
                 columns: table => new
                 {
-                    ResourceId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Amount = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<int>(type: "int", nullable: false),
-                    KingdomId = table.Column<int>(type: "int", nullable: true)
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    KingdomId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Resources", x => x.ResourceId);
+                    table.PrimaryKey("PK_Users", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_Resources_Kingdoms_KingdomId",
+                        name: "FK_Users_Kingdoms_KingdomId",
                         column: x => x.KingdomId,
                         principalTable: "Kingdoms",
                         principalColumn: "KingdomId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Resources_KingdomId",
-                table: "Resources",
-                column: "KingdomId");
+                name: "IX_Users_KingdomId",
+                table: "Users",
+                column: "KingdomId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Resources");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Kingdoms");

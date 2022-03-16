@@ -6,7 +6,6 @@ using DotNetTribes.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DotNetTribes.Services;
 using DotNetTribes.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -65,7 +64,7 @@ namespace DotNetTribes
 
             services.AddTransient<IJwtService, JwtService>();
             services.AddTransient<IAuthService, AuthService>();
-            services.AddTransient<IResourceService, ResourceService>();
+            // services.AddTransient<IResourceService, ResourceService>();
             services.AddTransient<IUserService, UserService>();
         }
 
@@ -78,6 +77,8 @@ namespace DotNetTribes
             }
 
             app.UseRouting();
+            
+            app.UseAuthentication();
             
             app.UseAuthorization();
 

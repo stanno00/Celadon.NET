@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220308094508_UserAndKingdom")]
-    partial class UserAndKingdom
+    [Migration("20220314144005_test3")]
+    partial class test3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,7 +56,8 @@ namespace DotNetTribes.Migrations
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("KingdomId");
+                    b.HasIndex("KingdomId")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -64,12 +65,17 @@ namespace DotNetTribes.Migrations
             modelBuilder.Entity("DotNetTribes.Models.User", b =>
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", "Kingdom")
-                        .WithMany()
-                        .HasForeignKey("KingdomId")
+                        .WithOne("User")
+                        .HasForeignKey("DotNetTribes.Models.User", "KingdomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Kingdom");
+                });
+
+            modelBuilder.Entity("DotNetTribes.Models.Kingdom", b =>
+                {
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Exceptions;
@@ -60,7 +61,6 @@ namespace DotNetTribes.Services
             {
                 throw new LoginException("Username or password is incorrect.");
             }
-           
         }
     }
 }

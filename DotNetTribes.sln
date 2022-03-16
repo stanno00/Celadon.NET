@@ -1,8 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetTribes", "DotNetTribes\DotNetTribes.csproj", "{536D9E69-FE38-41E1-AF3D-DE287514556C}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetTribes", "DotNetTribes\DotNetTribes.csproj", "{536D9E69-FE38-41E1-AF3D-DE287514556C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KingdomServiceTest", "KingdomServiceTest\KingdomServiceTest.csproj", "{ED2D813C-AAEE-49D1-A88F-EE915D343096}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetTribesTests", "DotNetTribesTests\DotNetTribesTests.csproj", "{5F81BE27-DD75-4D3B-AEDC-BFED8A9E297E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,9 +17,15 @@ Global
 		{536D9E69-FE38-41E1-AF3D-DE287514556C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{536D9E69-FE38-41E1-AF3D-DE287514556C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{536D9E69-FE38-41E1-AF3D-DE287514556C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED2D813C-AAEE-49D1-A88F-EE915D343096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED2D813C-AAEE-49D1-A88F-EE915D343096}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED2D813C-AAEE-49D1-A88F-EE915D343096}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED2D813C-AAEE-49D1-A88F-EE915D343096}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F81BE27-DD75-4D3B-AEDC-BFED8A9E297E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F81BE27-DD75-4D3B-AEDC-BFED8A9E297E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F81BE27-DD75-4D3B-AEDC-BFED8A9E297E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F81BE27-DD75-4D3B-AEDC-BFED8A9E297E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2CED3DCC-7FAE-4C08-AFAF-092842C48D5C}
 	EndGlobalSection
 EndGlobal

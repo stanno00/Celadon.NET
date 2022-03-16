@@ -4,7 +4,6 @@
     {
         //Subject to change as the app progresses
         Gold,
-        Wood,
-        Stone
+        Food
     }
 }

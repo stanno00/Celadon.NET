@@ -33,7 +33,25 @@ namespace DotNetTribes.Services
                 Username = userCredentials.Username,
                 HashedPassword = HashPassword(userCredentials.Password),
                 Email = userCredentials.Email,
-                Kingdom = new Kingdom() { Name = userCredentials.KingdomName }
+                Kingdom = new Kingdom()
+                {
+                    Name = userCredentials.KingdomName,
+                    Buildings = new List<Building>(),
+                    Resources = new List<Resource>
+                    {
+                        new Resource
+                        {
+                            Type = ResourceType.Gold,
+                            Amount = 0
+                        },
+                        new Resource
+                        {
+                            Type = ResourceType.Food,
+                            Amount = 0
+                        }
+                    },
+                    Troops = new List<Troop>(),
+                }
             };
 
             _applicationContext.Add(user);

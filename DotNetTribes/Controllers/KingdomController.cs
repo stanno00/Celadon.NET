@@ -11,7 +11,8 @@ namespace DotNetTribes.Controllers
     {
         private readonly IKingdomService _kingdomService;
         private readonly IJwtService _jwtService;
-
+        
+        
         public KingdomController(IKingdomService kingdomService, IJwtService jwtService)
         {
             _kingdomService = kingdomService;
@@ -34,12 +35,11 @@ namespace DotNetTribes.Controllers
             return kingdom;
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpPost("buildings")]
         public ActionResult<KingdomDto> CreateNewBuilding([FromHeader] string authorization, [FromBody] BuildingRequestDTO request)
         {
-            // int kingdomId = _authService.GetKingdomIdFromJwt(authorization);
-            int kingdomId = 1;
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var response = _kingdomService.CreateNewBuilding(kingdomId, request);
 
             return new OkObjectResult(response);

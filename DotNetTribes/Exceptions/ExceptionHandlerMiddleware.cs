@@ -66,10 +66,6 @@ namespace DotNetTribes.Exceptions
                     case EmailAlreadyTakenException e:
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
-                    case LoginException e:
-                        response.StatusCode = (int) HttpStatusCode.BadRequest;
-                        break;
-
                     // User registrations exceptions - END
                     
                     default:

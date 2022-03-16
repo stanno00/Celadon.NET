@@ -11,12 +11,10 @@ namespace DotNetTribes.Controllers
     public class LoginController
     {
         private readonly IAuthService _authService;
-        private readonly IJwtService _jwtService;
 
-        public LoginController(IAuthService authService, IJwtService jwtService)
+        public LoginController(IAuthService authService)
         {
             _authService = authService;
-            _jwtService = jwtService;
         }
 
         [HttpPost]
@@ -26,7 +24,7 @@ namespace DotNetTribes.Controllers
            
                 var loginResponseDto = _authService.Login(loginRequestDto);
 
-                return new CreatedResult("", loginResponseDto);
+                return new OkObjectResult(loginResponseDto);
         }
 
         [HttpPost("/test")]

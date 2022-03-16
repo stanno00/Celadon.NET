@@ -18,7 +18,7 @@ namespace DotNetTribes.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.14")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-            
+
             modelBuilder.Entity("DotNetTribes.Models.Building", b =>
                 {
                     b.Property<long>("BuildingId")
@@ -52,7 +52,7 @@ namespace DotNetTribes.Migrations
                 });
 
             modelBuilder.Entity("DotNetTribes.Models.Resource", b =>
-            {
+                {
                     b.Property<int>("ResourceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -63,7 +63,7 @@ namespace DotNetTribes.Migrations
 
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
-                    
+
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
@@ -106,7 +106,7 @@ namespace DotNetTribes.Migrations
 
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
-                    
+
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
@@ -117,7 +117,7 @@ namespace DotNetTribes.Migrations
 
                     b.ToTable("Users");
                 });
-            
+
             modelBuilder.Entity("DotNetTribes.Models.Building", b =>
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", null)
@@ -135,7 +135,7 @@ namespace DotNetTribes.Migrations
 
                     b.Navigation("Kingdom");
                 });
-            
+
             modelBuilder.Entity("DotNetTribes.Models.Troop", b =>
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", null)
@@ -161,7 +161,7 @@ namespace DotNetTribes.Migrations
                     b.Navigation("Resources");
 
                     b.Navigation("Troops");
-                    
+
                     b.Navigation("User");
                 });
 #pragma warning restore 612, 618

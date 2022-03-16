@@ -9,29 +9,29 @@ namespace DotNetTribes.Controllers
     public class KingdomController
     {
         private readonly IKingdomService _kingdomService;
-        private readonly IAuthService _authService;
+        private readonly IJwtService _jwtService;
 
-        public KingdomController(IKingdomService kingdomService, IAuthService authService)
+        public KingdomController(IKingdomService kingdomService, IJwtService jwtService)
         {
             _kingdomService = kingdomService;
-            _authService = authService;
+            _jwtService = jwtService;
         }
         
-        // [HttpGet("kingdom")]
-        // [Authorize]
-        // public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
-        // {
-        //
-        //     int kingdomId = _authService.GetKingdomIdFromJwt(authorization);
-        //     
-        //     KingdomDto kingdom = _kingdomService.KingdomInfo(kingdomId);
-        //
-        //     if (kingdom == null)
-        //     {
-        //         return new BadRequestObjectResult("Ops something is wrong");
-        //     }
-        //
-        //     return kingdom;
-        // }
+        [HttpGet("kingdom")]
+        [Authorize]
+        public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
+        {
+
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            
+            KingdomDto kingdom = _kingdomService.KingdomInfo(kingdomId);
+
+            if (kingdom == null)
+            {
+                return new BadRequestObjectResult("Ops something is wrong");
+            }
+
+            return kingdom;
+        }
     }
 }

@@ -9,12 +9,12 @@ namespace DotNetTribes.Services
     public class ResourceService : IResourceService
     {
         private readonly ApplicationContext _applicationContext;
-    
+
         public ResourceService(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
         }
-    
+
         public ResourcesDto GetKingdomResources(int kingdomId)
         {
             var kingdomResourceDtoList = _applicationContext.Resources

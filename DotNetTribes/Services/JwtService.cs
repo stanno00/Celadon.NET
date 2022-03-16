@@ -54,14 +54,16 @@ namespace DotNetTribes.Services
             return name;
         }
 
-        public string GetKingdomIdFromJwt(string jwt)
+        public int GetKingdomIdFromJwt(string jwt)
         {
             if (!jwt.Contains("Bearer "))
             {
-                return GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "KingdomId").Value;
+                var claims = GetClaimsPrincipal(jwt);
+                return int.Parse(claims.Claims.First(claim => claim.Type == "KingdomId").Value);
             }
             string jwtClean = jwt.Replace("Bearer ", "");
-            return GetClaimsPrincipal(jwtClean).Claims.First(claim => claim.Type == "KingdomId").Value;
+            var claimsFromClean = GetClaimsPrincipal(jwtClean);
+            return int.Parse(claimsFromClean.Claims.First(claim => claim.Type == "KingdomId").Value);
         }
         
         private JwtSecurityToken GetClaimsPrincipal(string jwtToken)

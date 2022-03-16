@@ -6,6 +6,6 @@ namespace DotNetTribes.Services
         string CreateToken(string name, string kingdomId);
         string GetNameFromJwt(string jwt);
 
-        string GetKingdomIdFromJwt(string jwt);
+        int GetKingdomIdFromJwt(string jwt);
     }
 }

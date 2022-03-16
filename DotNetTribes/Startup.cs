@@ -79,6 +79,8 @@ namespace DotNetTribes
 
             app.UseRouting();
             
+            app.UseAuthentication();
+            
             app.UseAuthorization();
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();

@@ -1,3 +1,4 @@
+
 using DotNetTribes.DTOs;
 
 namespace DotNetTribes.Services
@@ -6,4 +7,5 @@ namespace DotNetTribes.Services
     {
         LoginResponseDto Login(LoginRequestDto usernamePasswordDto);
     }
-}
+} 
+

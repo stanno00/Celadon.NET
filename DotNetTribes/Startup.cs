@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DotNetTribes.Services;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using DotNetTribes.Exceptions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -61,11 +63,30 @@ namespace DotNetTribes
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
+            
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SECRET_KEY))
+                };
+            });
 
             services.AddTransient<IJwtService, JwtService>();
             services.AddTransient<IAuthService, AuthService>();
-            // services.AddTransient<IResourceService, ResourceService>();
+            services.AddTransient<IResourceService, ResourceService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ITimeService, TimeService>();
+            services.AddTransient<IKingdomService, KingdomService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,6 +97,9 @@ namespace DotNetTribes
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
+
+            
             app.UseRouting();
             
             app.UseAuthentication();

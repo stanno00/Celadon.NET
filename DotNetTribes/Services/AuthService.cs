@@ -1,4 +1,5 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Exceptions;
@@ -7,7 +8,6 @@ namespace DotNetTribes.Services
 {
     public class AuthService : IAuthService
     {
-        
         private readonly ApplicationContext _applicationContext;
         private readonly IJwtService _jwtService;
 
@@ -20,7 +20,7 @@ namespace DotNetTribes.Services
         public LoginResponseDto Login(LoginRequestDto usernamePasswordDto)
         {
             if (usernamePasswordDto == null || string.IsNullOrEmpty(usernamePasswordDto.Username) &&
-                                                string.IsNullOrEmpty(usernamePasswordDto.Password))
+                string.IsNullOrEmpty(usernamePasswordDto.Password))
             {
                 throw new LoginException("All fields are required.");
             }

@@ -1,6 +1,5 @@
 ﻿using System;
 using DotNetTribes.DTOs;
-using DotNetTribes.Service;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

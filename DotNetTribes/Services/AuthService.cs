@@ -9,13 +9,12 @@ namespace DotNetTribes.Services
         public string GetNameFromJwt(string jwt)
         {
             string name = GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "Username").Value;
-
             return name;
         }
 
         public int GetKingdomIdFromJwt(string jwt)
         {
-            var result =GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "KingdomId").Value;
+            var result = GetClaimsPrincipal(jwt).Claims.First(claim => claim.Type == "KingdomId").Value;
             return Convert.ToInt32(result);
         }
 
@@ -24,7 +23,6 @@ namespace DotNetTribes.Services
             var handler = new JwtSecurityTokenHandler();
             var jsonToken = handler.ReadToken(jwtToken);
             var tokenS = jsonToken as JwtSecurityToken;
-
             return tokenS;
         }
     }

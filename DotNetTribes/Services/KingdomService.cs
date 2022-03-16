@@ -7,7 +7,7 @@ using DotNetTribes.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DotNetTribes.Service
+namespace DotNetTribes.Services
 {
     public class KingdomService : IKingdomService
     {
@@ -23,15 +23,17 @@ namespace DotNetTribes.Service
             IdIsNullOrDoesNotExist(kingdomId);
 
             var kingdom = _applicationContext.Kingdoms
-                .Include(k => k.Buildings)
-                .Include(k => k.Resources)
-                .Include(k => k.Troops)
-                .Single(k => k.KingdomId == kingdomId);
+                    .Include(k => k.Buildings)
+                    .Include(k => k.Resources)
+                    .Include(k => k.Troops)
+                    .Include(k => k.User)
+                    .Single(k => k.KingdomId == kingdomId);
+
 
             KingdomDto kingdomDto = new KingdomDto()
             {
                 KingdomName = kingdom.Name,
-                Username = kingdom.User.Username,
+                Username = kingdom.User?.Username,
                 Buildings = kingdom.Buildings,
                 Resources = kingdom.Resources,
                 Troops = kingdom.Troops
@@ -98,8 +100,8 @@ namespace DotNetTribes.Service
 
         private void IdIsNullOrDoesNotExist(int kingdomId)
         {
-            if (kingdomId == 0 || _applicationContext.Kingdoms
-                    .Last().KingdomId > kingdomId)
+
+            if (kingdomId == 0 || !_applicationContext.Kingdoms.Any(k => k.KingdomId == kingdomId))
             {
                 throw new KingdomDoesNotExistException();
             }

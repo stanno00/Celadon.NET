@@ -1,6 +1,6 @@
 ﻿using DotNetTribes.DTOs;
 
-namespace DotNetTribes.Service
+namespace DotNetTribes.Services
 {
     public interface IKingdomService
     {

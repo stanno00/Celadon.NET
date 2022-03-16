@@ -4,15 +4,18 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220316095335_initialMigration")]
+    partial class initialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
+#pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.14")
@@ -20,7 +23,6 @@ namespace DotNetTribes.Migrations
 
             modelBuilder.Entity("DotNetTribes.Models.Building", b =>
                 {
-
                     b.Property<long>("BuildingId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
@@ -42,7 +44,6 @@ namespace DotNetTribes.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -123,7 +124,6 @@ namespace DotNetTribes.Migrations
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", null)
                         .WithMany("Buildings")
-
                         .HasForeignKey("KingdomId");
                 });
 
@@ -166,6 +166,7 @@ namespace DotNetTribes.Migrations
 
                     b.Navigation("User");
                 });
+#pragma warning restore 612, 618
         }
     }
 }

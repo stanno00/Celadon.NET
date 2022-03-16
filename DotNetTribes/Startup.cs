@@ -1,16 +1,11 @@
 using System;
 using DotNetTribes.Services;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DotNetTribes.Services;
 using DotNetTribes.Exceptions;
-using DotNetTribes.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;Ł
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
@@ -42,8 +37,9 @@ namespace DotNetTribes
 
             services.AddTransient<IResourceService, ResourceService>();
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IKingdomService, KingdomService>();
+            services.AddTransient<ITimeService, TimeService>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IKingdomService, KingdomService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,7 +50,12 @@ namespace DotNetTribes
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
+
+            
             app.UseRouting();
+
+            app.UseAuthorization();
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
 

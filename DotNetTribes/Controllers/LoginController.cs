@@ -1,4 +1,3 @@
-using System;
 using DotNetTribes.DTOs;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -25,13 +24,6 @@ namespace DotNetTribes.Controllers
                 var loginResponseDto = _authService.Login(loginRequestDto);
 
                 return new OkObjectResult(loginResponseDto);
-        }
-
-        [HttpPost("/test")]
-        [Authorize]
-        public string test()
-        {
-            return "hello";
         }
     }
 }

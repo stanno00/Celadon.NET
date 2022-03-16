@@ -4,9 +4,14 @@ namespace DotNetTribes.Services
 {
     public class TimeService : ITimeService
     {
-        public int TimeSince(int timeSince)
+        public long MinutesSince(long lastUpdateInSeconds)
         {
-            return (int) DateTimeOffset.Now.ToUnixTimeSeconds()/60 - timeSince;
+            return (GetCurrentSeconds() - lastUpdateInSeconds) / 60;
+        }
+
+        public long GetCurrentSeconds()
+        {
+            return DateTimeOffset.Now.ToUnixTimeSeconds();
         }
     }
 }

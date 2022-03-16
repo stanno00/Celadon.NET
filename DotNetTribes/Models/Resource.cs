@@ -12,7 +12,7 @@ namespace DotNetTribes.Models
         public ResourceType Type { get; set; }
         public int Amount { get; set; }
         public int Generation { get; set; }
-        public int CreatedAt { get; set; }
+        public long UpdatedAt { get; set; }
         public int KingdomId { get; set; }
         public Kingdom Kingdom { get; set; }
     }

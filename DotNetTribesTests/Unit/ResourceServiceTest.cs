@@ -25,7 +25,7 @@ public class ResourceServiceTest
             Generation = 5,
             Type = ResourceType.Food,
             KingdomId = 1,
-            CreatedAt = 69857,
+            UpdatedAt = 69857,
             ResourceId = 1
         });
             
@@ -54,7 +54,7 @@ public class ResourceServiceTest
             Generation = 5,
             Type = ResourceType.Food,
             KingdomId = 1,
-            CreatedAt = 69857,
+            UpdatedAt = 69857,
             ResourceId = 1
         });
             

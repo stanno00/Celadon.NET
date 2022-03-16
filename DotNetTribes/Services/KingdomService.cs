@@ -38,7 +38,6 @@ namespace DotNetTribes.Services
                 Resources = kingdom.Resources,
                 Troops = kingdom.Troops
             };
-
             return kingdomDto;
         }
 
@@ -79,8 +78,7 @@ namespace DotNetTribes.Services
                 Hp = 100,
                 Started_at = 1000000,
                 Finished_at = 1500000,
-                KingdomId = kingdomId,
-                BuildingId = 1
+                KingdomId = kingdomId
             };
 
             kingdomGold.Amount -= buildingPrice;

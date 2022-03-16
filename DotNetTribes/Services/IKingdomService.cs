@@ -1,9 +1,9 @@
 ﻿using DotNetTribes.DTOs;
 
-namespace DotNetTribes.Service
+namespace DotNetTribes.Services
 {
     public interface IKingdomService
     {
-        KingdomDto KingdomInfo(UserDto userDto);
+        KingdomDto KingdomInfo(int kingdomId);
     }
 }

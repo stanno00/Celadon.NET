@@ -2,7 +2,7 @@
 {
     public class Building
     {
-        public long? BuildingId { get; set; }
+        public long BuildingId { get; set; }
 
     }
 }

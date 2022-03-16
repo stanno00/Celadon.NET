@@ -6,7 +6,6 @@
         public string Username { get; set; }
         public string HashedPassword { get; set; }
         public string Email { get; set; }
-        
         public int KingdomId { get; set; }
         public Kingdom Kingdom { get; set; }
     }

@@ -4,14 +4,16 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220316110320_updatedResources")]
+    partial class updatedResources
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,6 +63,9 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<int>("CreatedAt")
+                        .HasColumnType("int");
+
                     b.Property<int>("Generation")
                         .HasColumnType("int");
 
@@ -70,9 +75,6 @@ namespace DotNetTribes.Migrations
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<long>("UpdatedAt")
-                        .HasColumnType("bigint");
 
                     b.HasKey("ResourceId");
 

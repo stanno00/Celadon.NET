@@ -2,6 +2,7 @@
 {
     public interface ITimeService
     {
-        
+        long MinutesSince(long lastUpdateInSeconds);
+        long GetCurrentSeconds();
     }
 }

@@ -1,11 +1,18 @@
-﻿namespace DotNetTribes.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using DotNetTribes.Enums;
+using Newtonsoft.Json;
+
+namespace DotNetTribes.Models
 
 {
     public class Resource
     {
         public int ResourceId { get; set; }
-        public string Type { get; set; }
+        [Column(TypeName = "nvarchar(20)")]
+        public ResourceType Type { get; set; }
         public int Amount { get; set; }
+        public int Generation { get; set; }
+        public long UpdatedAt { get; set; }
         public int KingdomId { get; set; }
         public Kingdom Kingdom { get; set; }
     }

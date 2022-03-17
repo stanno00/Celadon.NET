@@ -44,7 +44,7 @@ public class ResourceServiceTest
     public void GetKingdomResources_correct_values()
     {
         var options = new DbContextOptionsBuilder<ApplicationContext>()
-            .UseInMemoryDatabase("ResourceDatabase")
+            .UseInMemoryDatabase("Resource Database")
             .Options;
 
         using var context = new ApplicationContext(options);

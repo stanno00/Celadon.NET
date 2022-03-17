@@ -13,7 +13,6 @@ namespace DotNetTribesTests.Unit
         [Fact]
         public void KingdomService_KingdomInfo_ReturnKingdomDto()
         {
-
             ICollection<Building> buildingsTest = new List<Building>();
             ICollection<Resource> resourceTest = new List<Resource>();
             ICollection<Troop> troopsTest = new List<Troop>();
@@ -24,7 +23,6 @@ namespace DotNetTribesTests.Unit
 
             var contex = new ApplicationContext(optionsBuilder);
 
-      
                 contex.Kingdoms.Add(new Kingdom()
                 {
                     KingdomId = 1,
@@ -53,7 +51,6 @@ namespace DotNetTribesTests.Unit
         [Fact]
         public void KingdomService_KingdomInfo_ReturnErrorInvalidKingdomId()
         {
-
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
                 .UseInMemoryDatabase("name")
                 .Options;
@@ -61,9 +58,7 @@ namespace DotNetTribesTests.Unit
             var context = new ApplicationContext(optionsBuilder);
             var controller = new KingdomService(context);
 
-            
             var exception = Record.Exception(() =>controller.KingdomInfo(0));
-            
             
             Debug.Assert(exception != null, nameof(exception) + " != null");
             Assert.Equal("Kingdom with this Id does not exist",exception.Message);

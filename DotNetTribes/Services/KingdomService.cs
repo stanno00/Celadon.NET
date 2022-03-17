@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Exceptions;
 using Microsoft.EntityFrameworkCore;

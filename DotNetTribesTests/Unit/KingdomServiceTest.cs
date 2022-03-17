@@ -21,33 +21,33 @@ namespace DotNetTribesTests.Unit
                 .UseInMemoryDatabase("name")
                 .Options;
 
-            var contex = new ApplicationContext(optionsBuilder);
+            var context = new ApplicationContext(optionsBuilder);
 
-                contex.Kingdoms.Add(new Kingdom()
-                {
-                    KingdomId = 1,
-                    Name = "Benq",
-                    Buildings = buildingsTest,
-                    Resources = resourceTest,
-                    Troops = troopsTest
-                });
-                
-                contex.Users.Add(new User()
-                {
-                    Email = "email@email.dummy",
-                    Username = "Hrnik",
-                    UserId = 1,
-                    KingdomId = 1,
-                    HashedPassword = "password"
-                });
-                contex.SaveChanges();
+            context.Kingdoms.Add(new Kingdom()
+            {
+                KingdomId = 1,
+                Name = "Benq",
+                Buildings = buildingsTest,
+                Resources = resourceTest,
+                Troops = troopsTest
+            });
 
-                var result = new KingdomService(contex).KingdomInfo(1);
+            context.Users.Add(new User()
+            {
+                Email = "email@email.dummy",
+                Username = "Hrnik",
+                UserId = 1,
+                KingdomId = 1,
+                HashedPassword = "password"
+            });
+            context.SaveChanges();
 
-            Assert.Equal("Benq",result.KingdomName);
-            Assert.Equal("Hrnik",result.Username);
+            var result = new KingdomService(context).KingdomInfo(1);
+
+            Assert.Equal("Benq", result.KingdomName);
+            Assert.Equal("Hrnik", result.Username);
         }
-        
+
         [Fact]
         public void KingdomService_KingdomInfo_ReturnErrorInvalidKingdomId()
         {
@@ -58,10 +58,10 @@ namespace DotNetTribesTests.Unit
             var context = new ApplicationContext(optionsBuilder);
             var controller = new KingdomService(context);
 
-            var exception = Record.Exception(() =>controller.KingdomInfo(0));
-            
+            var exception = Record.Exception(() => controller.KingdomInfo(0));
+
             Debug.Assert(exception != null, nameof(exception) + " != null");
-            Assert.Equal("Kingdom with this Id does not exist",exception.Message);
+            Assert.Equal("Kingdom with this Id does not exist", exception.Message);
         }
     }
 }

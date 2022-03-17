@@ -27,9 +27,9 @@ namespace DotNetTribesTests.Integration
             var responseString = response.Content.ReadAsStringAsync().Result;
 
             var responseObject = JsonConvert.DeserializeObject<RegisterUserResponseDTO>(responseString);
-            
+
             //Assert
-            Assert.Equal("Radoslav",responseObject.Username);
+            Assert.Equal("Radoslav", responseObject.Username);
         }
     }
 }

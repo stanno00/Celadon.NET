@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace DotNetTribesTests;
 
 public class CustomWebApplicationFactory<TStartup>
-    : WebApplicationFactory<TStartup> where TStartup: class
+    : WebApplicationFactory<TStartup> where TStartup : class
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

@@ -3,12 +3,12 @@ using DotNetTribes.Models;
 
 namespace DotNetTribes.Services
 {
-    public class ProductionRulesService: IRulesService
+    public class RulesService: IRulesService
     {
         private readonly ApplicationContext _applicationContext;
         private GameRules _r;
 
-        public ProductionRulesService(ApplicationContext applicationContext)
+        public RulesService(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
             _r = _applicationContext.GameRules.FirstOrDefault(r => r.Name == "Production");

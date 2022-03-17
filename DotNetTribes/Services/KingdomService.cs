@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs;
+using DotNetTribes.Enums;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,13 @@ namespace DotNetTribes.Services
     {
         private readonly ApplicationContext _applicationContext;
         private readonly IResourceService _resourceService;
+        private readonly ITimeService _timeService;
 
-        public KingdomService(ApplicationContext applicationContext, IResourceService resourceService)
+        public KingdomService(ApplicationContext applicationContext, IResourceService resourceService, ITimeService timeService)
         {
             _applicationContext = applicationContext;
             _resourceService = resourceService;
+            _timeService = timeService;
         }
 
         public KingdomDto KingdomInfo(int kingdomId)
@@ -57,7 +60,7 @@ namespace DotNetTribes.Services
             //TODO: remove this after Rules get implemented
             int buildingPrice = 100;
 
-            if (request.Type == null)
+            if (string.IsNullOrEmpty(request.Type))
             {
                 throw new BuildingCreationException("Building type required.");
             }
@@ -78,7 +81,7 @@ namespace DotNetTribes.Services
                 Type = requestedBuilding,
                 Level = 1,
                 Hp = 100,
-                Started_at = 1000000,
+                Started_at = _timeService.GetCurrentSeconds(),
                 Finished_at = 1500000,
                 KingdomId = kingdomId
             };

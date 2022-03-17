@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-
+using DotNetTribes.Enums;
 
 
 namespace DotNetTribes.Models

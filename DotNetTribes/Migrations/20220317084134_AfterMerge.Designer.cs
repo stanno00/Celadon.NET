@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220314135100_BuildingsFirstDraft")]
-    partial class BuildingsFirstDraft
+    [Migration("20220317084134_AfterMerge")]
+    partial class AfterMerge
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,8 +43,8 @@ namespace DotNetTribes.Migrations
                     b.Property<long>("Started_at")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("BuildingId");
 
@@ -78,11 +78,18 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<int>("Generation")
+                        .HasColumnType("int");
+
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<long>("UpdatedAt")
+                        .HasColumnType("bigint");
 
                     b.HasKey("ResourceId");
 

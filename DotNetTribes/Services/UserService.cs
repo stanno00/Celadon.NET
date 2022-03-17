@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs;
+using DotNetTribes.Enums;
 using DotNetTribes.Models;
 using DotNetTribes.RegistrationExceptions;
 

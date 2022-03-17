@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Enums;
@@ -45,7 +46,7 @@ namespace DotNetTribes.Services
             _applicationContext.SaveChanges();
         }
 
-        public ResourcesDto GetKingdomResources(int kingdomId)
+        public List<ResourceDto> GetKingdomResources(int kingdomId)
         {
             // Updating all resources before returning values to controller
             UpdateKingdomResources(kingdomId);
@@ -59,13 +60,8 @@ namespace DotNetTribes.Services
                     UpdatedAt = r.UpdatedAt
                 })
                 .ToList();
-            
-            var resources = new ResourcesDto
-            {
-                Resources = kingdomResourceDtoList
-            };
-            
-            return resources;
+
+            return kingdomResourceDtoList;
         }
     }
 }

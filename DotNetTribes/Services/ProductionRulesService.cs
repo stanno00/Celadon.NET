@@ -1,101 +1,111 @@
-﻿namespace DotNetTribes.Services
+﻿using System.Linq;
+using DotNetTribes.Models;
+
+namespace DotNetTribes.Services
 {
     public class ProductionRulesService: IRulesService
     {
-        public int StartingGold = 500;
-        
-        public int CalculateTownhallPrice(int level)
+        private readonly ApplicationContext _applicationContext;
+        private GameRules _r;
+
+        public ProductionRulesService(ApplicationContext applicationContext)
         {
-            return level * 200;
+            _applicationContext = applicationContext;
+            _r = _applicationContext.GameRules.FirstOrDefault(r => r.Name == "Production");
+        }
+
+        public int StartingGold()
+        {
+            return _r.StartingGold;
         }
         
-        public int CalculateFarmPrice(int level)
+        public int TownhallPrice(int level)
         {
-            return level * 100;
+            return level * _r.TownhallAllLevelsCost;
         }
         
-        public int CalculateMinePrice(int level)
+        public int FarmPrice(int level)
         {
-            return level * 100;
+            return level * _r.FarmAllLevelsCost;
         }
         
-        public int CalculateAcademyPrice(int level)
+        public int MinePrice(int level)
+        {
+            return level * _r.MineAllLevelsCost;
+        }
+        
+        public int AcademyPrice(int level)
         {
             if (level == 1)
             {
-                return 150;
+                return _r.AcademyLevelOneCost;
             }
-            return level * 100;
+            return level * _r.AcademyLevelNCost;
         }
         
-        public int CalculateTroopPrice(int level)
+        public int TroopPrice(int level)
         {
-            return level * 25;
+            return level * _r.TroopAllLevelsCost;
         }
         
-        public int CalculateTownhallHP(int level)
+        public int TownhallHP(int level)
         {
-            return level * 200;
+            return level * _r.TownhallHP;
         }
         
-        public int CalculateFarmHP(int level)
+        public int FarmHP(int level)
         {
-            return level * 100;
+            return level * _r.FarmHP;
         }
         
-        public int CalculateMineHP(int level)
+        public int MineHP(int level)
         {
-            return level * 100;
+            return level * _r.MineHP;
         }
         
-        public int CalculateAcademyHP(int level)
+        public int AcademyHP(int level)
         {
-            return level * 150;
+            return level * _r.AcademyHP;
         }
         
-        public int CalculateTroopHp(int level)
+        public int TroopHp(int level)
         {
-            return level * 20;
+            return level * _r.TroopHP;
         }
         
-        public int CalculateTownhallBuildingTime(int level)
+        public int TownhallBuildingTime(int level)
         {
             if (level == 1)
             {
-                return 120;
+                return _r.TownhallLevelOneDuration;
             }
 
-            return level * 60;
+            return level * _r.TownhallLevelNDuration;
         }
         
-        public int CalculateFarmBuildingTime(int level)
+        public int FarmBuildingTime(int level)
         {
-            return level * 60;
+            return level * _r.FarmAllLevelsDuration;
         }
         
-        public int CalculateMineBuildingTime(int level)
+        public int MineBuildingTime(int level)
         {
-            return level * 60;
+            return level * _r.MineAllLevesDuration;
         }
         
-        public int CalculateAcademyBuildingTime(int level)
+        public int AcademyBuildingTime(int level)
         {
             if (level == 1)
             {
-                return 90;
+                return _r.AcademyLevelOneDuration;
             }
 
-            return level * 60;
+            return level * _r.AcademyLevelNDuration;
         }
         
-        public int CalculateTroopBuildingTime(int level)
+        public int TroopBuildingTime(int level)
         {
-            return level * 30;
+            return level * _r.TroopAllLevelsDuration;
         }
-        
-        
-        
-        
-        
     }
 }

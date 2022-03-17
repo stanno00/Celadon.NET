@@ -4,15 +4,18 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220316110320_updatedResources")]
+    partial class updatedResources
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
+#pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.14")
@@ -20,27 +23,12 @@ namespace DotNetTribes.Migrations
 
             modelBuilder.Entity("DotNetTribes.Models.Building", b =>
                 {
-                    b.Property<int>("BuildingId")
+                    b.Property<long>("BuildingId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("Finished_at")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Hp")
-                        .HasColumnType("int");
-
-                    b.Property<int>("KingdomId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
-
-                    b.Property<long>("Started_at")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Type")
+                    b.Property<int?>("KingdomId")
                         .HasColumnType("int");
 
                     b.HasKey("BuildingId");
@@ -75,6 +63,9 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<int>("CreatedAt")
+                        .HasColumnType("int");
+
                     b.Property<int>("Generation")
                         .HasColumnType("int");
 
@@ -84,8 +75,6 @@ namespace DotNetTribes.Migrations
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
-                    b.Property<long>("UpdatedAt")
-                        .HasColumnType("bigint");
 
                     b.HasKey("ResourceId");
 
@@ -142,9 +131,7 @@ namespace DotNetTribes.Migrations
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", null)
                         .WithMany("Buildings")
-                        .HasForeignKey("KingdomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("KingdomId");
                 });
 
             modelBuilder.Entity("DotNetTribes.Models.Resource", b =>
@@ -186,6 +173,7 @@ namespace DotNetTribes.Migrations
 
                     b.Navigation("User");
                 });
+#pragma warning restore 612, 618
         }
     }
 }

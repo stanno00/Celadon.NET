@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220316095335_initialMigration")]
-    partial class initialMigration
+    [Migration("20220318112631_AddFoodRule")]
+    partial class AddFoodRule
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,12 +23,27 @@ namespace DotNetTribes.Migrations
 
             modelBuilder.Entity("DotNetTribes.Models.Building", b =>
                 {
-                    b.Property<long>("BuildingId")
+                    b.Property<int>("BuildingId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("KingdomId")
+                    b.Property<long>("Finished_at")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Hp")
+                        .HasColumnType("int");
+
+                    b.Property<int>("KingdomId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<long>("Started_at")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("BuildingId");
@@ -36,6 +51,104 @@ namespace DotNetTribes.Migrations
                     b.HasIndex("KingdomId");
 
                     b.ToTable("Buildings");
+                });
+
+            modelBuilder.Entity("DotNetTribes.Models.GameRules", b =>
+                {
+                    b.Property<int>("GameRulesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AcademyHP")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AcademyLevelNCost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AcademyLevelNDuration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AcademyLevelOneCost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AcademyLevelOneDuration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FarmAllLevelsCost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FarmAllLevelsDuration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FarmHP")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MineAllLevelsCost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MineAllLevesDuration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MineHP")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StartingGold")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TownhallAllLevelsCost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TownhallHP")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TownhallLevelNDuration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TownhallLevelOneDuration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TroopAllLevelsCost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TroopAllLevelsDuration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TroopHP")
+                        .HasColumnType("int");
+
+                    b.HasKey("GameRulesId");
+
+                    b.ToTable("GameRules");
+
+                    b.HasData(
+                        new
+                        {
+                            GameRulesId = 1,
+                            AcademyHP = 150,
+                            AcademyLevelNCost = 100,
+                            AcademyLevelNDuration = 60,
+                            AcademyLevelOneCost = 150,
+                            AcademyLevelOneDuration = 90,
+                            FarmAllLevelsCost = 100,
+                            FarmAllLevelsDuration = 60,
+                            FarmHP = 100,
+                            MineAllLevelsCost = 100,
+                            MineAllLevesDuration = 60,
+                            MineHP = 100,
+                            Name = "Production",
+                            StartingGold = 500,
+                            TownhallAllLevelsCost = 200,
+                            TownhallHP = 200,
+                            TownhallLevelNDuration = 60,
+                            TownhallLevelOneDuration = 120,
+                            TroopAllLevelsCost = 25,
+                            TroopAllLevelsDuration = 30,
+                            TroopHP = 20
+                        });
                 });
 
             modelBuilder.Entity("DotNetTribes.Models.Kingdom", b =>
@@ -63,11 +176,18 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<int>("Generation")
+                        .HasColumnType("int");
+
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<long>("UpdatedAt")
+                        .HasColumnType("bigint");
 
                     b.HasKey("ResourceId");
 
@@ -124,7 +244,9 @@ namespace DotNetTribes.Migrations
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", null)
                         .WithMany("Buildings")
-                        .HasForeignKey("KingdomId");
+                        .HasForeignKey("KingdomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DotNetTribes.Models.Resource", b =>

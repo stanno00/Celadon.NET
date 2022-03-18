@@ -66,7 +66,7 @@ namespace DotNetTribes
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IJwtService, JwtService>();
             services.AddTransient<IKingdomService, KingdomService>();
-            services.AddSingleton<IRulesService, RulesService>();
+            services.AddTransient<IRulesService, RulesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

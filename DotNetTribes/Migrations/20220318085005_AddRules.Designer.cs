@@ -10,13 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-<<<<<<<< HEAD:DotNetTribes/Migrations/20220317084134_AfterMerge.Designer.cs
-    [Migration("20220317084134_AfterMerge")]
-    partial class AfterMerge
-========
-    [Migration("20220317120339_AddRules")]
+    [Migration("20220318085005_AddRules")]
     partial class AddRules
->>>>>>>> develop:DotNetTribes/Migrations/20220317120339_AddRules.Designer.cs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

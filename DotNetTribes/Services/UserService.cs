@@ -11,10 +11,13 @@ namespace DotNetTribes.Services
     public class UserService : IUserService
     {
         private readonly ApplicationContext _applicationContext;
+        private readonly IRulesService _rules;
 
-        public UserService(ApplicationContext applicationContext)
+        public UserService(ApplicationContext applicationContext, IRulesService rules)
         {
             _applicationContext = applicationContext;
+            _rules = rules;
+            
         }
 
         public string HashPassword(string password)
@@ -43,7 +46,7 @@ namespace DotNetTribes.Services
                         new Resource
                         {
                             Type = ResourceType.Gold,
-                            Amount = 0
+                            Amount = _rules.StartingGold()
                         },
                         new Resource
                         {

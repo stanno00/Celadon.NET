@@ -6,6 +6,7 @@ using DotNetTribes.Enums;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotNetTribes.Services
@@ -15,12 +16,15 @@ namespace DotNetTribes.Services
         private readonly ApplicationContext _applicationContext;
         private readonly IResourceService _resourceService;
         private readonly ITimeService _timeService;
+        private readonly IRulesService _rules;
 
-        public KingdomService(ApplicationContext applicationContext, IResourceService resourceService, ITimeService timeService)
+        public KingdomService(ApplicationContext applicationContext, IResourceService resourceService,
+            ITimeService timeService, IRulesService rules)
         {
             _applicationContext = applicationContext;
             _resourceService = resourceService;
             _timeService = timeService;
+            _rules = rules;
         }
 
         public KingdomDto KingdomInfo(int kingdomId)
@@ -28,11 +32,11 @@ namespace DotNetTribes.Services
             IdIsNullOrDoesNotExist(kingdomId);
 
             var kingdom = _applicationContext.Kingdoms
-                    .Include(k => k.Buildings)
-                    .Include(k => k.Resources)
-                    .Include(k => k.Troops)
-                    .Include(k => k.User)
-                    .Single(k => k.KingdomId == kingdomId);
+                .Include(k => k.Buildings)
+                .Include(k => k.Resources)
+                .Include(k => k.Troops)
+                .Include(k => k.User)
+                .Single(k => k.KingdomId == kingdomId);
 
 
             KingdomDto kingdomDto = new KingdomDto()
@@ -49,16 +53,13 @@ namespace DotNetTribes.Services
         public BuildingResponseDTO CreateNewBuilding(int kingdomId, BuildingRequestDTO request)
         {
             IdIsNullOrDoesNotExist(kingdomId);
-            
+
             var kingdom = _applicationContext.Kingdoms
                 .Include(b => b.Buildings)
                 .Include(r => r.Resources)
                 .FirstOrDefault(k => k.KingdomId == kingdomId);
 
             var kingdomGold = kingdom.Resources.FirstOrDefault(r => r.Type.Equals(ResourceType.Gold));
-            
-            //TODO: remove this after Rules get implemented
-            int buildingPrice = 100;
 
             if (string.IsNullOrEmpty(request.Type))
             {
@@ -70,21 +71,66 @@ namespace DotNetTribes.Services
                 throw new BuildingCreationException("Incorrect building type.");
             }
 
+            int buildingPrice;
+            Building toBeAdded;
+
+            if (requestedBuilding == BuildingType.TownHall)
+            {
+                buildingPrice = _rules.TownhallPrice(1);
+                toBeAdded = new Building
+                {
+                    Type = BuildingType.TownHall,
+                    Level = 1,
+                    Hp = _rules.TownhallHP(1),
+                    Started_at = _timeService.GetCurrentSeconds(),
+                    Finished_at = _timeService.GetCurrentSeconds() + _rules.TownhallBuildingTime(1),
+                    KingdomId = kingdomId
+                };
+            }
+            else if (requestedBuilding == BuildingType.Farm)
+            {
+                buildingPrice = _rules.FarmPrice(1);
+                toBeAdded = new Building
+                {
+                    Type = BuildingType.Farm,
+                    Level = 1,
+                    Hp = _rules.FarmHP(1),
+                    Started_at = _timeService.GetCurrentSeconds(),
+                    Finished_at = _timeService.GetCurrentSeconds() + _rules.FarmBuildingTime(1),
+                    KingdomId = kingdomId
+                };
+            }
+            else if (requestedBuilding == BuildingType.Mine)
+            {
+                buildingPrice = _rules.MinePrice(1);
+                toBeAdded = new Building
+                {
+                    Type = BuildingType.Mine,
+                    Level = 1,
+                    Hp = _rules.MineHP(1),
+                    Started_at = _timeService.GetCurrentSeconds(),
+                    Finished_at = _timeService.GetCurrentSeconds() + _rules.MineBuildingTime(1),
+                    KingdomId = kingdomId
+                };
+            }
+            else
+            {
+                buildingPrice = _rules.AcademyPrice(1);
+                toBeAdded = new Building
+                {
+                    Type = BuildingType.Academy,
+                    Level = 1,
+                    Hp = _rules.AcademyHP(1),
+                    Started_at = _timeService.GetCurrentSeconds(),
+                    Finished_at = _timeService.GetCurrentSeconds() + _rules.AcademyBuildingTime(1),
+                    KingdomId = kingdomId
+                };
+            }
+
             if (buildingPrice > kingdomGold.Amount)
             {
                 throw new BuildingCreationException("Gold needed.");
             }
-
-            Building toBeAdded = new Building
-            {
-                //TODO: these are placeholder values, update after Rules get implemented
-                Type = requestedBuilding,
-                Level = 1,
-                Hp = 100,
-                Started_at = _timeService.GetCurrentSeconds(),
-                Finished_at = 1500000,
-                KingdomId = kingdomId
-            };
 
             kingdomGold.Amount -= buildingPrice;
             kingdom.Buildings.Add(toBeAdded);
@@ -103,7 +149,6 @@ namespace DotNetTribes.Services
 
         private void IdIsNullOrDoesNotExist(int kingdomId)
         {
-
             if (kingdomId == 0 || !_applicationContext.Kingdoms.Any(k => k.KingdomId == kingdomId))
             {
                 throw new KingdomDoesNotExistException();

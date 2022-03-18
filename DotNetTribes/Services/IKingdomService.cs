@@ -7,5 +7,6 @@ namespace DotNetTribes.Services
         KingdomDto KingdomInfo(int kingdomId);
 
         public BuildingResponseDTO CreateNewBuilding(int kingdomId, BuildingRequestDTO request);
+        
     }
 }

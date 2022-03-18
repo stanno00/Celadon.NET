@@ -1,4 +1,7 @@
-﻿namespace DotNetTribes.Services
+﻿using DotNetTribes.DTOs;
+using DotNetTribes.Models;
+
+namespace DotNetTribes.Services
 {
     public interface IRulesService
     {
@@ -18,5 +21,7 @@
         public int MineBuildingTime(int level);
         public int AcademyBuildingTime(int level);
         public int TroopBuildingTime(int level);
+
+        public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level);
     }
 }

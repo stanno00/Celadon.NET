@@ -46,7 +46,7 @@ namespace DotNetTribes.Services
             _applicationContext.SaveChanges();
         }
 
-        public List<ResourceDto> GetKingdomResources(int kingdomId)
+        public ResourcesDto GetKingdomResources(int kingdomId)
         {
             // Updating all resources before returning values to controller
             UpdateKingdomResources(kingdomId);
@@ -60,8 +60,13 @@ namespace DotNetTribes.Services
                     UpdatedAt = r.UpdatedAt
                 })
                 .ToList();
+            
+            var resources = new ResourcesDto
+            {
+                Resources = kingdomResourceDtoList
+            };
 
-            return kingdomResourceDtoList;
+            return resources;
         }
     }
 }

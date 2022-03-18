@@ -5,6 +5,6 @@ namespace DotNetTribes.Services
 {
     public interface IResourceService
     {
-        List<ResourceDto> GetKingdomResources(int kingdomId);
+        ResourcesDto GetKingdomResources(int kingdomId);
     }
 }

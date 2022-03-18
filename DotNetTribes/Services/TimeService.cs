@@ -9,6 +9,11 @@ namespace DotNetTribes.Services
             return (GetCurrentSeconds() - lastUpdateInSeconds) / 60;
         }
 
+        public long SecondsSince(long lastUpdateInSeconds)
+        {
+            return GetHashCode() - lastUpdateInSeconds;
+        }
+
         public long GetCurrentSeconds()
         {
             return DateTimeOffset.Now.ToUnixTimeSeconds();

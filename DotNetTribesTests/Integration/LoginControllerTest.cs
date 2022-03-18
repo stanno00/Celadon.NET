@@ -18,17 +18,11 @@ public class LoginControllerTest
         using var application = new CustomWebApplicationFactory<Startup>();
         using var client = application.CreateClient();
 
-        var jsonCreateNew = JsonConvert.SerializeObject(new RegisterUserRequestDTO()
-            {Email = "realEmail@ForIntegrationTest.dummy", Password = "password", Username = "Rado"});
-        var httpContextCreateNew = new StringContent(jsonCreateNew, Encoding.UTF8, "application/json");
-
         var json = JsonConvert.SerializeObject(new LoginRequestDto()
-            {Password = "password", Username = "Rado"});
+            {Password = "password", Username = "Hrnik"});
         var httpContext = new StringContent(json, Encoding.UTF8, "application/json");
 
         //Act
-        var responseCreateUser = client.PostAsync("/Register", httpContextCreateNew).Result;
-
         var response = client.PostAsync("/login", httpContext).Result;
 
         var responseString = response.Content.ReadAsStringAsync().Result;

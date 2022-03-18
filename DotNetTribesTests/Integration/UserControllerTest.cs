@@ -18,7 +18,7 @@ namespace DotNetTribesTests.Integration
             using var client = application.CreateClient();
 
             var json = JsonConvert.SerializeObject(new RegisterUserRequestDTO()
-                {Email = "realEmail@ForIntegrationTest.dummyTest", Password = "password", Username = "Radoslav"});
+                {Email = "Test@Test.dummy", Password = "password", Username = "Rado",KingdomName = "Kingdom Name"});
             var httpContext = new StringContent(json, Encoding.UTF8, "application/json");
 
             //Act
@@ -29,7 +29,8 @@ namespace DotNetTribesTests.Integration
             var responseObject = JsonConvert.DeserializeObject<RegisterUserResponseDTO>(responseString);
 
             //Assert
-            Assert.Equal("Radoslav", responseObject.Username);
+            Assert.Equal("Rado", responseObject.Username);
+            Assert.Equal(2, responseObject.Id);
         }
     }
 }

@@ -17,21 +17,19 @@ namespace DotNetTribes.Services
         {
             _applicationContext = applicationContext;
             _rules = rules;
-            
         }
 
         public string HashPassword(string password)
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
-        
+
         public RegisterUserResponseDTO RegisterUser(RegisterUserRequestDTO userCredentials)
         {
-            
             HandleMissingFields(userCredentials);
             CheckIfFieldsAreNotTaken(userCredentials);
             CheckIfPasswordIsLongEnough(userCredentials.Password, 8);
-            
+
             var user = new User()
             {
                 Username = userCredentials.Username,
@@ -40,7 +38,6 @@ namespace DotNetTribes.Services
                 Kingdom = new Kingdom()
                 {
                     Name = userCredentials.KingdomName,
-                    Buildings = new List<Building>(),
                     Resources = new List<Resource>
                     {
                         new Resource
@@ -51,16 +48,15 @@ namespace DotNetTribes.Services
                         new Resource
                         {
                             Type = ResourceType.Food,
-                            Amount = 0
+                            Amount = _rules.StartingFood()
                         }
-                    },
-                    Troops = new List<Troop>(),
+                    }
                 }
             };
 
             _applicationContext.Add(user);
             _applicationContext.SaveChanges();
-            
+
             return new RegisterUserResponseDTO()
             {
                 Id = user.UserId,
@@ -73,7 +69,7 @@ namespace DotNetTribes.Services
         public void HandleMissingFields(RegisterUserRequestDTO userCredentials)
         {
             var errorMessages = new List<string>();
-            
+
             if (FieldIsNullOrEmpty(userCredentials.Password))
             {
                 errorMessages.Add("Password is required.");
@@ -83,19 +79,19 @@ namespace DotNetTribes.Services
             {
                 errorMessages.Add("Username is required.");
             }
-            
+
             if (FieldIsNullOrEmpty(userCredentials.Email))
             {
                 errorMessages.Add("Email is required.");
             }
-            
+
             if (errorMessages.Count > 0)
             {
                 var errorOutput = String.Join(" ", errorMessages);
                 throw new MissingFieldException(errorOutput);
             }
         }
-        
+
         public bool FieldIsNullOrEmpty(string field)
         {
             return (field is null || field.Trim().Length == 0);
@@ -112,15 +108,15 @@ namespace DotNetTribes.Services
             {
                 throw new UsernameAlreadyTakenException();
             }
-            
+
             if (KingdomNameIsTaken(kingdomName))
             {
                 throw new KingdomNameAlreadyTakenException();
             }
-            
+
             userCredentials.KingdomName = kingdomName;
-            
-            
+
+
             if (EmailIsTaken(userCredentials.Email))
             {
                 throw new EmailAlreadyTakenException();
@@ -134,15 +130,14 @@ namespace DotNetTribes.Services
                 throw new ShortPasswordException(minLength);
             }
         }
-        
+
         public bool UsernameIsTaken(string username)
         {
             var user = _applicationContext
                 .Users
                 .SingleOrDefault(user => user.Username == username);
-            
-            return (user != null);
 
+            return (user != null);
         }
 
         public bool KingdomNameIsTaken(string name)
@@ -162,7 +157,7 @@ namespace DotNetTribes.Services
 
             return (emailAddress != null);
         }
-        
+
         public string SetKingdomNameIfMissing(string kingdomName, string userName)
         {
             return (FieldIsNullOrEmpty(kingdomName))

@@ -5,6 +5,7 @@
         public int GameRulesId { get; set; }
         public string Name { get; set; }
         public int StartingGold { get; set; }
+        public int StartingFood { get; set; }
         public int TownhallAllLevelsCost { get; set; }
         public int FarmAllLevelsCost { get; set; }
         public int MineAllLevelsCost { get; set; }

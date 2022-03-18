@@ -22,6 +22,11 @@ namespace DotNetTribes.Services
             return _r.StartingGold;
         }
         
+        public int StartingFood()
+        {
+            return _r.StartingFood;
+        }
+
         public int TownhallPrice(int level)
         {
             return level * _r.TownhallAllLevelsCost;

@@ -6,6 +6,7 @@ namespace DotNetTribes.Services
     public interface IRulesService
     {
         public int StartingGold();
+        public int StartingFood();
         public int TownhallPrice(int level);
         public int FarmPrice(int level);
         public int MinePrice(int level);

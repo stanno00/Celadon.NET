@@ -11,7 +11,7 @@ namespace DotNetTribes.Services
 
         public long SecondsSince(long lastUpdateInSeconds)
         {
-            return GetHashCode() - lastUpdateInSeconds;
+            return GetCurrentSeconds() - lastUpdateInSeconds;
         }
 
         public long GetCurrentSeconds()

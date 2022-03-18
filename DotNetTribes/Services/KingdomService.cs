@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using DotNetTribes.DTOs;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using DotNetTribes.DTOs;
 
 namespace DotNetTribes.Services
 {
@@ -8,16 +8,11 @@ namespace DotNetTribes.Services
     {
         private readonly ApplicationContext _applicationContext;
         private readonly IResourceService _resourceService;
-        private readonly ITimeService _timeService;
-        private readonly IRulesService _rules;
 
-        public KingdomService(ApplicationContext applicationContext, IResourceService resourceService,
-            ITimeService timeService, IRulesService rules)
+        public KingdomService(ApplicationContext applicationContext, IResourceService resourceService)
         {
             _applicationContext = applicationContext;
             _resourceService = resourceService;
-            _timeService = timeService;
-            _rules = rules;
         }
 
         public KingdomDto KingdomInfo(int kingdomId)
@@ -28,8 +23,7 @@ namespace DotNetTribes.Services
                 .Include(k => k.Troops)
                 .Include(k => k.User)
                 .Single(k => k.KingdomId == kingdomId);
-
-
+            
             KingdomDto kingdomDto = new KingdomDto()
             {
                 KingdomName = kingdom.Name,

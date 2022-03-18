@@ -21,9 +21,9 @@ namespace DotNetTribes.Controllers
 
         [HttpGet]
         [Authorize]
-        public ActionResult<List<ResourceDto>> GetKingdomResources([FromHeader] string jwtToken)
+        public ActionResult<ResourcesDto> GetKingdomResources([FromHeader] string authorization)
         {
-            var kingdomResources = _resourcesService.GetKingdomResources(_jwtService.GetKingdomIdFromJwt(jwtToken));
+            var kingdomResources = _resourcesService.GetKingdomResources(_jwtService.GetKingdomIdFromJwt(authorization));
             if (kingdomResources.Resources.Count == 0)
             {
                 return new BadRequestObjectResult("Bad request!");

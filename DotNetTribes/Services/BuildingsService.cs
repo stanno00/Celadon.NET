@@ -79,5 +79,55 @@ namespace DotNetTribes.Services
             };
             return newBuilding;
         }
+
+        public BuildingResponseDTO UpgradeBuilding(int kingdomId, int buildingId)
+        {
+            var building =
+                _applicationContext.Buildings.FirstOrDefault(
+                    b => b.BuildingId == buildingId && b.KingdomId == kingdomId);
+            
+            if (building == null)
+            {
+                throw new BuildingCreationException("Building does not exist!");
+            }
+            
+            var townHallLevel = _applicationContext.Buildings.Single(b => b.Type == BuildingType.TownHall && b.KingdomId == kingdomId).Level;
+            var buildingType = building.Type;
+            var buildingLevel = building.Level;
+            var buildingNextLevel = buildingLevel + 1;
+            
+            if (buildingLevel >= townHallLevel && buildingType != BuildingType.TownHall)
+            {
+                throw new BuildingCreationException("Townhall level is too low!");
+            }
+
+            var upgradeBuilding = _rules.GetBuildingDetails(buildingType, buildingNextLevel);
+
+            var gold =
+                _applicationContext.Resources.Single(r => r.KingdomId == kingdomId && r.Type == ResourceType.Gold);
+
+            if (gold.Amount < upgradeBuilding.BuildingPrice)
+            {
+                throw new BuildingCreationException("You dont have enough gold!");
+            }
+
+            gold.Amount -= upgradeBuilding.BuildingPrice;
+            building.Hp = upgradeBuilding.BuildingHP;
+            building.Level = buildingNextLevel;
+            
+            _applicationContext.SaveChanges();
+
+            var response = new BuildingResponseDTO()
+            {
+                Id = buildingId,
+                Type = building.Type.ToString(),
+                Level = buildingNextLevel,
+                Hp = building.Hp,
+                Started_at = _timeService.GetCurrentSeconds().ToString(),
+                Finished_at = ((int)_timeService.GetCurrentSeconds() + upgradeBuilding.BuildingDuration).ToString()
+            };
+
+            return response;
+        }
     }
 }

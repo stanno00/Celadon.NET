@@ -1,16 +1,6 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using DotNetTribes.DTOs;
-using DotNetTribes.Enums;
-using DotNetTribes.Exceptions;
-using DotNetTribes.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Rewrite;
-using Microsoft.EntityFrameworkCore;
 
 namespace DotNetTribes.Services
 {

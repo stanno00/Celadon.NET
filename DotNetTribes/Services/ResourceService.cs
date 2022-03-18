@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Enums;
@@ -64,7 +65,7 @@ namespace DotNetTribes.Services
             {
                 Resources = kingdomResourceDtoList
             };
-            
+
             return resources;
         }
     }

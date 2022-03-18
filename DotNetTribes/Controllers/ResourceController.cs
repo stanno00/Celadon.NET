@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using DotNetTribes.DTOs;
 using DotNetTribes.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetTribes.Controllers
@@ -10,16 +11,19 @@ namespace DotNetTribes.Controllers
     public class ResourceController
     {
         private readonly IResourceService _resourcesService;
+        private readonly IJwtService _jwtService;
 
-        public ResourceController(IResourceService resourceService)
+        public ResourceController(IResourceService resourceService, IJwtService jwtService)
         {
             _resourcesService = resourceService;
+            _jwtService = jwtService;
         }
 
-        [HttpGet("{kingdomId}")]
-        public ActionResult<List<ResourceDto>> GetKingdomResources([FromRoute] int kingdomId)
+        [HttpGet]
+        [Authorize]
+        public ActionResult<ResourcesDto> GetKingdomResources([FromHeader] string authorization)
         {
-            var kingdomResources = _resourcesService.GetKingdomResources(kingdomId);
+            var kingdomResources = _resourcesService.GetKingdomResources(_jwtService.GetKingdomIdFromJwt(authorization));
             if (kingdomResources.Resources.Count == 0)
             {
                 return new BadRequestObjectResult("Bad request!");

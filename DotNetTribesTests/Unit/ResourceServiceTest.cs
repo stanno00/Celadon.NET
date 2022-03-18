@@ -36,7 +36,7 @@ public class ResourceServiceTest
         var resources = resourceService.GetKingdomResources(0);
         
         Assert.Empty(resources.Resources);
-        Assert.NotNull(resources.Resources);
+        Assert.NotNull(resources);
 
     }
     
@@ -44,6 +44,7 @@ public class ResourceServiceTest
     public void ResourceService_GetKingdomResources_correctValues()
     {
         var options = new DbContextOptionsBuilder<ApplicationContext>()
+
             .UseInMemoryDatabase("Resource Database")
             .Options;
 

@@ -55,9 +55,14 @@ namespace DotNetTribes.Migrations
                 name: "Buildings",
                 columns: table => new
                 {
-                    BuildingId = table.Column<long>(type: "bigint", nullable: false)
+                    BuildingId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    KingdomId = table.Column<int>(type: "int", nullable: true)
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Level = table.Column<int>(type: "int", nullable: false),
+                    Hp = table.Column<int>(type: "int", nullable: false),
+                    Started_at = table.Column<long>(type: "bigint", nullable: false),
+                    Finished_at = table.Column<long>(type: "bigint", nullable: false),
+                    KingdomId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,7 +72,7 @@ namespace DotNetTribes.Migrations
                         column: x => x.KingdomId,
                         principalTable: "Kingdoms",
                         principalColumn: "KingdomId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

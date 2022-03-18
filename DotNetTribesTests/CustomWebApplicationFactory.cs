@@ -36,6 +36,32 @@ public class CustomWebApplicationFactory<TStartup>
                 var scopedServices = scope.ServiceProvider;
                 var db = scopedServices.GetRequiredService<ApplicationContext>();
 
+                db.GameRules.Add(new GameRules
+                {
+                    GameRulesId = 1,
+                    Name = "Production",
+                    StartingGold = 500,
+                    StartingFood = 500,
+                    TownhallAllLevelsCost = 200,
+                    FarmAllLevelsCost = 100,
+                    MineAllLevelsCost = 100,
+                    AcademyLevelOneCost = 150,
+                    AcademyLevelNCost = 100,
+                    TroopAllLevelsCost = 25,
+                    TownhallLevelOneDuration = 120,
+                    TownhallLevelNDuration = 60,
+                    FarmAllLevelsDuration = 60,
+                    MineAllLevesDuration = 60,
+                    AcademyLevelOneDuration = 90,
+                    AcademyLevelNDuration = 60,
+                    TroopAllLevelsDuration = 30,
+                    TownhallHP = 200,
+                    FarmHP = 100,
+                    MineHP = 100,
+                    AcademyHP = 150,
+                    TroopHP = 20
+                });
+                
                 db.Users.Add(new User()
                 {
                     Email = "realEmail@Test.dummy",

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using DotNetTribes.Enums;
-using Newtonsoft.Json;
+
 
 namespace DotNetTribes.Models
 

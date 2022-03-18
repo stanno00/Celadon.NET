@@ -18,7 +18,7 @@ namespace DotNetTribesTests.Integration
             using var client = application.CreateClient();
 
             var json = JsonConvert.SerializeObject(new RegisterUserRequestDTO()
-                {Email = "Test@Test.dummy", Password = "password", Username = "Rado",KingdomName = "Kingdom Name"});
+                {Email = "Test@Test.dummy", Password = "password", Username = "Rado"});
             var httpContext = new StringContent(json, Encoding.UTF8, "application/json");
 
             //Act

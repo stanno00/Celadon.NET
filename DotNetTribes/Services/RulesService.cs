@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using DotNetTribes.DTOs;
+using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 
 namespace DotNetTribes.Services
@@ -19,6 +22,11 @@ namespace DotNetTribes.Services
             return _r.StartingGold;
         }
         
+        public int StartingFood()
+        {
+            return _r.StartingFood;
+        }
+
         public int TownhallPrice(int level)
         {
             return level * _r.TownhallAllLevelsCost;
@@ -106,6 +114,45 @@ namespace DotNetTribes.Services
         public int TroopBuildingTime(int level)
         {
             return level * _r.TroopAllLevelsDuration;
+        }
+        
+        public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level)
+        {
+            switch (type)
+            {
+                case BuildingType.TownHall:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = TownhallPrice(level),
+                        BuildingHP = TownhallHP(level),
+                        BuildingDuration = TownhallBuildingTime(level)
+                    };
+                case BuildingType.Farm:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = FarmPrice(level),
+                        BuildingHP = FarmHP(level),
+                        BuildingDuration = FarmBuildingTime(level)
+                    };
+                case BuildingType.Mine:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = MinePrice(level),
+                        BuildingHP = MineHP(level),
+                        BuildingDuration = MineBuildingTime(level)
+                    };
+                case BuildingType.Academy:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = AcademyPrice(level),
+                        BuildingHP = AcademyHP(level),
+                        BuildingDuration = AcademyBuildingTime(level)
+                    };
+                default:
+                    throw new BuildingCreationException("This should not happen under any circumstances. Recommended actions:" +
+                                                        "Troubleshooting, exorcism of the server, throwing heavy objects at high velocities in the direction of" +
+                                                        "the developer's head.");
+            }
         }
     }
 }

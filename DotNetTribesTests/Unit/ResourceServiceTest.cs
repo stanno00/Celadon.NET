@@ -35,7 +35,7 @@ public class ResourceServiceTest
 
         var resources = resourceService.GetKingdomResources(0);
         
-        Assert.Empty(resources);
+        Assert.Empty(resources.Resources);
         Assert.NotNull(resources);
 
     }
@@ -44,7 +44,7 @@ public class ResourceServiceTest
     public void GetKingdomResources_correct_values()
     {
         var options = new DbContextOptionsBuilder<ApplicationContext>()
-            .UseInMemoryDatabase("ResourceDatabase")
+            .UseInMemoryDatabase("ResourceDatabase1")
             .Options;
 
         using var context = new ApplicationContext(options);
@@ -64,10 +64,10 @@ public class ResourceServiceTest
 
         var resources = resourceService.GetKingdomResources(1);
             
-        Assert.NotEmpty(resources);
+        Assert.NotEmpty(resources.Resources);
         Assert.NotNull(resources);
-        Assert.Equal(80, resources.ToArray()[0].Amount);
-        Assert.Equal(1, resources.Count);
-        Assert.Equal("Food", resources.ToArray()[0].Type);
+        Assert.Equal(80, resources.Resources.ToArray()[0].Amount);
+        Assert.Equal(1, resources.Resources.Count);
+        Assert.Equal("Food", resources.Resources.ToArray()[0].Type);
     }
 }

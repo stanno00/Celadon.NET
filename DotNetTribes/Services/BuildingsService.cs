@@ -78,5 +78,55 @@ namespace DotNetTribes.Services
             };
             return newBuilding;
         }
+
+        public BuildingResponseDTO UpgradeBuilding(int kingdomId, int buildingId)
+        {
+            var building =
+                _applicationContext.Buildings.FirstOrDefault(
+                    b => b.BuildingId == buildingId && b.KingdomId == kingdomId);
+            
+            if (building == null)
+            {
+                throw new BuildingCreationException("Building does not exist!");
+            }
+
+            var townHallLevel = _applicationContext.Buildings.Single(b => b.Type == BuildingType.TownHall).Level;
+            var buildingType = building.Type;
+            var buildingLevel = building.Level;
+            var buildingNextLevel = buildingLevel + 1;
+            
+            if (buildingLevel >= townHallLevel)
+            {
+                throw new BuildingCreationException("Townhall level is too low!");
+            }
+
+            var upgradeBuilding = _rules.GetBuildingDetails(buildingType, buildingNextLevel);
+
+            var goldAmount =
+                _applicationContext.Resources.Single(r => r.KingdomId == kingdomId && r.Type == ResourceType.Gold)
+                    .Amount;
+
+            if (goldAmount < upgradeBuilding.BuildingPrice)
+            {
+                throw new BuildingCreationException("You dont have enough gold!");
+            }
+
+            goldAmount -= upgradeBuilding.BuildingPrice;
+            building.Hp = upgradeBuilding.BuildingHP;
+            building.Level = buildingNextLevel;
+            
+            _applicationContext.SaveChanges();
+
+            var response = new BuildingResponseDTO()
+            {
+                Id = buildingId,
+                Type = building.Type.ToString(),
+                Level = buildingNextLevel,
+                Started_at = _timeService.GetCurrentSeconds().ToString(),
+                Finished_at = ((int)_timeService.GetCurrentSeconds() + upgradeBuilding.BuildingDuration).ToString()
+            };
+
+            return response;
+        }
     }
 }

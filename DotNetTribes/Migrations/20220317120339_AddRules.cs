@@ -2,7 +2,9 @@
 
 namespace DotNetTribes.Migrations
 {
+
     public partial class AddRules : Migration
+
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

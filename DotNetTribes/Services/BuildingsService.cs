@@ -91,7 +91,7 @@ namespace DotNetTribes.Services
                 throw new BuildingCreationException("Building does not exist!");
             }
             
-            var townHallLevel = _applicationContext.Buildings.Single(b => b.Type == BuildingType.TownHall).Level;
+            var townHallLevel = _applicationContext.Buildings.Single(b => b.Type == BuildingType.TownHall && b.KingdomId == kingdomId).Level;
             var buildingType = building.Type;
             var buildingLevel = building.Level;
             var buildingNextLevel = buildingLevel + 1;

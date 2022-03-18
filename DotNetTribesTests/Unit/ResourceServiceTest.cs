@@ -12,7 +12,7 @@ namespace DotNetTribesTests.Unit;
 public class ResourceServiceTest
 {
     [Fact]
-    public void GetKingdomResources_returns_empty_list()
+    public void ResourceService_GetKingdomResources_returnsEmptyList()
     {
         var options = new DbContextOptionsBuilder<ApplicationContext>()
             .UseInMemoryDatabase("ResourceDatabase")
@@ -41,10 +41,10 @@ public class ResourceServiceTest
     }
     
     [Fact]
-    public void GetKingdomResources_correct_values()
+    public void ResourceService_GetKingdomResources_correctValues()
     {
         var options = new DbContextOptionsBuilder<ApplicationContext>()
-            .UseInMemoryDatabase("ResourceDatabase")
+            .UseInMemoryDatabase("Resource Database")
             .Options;
 
         using var context = new ApplicationContext(options);

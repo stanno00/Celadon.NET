@@ -1,5 +1,4 @@
-﻿using System;
-using DotNetTribes.DTOs;
+﻿using DotNetTribes.DTOs;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +33,7 @@ namespace DotNetTribes.Controllers
                 return new BadRequestObjectResult("Ops something is wrong");
             }
 
-            return kingdom;
+            return new OkObjectResult(kingdom);
         }
 
         [Authorize]

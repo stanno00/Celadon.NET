@@ -42,10 +42,6 @@ namespace DotNetTribes.Exceptions
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
 
-                    case KingdomDoesNotExistException e:
-                        response.StatusCode = (int) HttpStatusCode.NotFound;
-                        break;
-                    
                     // User registrations exceptions - BEGIN
                     case UsernameAlreadyTakenException e:
                         response.StatusCode = (int) HttpStatusCode.BadRequest;

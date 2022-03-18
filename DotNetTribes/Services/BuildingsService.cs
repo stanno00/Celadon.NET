@@ -43,7 +43,7 @@ namespace DotNetTribes.Services
 
             BuildingDetailsDTO buildingDetails = _rules.GetBuildingDetails(requestedBuilding, 1);
             Building toBeAdded =
-                CreateNewBuilding(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration);
+                CreateNewBuilding(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration, requestedBuilding);
 
 
             if (buildingDetails.BuildingPrice > kingdomGold.Amount)
@@ -66,12 +66,13 @@ namespace DotNetTribes.Services
             };
         }
 
-        private Building CreateNewBuilding(int kingdomId, int hp, int duration)
+        private Building CreateNewBuilding(int kingdomId, int hp, int duration, BuildingType type)
         {
             Building newBuilding = new Building
             {
                 KingdomId = kingdomId,
                 Level = 1,
+                Type = type,
                 Started_at = _timeService.GetCurrentSeconds(),
                 Finished_at = _timeService.GetCurrentSeconds() + duration,
                 Hp = hp

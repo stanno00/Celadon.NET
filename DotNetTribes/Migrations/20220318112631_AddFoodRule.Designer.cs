@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220317120339_AddRules")]
-    partial class AddRules
+    [Migration("20220318112631_AddFoodRule")]
+    partial class AddFoodRule
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,12 +23,27 @@ namespace DotNetTribes.Migrations
 
             modelBuilder.Entity("DotNetTribes.Models.Building", b =>
                 {
-                    b.Property<long>("BuildingId")
+                    b.Property<int>("BuildingId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("KingdomId")
+                    b.Property<long>("Finished_at")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Hp")
+                        .HasColumnType("int");
+
+                    b.Property<int>("KingdomId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<long>("Started_at")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("BuildingId");
@@ -229,7 +244,9 @@ namespace DotNetTribes.Migrations
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", null)
                         .WithMany("Buildings")
-                        .HasForeignKey("KingdomId");
+                        .HasForeignKey("KingdomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DotNetTribes.Models.Resource", b =>

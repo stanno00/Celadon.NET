@@ -23,6 +23,7 @@ namespace DotNetTribes
                     GameRulesId = 1,
                     Name = "Production",
                     StartingGold = 500,
+                    StartingFood = 500,
                     TownhallAllLevelsCost = 200,
                     FarmAllLevelsCost = 100,
                     MineAllLevelsCost = 100,

@@ -5,6 +5,6 @@ namespace DotNetTribes.DTOs.Troops
 {
     public class TroopResponseDTO
     {
-        public List<Troop> NewTroops { get; set; }
+        public List<UnfinishedTroop> NewTroops { get; set; }
     }
 }

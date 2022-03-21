@@ -5,6 +5,7 @@ using DotNetTribes.Enums;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace DotNetTribes.Services
 {
@@ -37,11 +38,16 @@ namespace DotNetTribes.Services
                 throw new TroopCreationException("You need an academy to be able to train troops.");
             }
 
-            var kingdom = _applicationContext.Kingdoms
-                .Include(k => k.Troops)
-                .FirstOrDefault(k => k.KingdomId == kingdomId);
-            var troops = kingdom!.Troops;
-            var storageLimit = _rules.StorageLimit(townhall.Level) - troops.Count;
+            //TODO: try to find a way to cut the kingdom out in this part
+            var troops = _applicationContext.Troops
+                .Where(t => t.KingdomId == kingdomId)
+                .ToList();
+            
+            var troopsWorkedOn = _applicationContext.TroopsWorkedOn
+                .Where(t => t.KingdomId == kingdomId)
+                .ToList();
+            
+            var storageLimit = _rules.StorageLimit(townhall.Level) - (troops.Count + troopsWorkedOn.Count) ;
 
             if (storageLimit < request.Number_of_troops)
             {
@@ -56,24 +62,21 @@ namespace DotNetTribes.Services
                 throw new TroopCreationException("Not enough gold.");
             }
 
-            List<Troop> newTroops = new List<Troop>();
+            List<UnfinishedTroop> newTroops = new List<UnfinishedTroop>();
 
             // add queue mechanic
-
             for (int i = 0; i < request.Number_of_troops; i++)
             {
-                newTroops.Add(new Troop
+                newTroops.Add(new UnfinishedTroop
                 {
-                    ConsumingFood = false,
                     StartedAt = _timeService.GetCurrentSeconds(),
                     FinishedAt = _timeService.GetCurrentSeconds() + _rules.TroopBuildingTime(1),
-                    //TODO: add kingdom coordinates once they are implemented
                 });
             }
 
             foreach (var troop in newTroops)
             {
-                troops.Add(troop);
+                troopsWorkedOn.Add(troop);
             }
 
             _applicationContext.SaveChanges();
@@ -83,6 +86,34 @@ namespace DotNetTribes.Services
             {
                 NewTroops = newTroops
             };
+        }
+        
+        public void UpdateTroops(int kingdomId)
+        {
+            var troops = _applicationContext.Troops
+                .Where(t => t.KingdomId == kingdomId)
+                .ToList();
+            
+            var troopsWorkedOn = _applicationContext.TroopsWorkedOn
+                .Where(t => t.KingdomId == kingdomId)
+                .ToList();
+
+            foreach (var troop in troopsWorkedOn)
+            {
+              if (troop.FinishedAt < _timeService.GetCurrentSeconds())
+              {
+                  troops.Add(new Troop
+                  {
+                      //TODO: Add coordinates once they get implemented
+                      KingdomId = kingdomId,
+                      ConsumingFood = true
+                  });
+                  troopsWorkedOn.Remove(troop);
+              }
+              troop.UpdatedAt = _timeService.GetCurrentSeconds();
+            }
+
+            _applicationContext.SaveChanges();
         }
     }
 }

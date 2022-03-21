@@ -24,73 +24,26 @@ namespace DotNetTribes.Services
 
         public TroopResponseDTO CreateNewTroops(int kingdomId, TroopRequestDTO request)
         {
-            Building townhall = _applicationContext.Buildings.FirstOrDefault(b => b.KingdomId == kingdomId && b.Type == BuildingType.TownHall);
-
-            if (townhall == null)
-            {
-                throw new TroopCreationException("You need a townhall first!");
-            }
-
-            Building academy = _applicationContext.Buildings.FirstOrDefault(b => b.KingdomId == kingdomId && b.Type == BuildingType.Academy);
-
-            if (academy == null)
-            {
-                throw new TroopCreationException("You need an academy to be able to train troops.");
-            }
-
-            //TODO: move this to a separate method
-            var troops = _applicationContext.Troops
-                .Where(t => t.KingdomId == kingdomId)
-                .ToList();
-
-            var troopsWorkedOn = _applicationContext.TroopsWorkedOn
-                .Where(t => t.KingdomId == kingdomId)
-                .ToList();
-
-            var storageLimit = _rules.StorageLimit(townhall.Level) - (troops.Count + troopsWorkedOn.Count);
-
-            if (storageLimit < request.Number_of_troops)
-            {
-                throw new TroopCreationException("Insufficient troop capacity.");
-            }
-
-            var kingdomGold = _applicationContext.Resources.FirstOrDefault(r => r.Type == ResourceType.Gold && r.KingdomId == kingdomId);
+            // this large DB call is done to avoid making 5 different, smaller DB calls needed throughout the process.
+            var kingdom = _applicationContext.Kingdoms
+                .Include(k => k.Buildings)
+                .Include(k => k.Resources)
+                .Include(k => k.Troops)
+                .Include(k => k.TroopsWorkedOn)
+                .FirstOrDefault(k => k.KingdomId == kingdomId);
+            var kingdomGold = kingdom.Resources.FirstOrDefault(r => r.Type == ResourceType.Gold);
             var orderPrice = _rules.TroopPrice(1) * request.Number_of_troops;
+            
+            PerformChecks(kingdom, request.Number_of_troops, kingdomGold!.Amount,orderPrice);
 
-            if (orderPrice > kingdomGold!.Amount)
-            {
-                throw new TroopCreationException("Not enough gold.");
-            }
-
-            List<UnfinishedTroop> newTroops = new List<UnfinishedTroop>();
-
-            // if the queue is empty:
-            {
-                for (int i = 0; i < request.Number_of_troops; i++)
-                {
-                    newTroops.Add(new UnfinishedTroop
-                    {
-                        //The starting time is decided on whether there are other troops being worked on. If there aren't, training starts now. If there are, it starts as soon as the last troop is finished training.
-                        StartedAt = troopsWorkedOn.Count == 0 ? 
-                            _timeService.GetCurrentSeconds() + i * _rules.TroopBuildingTime(1) : 
-                            troopsWorkedOn.Last().FinishedAt +  i * _rules.TroopBuildingTime(1),
-                        FinishedAt =
-                            troopsWorkedOn.Count == 0 ? 
-                                _timeService.GetCurrentSeconds() + (i + 1) * _rules.TroopBuildingTime(1) :
-                                troopsWorkedOn.Last().FinishedAt +  (i + 1) * _rules.TroopBuildingTime(1),
-                        Level = 1,
-                        KingdomId = kingdomId
-                    });
-                }
-            }
+            List<UnfinishedTroop> newTroops = CreateNewTroops(kingdomId, request.Number_of_troops, kingdom.TroopsWorkedOn.ToList());
 
             foreach (var troop in newTroops)
             {
-                _applicationContext.TroopsWorkedOn.Add(troop);
+                kingdom.TroopsWorkedOn.Add(troop);
             }
-
+            kingdomGold.Amount -= orderPrice;
             _applicationContext.SaveChanges();
-
 
             return new TroopResponseDTO
             {
@@ -126,6 +79,46 @@ namespace DotNetTribes.Services
             }
 
             _applicationContext.SaveChanges();
+        }
+
+        public int CalculateStorageLimit(Kingdom kingdom)
+        {
+            return _rules.StorageLimit(kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall).Level) - (kingdom.Troops.Count + kingdom.TroopsWorkedOn.Count);
+        }
+        
+        public void PerformChecks(Kingdom kingdom, int requestedAmount, int goldAmount, int orderPrice)
+        {
+            if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy) == null)
+            {
+                throw new TroopCreationException("You need an academy to be able to train troops.");
+            }
+            if (CalculateStorageLimit(kingdom) < requestedAmount)
+            {
+                throw new TroopCreationException("Insufficient troop capacity.");
+            }
+            if (orderPrice > goldAmount)
+            {
+                throw new TroopCreationException("Not enough gold.");
+            }
+        }
+
+        public List<UnfinishedTroop> CreateNewTroops(int kingdomId, int amount, List<UnfinishedTroop> troopsWorkedOn)
+        {
+            List<UnfinishedTroop> newTroops = new List<UnfinishedTroop>();
+
+            for (int i = 0; i < amount; i++)
+            {
+                newTroops.Add(new UnfinishedTroop
+                {
+                    //The starting time is decided on whether there are other troops being worked on (Built or upgraded). If there aren't, training starts now. If there are, it starts as soon as the last troop is finished training.
+                    StartedAt = troopsWorkedOn.Count == 0 ? _timeService.GetCurrentSeconds() + i * _rules.TroopBuildingTime(1) : troopsWorkedOn.Last().FinishedAt + i * _rules.TroopBuildingTime(1),
+                    FinishedAt =
+                        troopsWorkedOn.Count == 0 ? _timeService.GetCurrentSeconds() + (i + 1) * _rules.TroopBuildingTime(1) : troopsWorkedOn.Last().FinishedAt + (i + 1) * _rules.TroopBuildingTime(1),
+                    Level = 1,
+                    KingdomId = kingdomId
+                });
+            }
+            return newTroops;
         }
     }
 }

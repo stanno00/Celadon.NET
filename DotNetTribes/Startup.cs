@@ -68,6 +68,7 @@ namespace DotNetTribes
             services.AddTransient<IKingdomService, KingdomService>();
             services.AddTransient<IRulesService, RulesService>();
             services.AddTransient<IBuildingsService, BuildingsService>();
+            services.AddTransient<ITroopService, TroopService>();
 
         }
 

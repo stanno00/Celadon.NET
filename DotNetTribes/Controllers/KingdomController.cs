@@ -1,4 +1,5 @@
 ﻿using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Troops;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +12,15 @@ namespace DotNetTribes.Controllers
         private readonly IKingdomService _kingdomService;
         private readonly IJwtService _jwtService;
         private readonly IBuildingsService _buildingsService;
+        private readonly ITroopService _troopService;
         
         
-        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService)
+        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService, ITroopService troopService)
         {
             _kingdomService = kingdomService;
             _jwtService = jwtService;
             _buildingsService = buildingsService;
+            _troopService = troopService;
         }
 
         [HttpGet]
@@ -53,6 +56,16 @@ namespace DotNetTribes.Controllers
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var response = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
+            return new OkObjectResult(response);
+        }
+
+        [Authorize]
+        [HttpPost("troops")]
+        public ActionResult<TroopResponseDTO> CreateTroops([FromHeader] string authorization, [FromBody] TroopRequestDTO request)
+        {
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var response = _troopService.CreateNewTroops(kingdomId, request);
+
             return new OkObjectResult(response);
         }
     }

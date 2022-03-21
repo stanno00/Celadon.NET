@@ -1,7 +1,10 @@
-﻿namespace DotNetTribes.DTOs.Troops
+﻿using System.Collections.Generic;
+using DotNetTribes.Models;
+
+namespace DotNetTribes.DTOs.Troops
 {
     public class TroopResponseDTO
     {
-        public string New_troops { get; set; }
+        public List<Troop> NewTroops { get; set; }
     }
 }

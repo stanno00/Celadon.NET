@@ -13,12 +13,14 @@ namespace DotNetTribes.Services
         private readonly ApplicationContext _applicationContext;
         private readonly ITimeService _timeService;
         private readonly IRulesService _rules;
+        private readonly IResourceService _resourceService;
 
-        public BuildingsService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rules)
+        public BuildingsService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rules, IResourceService resourceService)
         {
             _applicationContext = applicationContext;
             _timeService = timeService;
             _rules = rules;
+            _resourceService = resourceService;
         }
 
 
@@ -114,6 +116,8 @@ namespace DotNetTribes.Services
             gold.Amount -= upgradeBuilding.BuildingPrice;
             building.Hp = upgradeBuilding.BuildingHP;
             building.Level = buildingNextLevel;
+            
+            _resourceService.UpdateKingdomResources(kingdomId);
             
             _applicationContext.SaveChanges();
 

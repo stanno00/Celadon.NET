@@ -11,11 +11,13 @@ namespace DotNetTribes.Services
     {
         private readonly ApplicationContext _applicationContext;
         private readonly ITimeService _timeService;
+        private readonly IRulesService _rulesService;
 
-        public ResourceService(ApplicationContext applicationContext, ITimeService timeService)
+        public ResourceService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rulesService)
         {
             _applicationContext = applicationContext;
             _timeService = timeService;
+            _rulesService = rulesService;
         }
 
         private void UpdateSingleResource(Resource resource)
@@ -24,25 +26,30 @@ namespace DotNetTribes.Services
 
             // Unless a minute passes this method wont run
             if (minutesPassedSinceLastUpdate <= 0) return;
-            
+
             resource.Amount += minutesPassedSinceLastUpdate * resource.Generation;
             resource.UpdatedAt = _timeService.GetCurrentSeconds();
 
         }
 
-        private void UpdateKingdomResources(int kingdomId)
+        public void UpdateKingdomResources(int kingdomId)
         {
-            // Getting all resources from kingdom 
-            var kingdomResources = _applicationContext.Resources
-                .Where(r => r.KingdomId == kingdomId)
+            // Getting all resource generation buildings from kingdom 
+            var kingdomResourceBuildings = _applicationContext.Buildings
+                .Where(b => b.KingdomId == kingdomId && (b.Type == BuildingType.Farm || b.Type == BuildingType.Mine))
                 .ToList();
 
             // Updating each resource
-            foreach (var resource in kingdomResources)
+            foreach (var building in kingdomResourceBuildings)
             {
+                var resource = _applicationContext.Resources.FirstOrDefault(r =>
+                    r.KingdomId == kingdomId && r.Type == GetResourceTypeByBuildingType(building.Type));
+                
+                if (resource == null) continue;
+                
+                resource.Generation = _rulesService.BuildingResourceGeneration(building, resource);
                 UpdateSingleResource(resource);
             }
-
             _applicationContext.SaveChanges();
         }
 
@@ -67,6 +74,18 @@ namespace DotNetTribes.Services
             };
 
             return resources;
+        }
+
+        private ResourceType GetResourceTypeByBuildingType(BuildingType buildingType)
+        {
+            var resourceType = buildingType switch
+            {
+                BuildingType.Farm => ResourceType.Food,
+                BuildingType.Mine => ResourceType.Gold,
+                _ => throw new ArgumentOutOfRangeException(nameof(buildingType), buildingType, null)
+            };
+
+            return resourceType;
         }
     }
 }

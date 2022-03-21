@@ -23,6 +23,8 @@ namespace DotNetTribes.Services
         public int AcademyBuildingTime(int level);
         public int TroopBuildingTime(int level);
 
+        public int BuildingResourceGeneration(Building building, Resource resource);
+
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level);
     }
 }

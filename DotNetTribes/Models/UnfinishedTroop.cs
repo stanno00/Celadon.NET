@@ -7,5 +7,8 @@
         public long StartedAt { get; set; }
         public long FinishedAt { get; set; }
         public long UpdatedAt { get; set; }
+        
+        public int Level { get; set; }
+        public bool Upgrading { get; set; }
     }
 }

@@ -39,6 +39,7 @@ namespace DotNetTribes.Services
             }
 
             //TODO: try to find a way to cut the kingdom out in this part
+            //TODO: move this to a separate method
             var troops = _applicationContext.Troops
                 .Where(t => t.KingdomId == kingdomId)
                 .ToList();
@@ -63,22 +64,22 @@ namespace DotNetTribes.Services
             }
 
             List<UnfinishedTroop> newTroops = new List<UnfinishedTroop>();
-
-            // add queue mechanic
+            
             for (int i = 0; i < request.Number_of_troops; i++)
             {
                 newTroops.Add(new UnfinishedTroop
                 {
-                    StartedAt = _timeService.GetCurrentSeconds(),
-                    FinishedAt = _timeService.GetCurrentSeconds() + _rules.TroopBuildingTime(1),
+                    StartedAt = _timeService.GetCurrentSeconds() + i* _rules.TroopBuildingTime(1),
+                    FinishedAt = _timeService.GetCurrentSeconds() + (i + 1) * _rules.TroopBuildingTime(1),
+                    Level = 1,
+                    KingdomId = kingdomId
                 });
             }
 
             foreach (var troop in newTroops)
             {
-                troopsWorkedOn.Add(troop);
+                _applicationContext.TroopsWorkedOn.Add(troop);
             }
-
             _applicationContext.SaveChanges();
 
 
@@ -106,13 +107,13 @@ namespace DotNetTribes.Services
                   {
                       //TODO: Add coordinates once they get implemented
                       KingdomId = kingdomId,
-                      ConsumingFood = true
+                      ConsumingFood = true, 
+                      Level = troop.Upgrading ? (troop.Level + 1) : troop.Level
                   });
                   troopsWorkedOn.Remove(troop);
               }
               troop.UpdatedAt = _timeService.GetCurrentSeconds();
             }
-
             _applicationContext.SaveChanges();
         }
     }

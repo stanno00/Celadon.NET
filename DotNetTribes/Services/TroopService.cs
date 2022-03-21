@@ -38,17 +38,16 @@ namespace DotNetTribes.Services
                 throw new TroopCreationException("You need an academy to be able to train troops.");
             }
 
-            //TODO: try to find a way to cut the kingdom out in this part
             //TODO: move this to a separate method
             var troops = _applicationContext.Troops
                 .Where(t => t.KingdomId == kingdomId)
                 .ToList();
-            
+
             var troopsWorkedOn = _applicationContext.TroopsWorkedOn
                 .Where(t => t.KingdomId == kingdomId)
                 .ToList();
-            
-            var storageLimit = _rules.StorageLimit(townhall.Level) - (troops.Count + troopsWorkedOn.Count) ;
+
+            var storageLimit = _rules.StorageLimit(townhall.Level) - (troops.Count + troopsWorkedOn.Count);
 
             if (storageLimit < request.Number_of_troops)
             {
@@ -64,22 +63,32 @@ namespace DotNetTribes.Services
             }
 
             List<UnfinishedTroop> newTroops = new List<UnfinishedTroop>();
-            
-            for (int i = 0; i < request.Number_of_troops; i++)
+
+            // if the queue is empty:
             {
-                newTroops.Add(new UnfinishedTroop
+                for (int i = 0; i < request.Number_of_troops; i++)
                 {
-                    StartedAt = _timeService.GetCurrentSeconds() + i* _rules.TroopBuildingTime(1),
-                    FinishedAt = _timeService.GetCurrentSeconds() + (i + 1) * _rules.TroopBuildingTime(1),
-                    Level = 1,
-                    KingdomId = kingdomId
-                });
+                    newTroops.Add(new UnfinishedTroop
+                    {
+                        //The starting time is decided on whether there are other troops being worked on. If there aren't, training starts now. If there are, it starts as soon as the last troop is finished training.
+                        StartedAt = troopsWorkedOn.Count == 0 ? 
+                            _timeService.GetCurrentSeconds() + i * _rules.TroopBuildingTime(1) : 
+                            troopsWorkedOn.Last().FinishedAt +  i * _rules.TroopBuildingTime(1),
+                        FinishedAt =
+                            troopsWorkedOn.Count == 0 ? 
+                                _timeService.GetCurrentSeconds() + (i + 1) * _rules.TroopBuildingTime(1) :
+                                troopsWorkedOn.Last().FinishedAt +  (i + 1) * _rules.TroopBuildingTime(1),
+                        Level = 1,
+                        KingdomId = kingdomId
+                    });
+                }
             }
 
             foreach (var troop in newTroops)
             {
                 _applicationContext.TroopsWorkedOn.Add(troop);
             }
+
             _applicationContext.SaveChanges();
 
 
@@ -88,32 +97,34 @@ namespace DotNetTribes.Services
                 NewTroops = newTroops
             };
         }
-        
+
         public void UpdateTroops(int kingdomId)
         {
             var troops = _applicationContext.Troops
                 .Where(t => t.KingdomId == kingdomId)
                 .ToList();
-            
+
             var troopsWorkedOn = _applicationContext.TroopsWorkedOn
                 .Where(t => t.KingdomId == kingdomId)
                 .ToList();
 
             foreach (var troop in troopsWorkedOn)
             {
-              if (troop.FinishedAt < _timeService.GetCurrentSeconds())
-              {
-                  troops.Add(new Troop
-                  {
-                      //TODO: Add coordinates once they get implemented
-                      KingdomId = kingdomId,
-                      ConsumingFood = true, 
-                      Level = troop.Upgrading ? (troop.Level + 1) : troop.Level
-                  });
-                  troopsWorkedOn.Remove(troop);
-              }
-              troop.UpdatedAt = _timeService.GetCurrentSeconds();
+                if (troop.FinishedAt < _timeService.GetCurrentSeconds())
+                {
+                    troops.Add(new Troop
+                    {
+                        //TODO: Add coordinates once they get implemented
+                        KingdomId = kingdomId,
+                        ConsumingFood = true,
+                        Level = troop.Upgrading ? (troop.Level + 1) : troop.Level
+                    });
+                    troopsWorkedOn.Remove(troop);
+                }
+
+                troop.UpdatedAt = _timeService.GetCurrentSeconds();
             }
+
             _applicationContext.SaveChanges();
         }
     }

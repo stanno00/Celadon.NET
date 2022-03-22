@@ -117,22 +117,20 @@ namespace DotNetTribes.Services
             return level * _r.TroopAllLevelsDuration;
         }
 
-        public int BuildingResourceGeneration(Building building, Resource resource)
+        public int BuildingResourceGeneration(Building building)
         {
+            var resourceGeneration = 0;
             switch (building.Type)
             {
                 case BuildingType.Mine:
-                    resource.Generation = _r.MineALlLevelsGoldGeneration;
+                    resourceGeneration = _r.MineALlLevelsGoldGeneration;
                     break;
                 case BuildingType.Farm:
-                    resource.Generation = _r.FarmAllLevelsFoodGeneration;
-                    break;
-                default:
-                    resource.Generation = 0;
+                    resourceGeneration = _r.FarmAllLevelsFoodGeneration;
                     break;
             }
 
-            return building.Level * resource.Generation + 5;
+            return building.Level * resourceGeneration + 5;
         }
 
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level)

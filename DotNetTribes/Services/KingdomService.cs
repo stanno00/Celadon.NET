@@ -7,12 +7,10 @@ namespace DotNetTribes.Services
     public class KingdomService : IKingdomService
     {
         private readonly ApplicationContext _applicationContext;
-        private readonly IResourceService _resourceService;
 
-        public KingdomService(ApplicationContext applicationContext, IResourceService resourceService)
+        public KingdomService(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
-            _resourceService = resourceService;
         }
 
         public KingdomDto KingdomInfo(int kingdomId)
@@ -29,7 +27,7 @@ namespace DotNetTribes.Services
                 KingdomName = kingdom.Name,
                 Username = kingdom.User?.Username,
                 Buildings = kingdom.Buildings,
-                Resources = _resourceService.GetKingdomResources(kingdomId),
+                Resources = kingdom.Resources,
                 Troops = kingdom.Troops
             };
             return kingdomDto;

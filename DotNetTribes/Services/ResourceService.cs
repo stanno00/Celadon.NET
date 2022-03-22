@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Enums;
@@ -35,19 +34,19 @@ namespace DotNetTribes.Services
         public void UpdateKingdomResources(int kingdomId)
         {
             // Getting all resource generation buildings from kingdom 
-            var kingdomResourceBuildings = _applicationContext.Buildings
-                .Where(b => b.KingdomId == kingdomId && (b.Type == BuildingType.Farm || b.Type == BuildingType.Mine))
+            var kingdomResources = _applicationContext.Resources
+                .Where(r => r.KingdomId == kingdomId)
                 .ToList();
 
             // Updating each resource
-            foreach (var building in kingdomResourceBuildings)
+            foreach (var resource in kingdomResources)
             {
-                var resource = _applicationContext.Resources.FirstOrDefault(r =>
-                    r.KingdomId == kingdomId && r.Type == GetResourceTypeByBuildingType(building.Type));
+                var building = _applicationContext.Buildings.FirstOrDefault(b =>
+                    b.KingdomId == kingdomId && b.Type == GetBuildingTypeByResourceType(resource.Type));
                 
-                if (resource == null) continue;
+                if (building == null) continue;
                 
-                resource.Generation = _rulesService.BuildingResourceGeneration(building, resource);
+                resource.Generation = _rulesService.BuildingResourceGeneration(building);
                 UpdateSingleResource(resource);
             }
             _applicationContext.SaveChanges();
@@ -76,16 +75,16 @@ namespace DotNetTribes.Services
             return resources;
         }
 
-        private ResourceType GetResourceTypeByBuildingType(BuildingType buildingType)
+        private BuildingType GetBuildingTypeByResourceType(ResourceType resourceType)
         {
-            var resourceType = buildingType switch
+            var buildingType = resourceType switch
             {
-                BuildingType.Farm => ResourceType.Food,
-                BuildingType.Mine => ResourceType.Gold,
-                _ => throw new ArgumentOutOfRangeException(nameof(buildingType), buildingType, null)
+                ResourceType.Food => BuildingType.Farm,
+                ResourceType.Gold => BuildingType.Mine,
+                _ => throw new ArgumentOutOfRangeException(nameof(resourceType), resourceType, null)
             };
 
-            return resourceType;
+            return buildingType;
         }
     }
 }

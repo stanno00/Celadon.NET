@@ -14,12 +14,14 @@ namespace DotNetTribes.Services
         private readonly ApplicationContext _applicationContext;
         private readonly IRulesService _rules;
         private readonly ITimeService _timeService;
+        private readonly IResourceService _resourceService;
 
-        public TroopService(ApplicationContext applicationContext, IRulesService rules, ITimeService timeService)
+        public TroopService(ApplicationContext applicationContext, IRulesService rules, ITimeService timeService, IResourceService resourceService)
         {
             _applicationContext = applicationContext;
             _rules = rules;
             _timeService = timeService;
+            _resourceService = resourceService;
         }
 
         public TroopResponseDTO TrainNewTroops(int kingdomId, TroopRequestDTO request)
@@ -91,6 +93,9 @@ namespace DotNetTribes.Services
                         _applicationContext.TroopsWorkedOn.Remove(troop);
                     }
 
+                    //Once a soldier (or a bunch of them) are created, they start eating. Fortunately, the methods are implemented in such a way that
+                    //unless enough time has passed, only the generation will be updated, not the actual amount.
+                    _resourceService.UpdateKingdomResources(kingdomId);
                     _applicationContext.SaveChanges();
                 }
             }

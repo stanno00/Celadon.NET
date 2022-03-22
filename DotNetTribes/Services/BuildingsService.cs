@@ -138,8 +138,8 @@ namespace DotNetTribes.Services
                 Type = buildingToBeUpgraded.Type.ToString(),
                 Level = buildingNextLevel,
                 Hp = buildingToBeUpgraded.Hp,
-                Started_at = _timeService.GetCurrentSeconds().ToString(),
-                Finished_at = ((int)_timeService.GetCurrentSeconds() + upgradeBuilding.BuildingDuration).ToString()
+                Started_at = buildingToBeUpgraded.Started_at.ToString(),
+                Finished_at = buildingToBeUpgraded.Finished_at.ToString()
             };
 
             return response;

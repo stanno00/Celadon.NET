@@ -7,5 +7,6 @@ namespace DotNetTribes.Services
         public TroopResponseDTO CreateNewTroops(int kingdomId, TroopRequestDTO request);
 
         public KingdomTroopsDTO GetKingdomTroops(int kingdomId);
+        public void UpdateTroops(int kingdomId);
     }
 }

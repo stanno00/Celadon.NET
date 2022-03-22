@@ -33,8 +33,8 @@ namespace DotNetTribes.Services
                 .FirstOrDefault(k => k.KingdomId == kingdomId);
             var kingdomGold = kingdom.Resources.FirstOrDefault(r => r.Type == ResourceType.Gold);
             var orderPrice = _rules.TroopPrice(1) * request.Number_of_troops;
-            
-            PerformChecks(kingdom, request.Number_of_troops, kingdomGold!.Amount,orderPrice);
+
+            PerformChecks(kingdom, request.Number_of_troops, kingdomGold!.Amount, orderPrice);
 
             List<UnfinishedTroop> newTroops = CreateNewTroops(kingdomId, request.Number_of_troops, kingdom.TroopsWorkedOn.ToList());
 
@@ -42,6 +42,7 @@ namespace DotNetTribes.Services
             {
                 kingdom.TroopsWorkedOn.Add(troop);
             }
+
             kingdomGold.Amount -= orderPrice;
             _applicationContext.SaveChanges();
 
@@ -61,6 +62,8 @@ namespace DotNetTribes.Services
                 .Where(t => t.KingdomId == kingdomId)
                 .ToList();
 
+            List<UnfinishedTroop> troopsToRemove = new List<UnfinishedTroop>();
+
             foreach (var troop in troopsWorkedOn)
             {
                 if (troop.FinishedAt < _timeService.GetCurrentSeconds())
@@ -72,10 +75,21 @@ namespace DotNetTribes.Services
                         ConsumingFood = true,
                         Level = troop.Upgrading ? (troop.Level + 1) : troop.Level
                     });
-                    troopsWorkedOn.Remove(troop);
+                   troopsToRemove.Add(troop);
                 }
 
                 troop.UpdatedAt = _timeService.GetCurrentSeconds();
+            }
+
+            // this is disgusting, find a way to make it better
+            foreach (var troop in troopsToRemove)
+            {
+                _applicationContext.TroopsWorkedOn.Remove(troop);
+            }
+
+            foreach (var troop in troops)
+            {
+                _applicationContext.Troops.Add(troop);
             }
 
             _applicationContext.SaveChanges();
@@ -85,17 +99,19 @@ namespace DotNetTribes.Services
         {
             return _rules.StorageLimit(kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall).Level) - (kingdom.Troops.Count + kingdom.TroopsWorkedOn.Count);
         }
-        
+
         public void PerformChecks(Kingdom kingdom, int requestedAmount, int goldAmount, int orderPrice)
         {
             if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy) == null)
             {
                 throw new TroopCreationException("You need an academy to be able to train troops.");
             }
+
             if (CalculateStorageLimit(kingdom) < requestedAmount)
             {
                 throw new TroopCreationException("Insufficient troop capacity.");
             }
+
             if (orderPrice > goldAmount)
             {
                 throw new TroopCreationException("Not enough gold.");
@@ -118,6 +134,7 @@ namespace DotNetTribes.Services
                     KingdomId = kingdomId
                 });
             }
+
             return newTroops;
         }
 
@@ -129,11 +146,6 @@ namespace DotNetTribes.Services
                     .Where(t => t.KingdomId == kingdomId)
                     .ToList()
             };
-        }
-        
-        public void CheckTrainingFinished()
-        {
-            
         }
     }
 }

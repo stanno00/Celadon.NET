@@ -56,7 +56,9 @@ namespace DotNetTribes.Controllers
         [HttpGet("troops")]
         public ActionResult<KingdomTroopsDTO> GetKingdomTroops([FromHeader]string authorization)
         {
-            return new OkObjectResult(_troopService.GetKingdomTroops(_jwtService.GetKingdomIdFromJwt(authorization)));
+            var kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            _troopService.UpdateTroops(kingdomId);
+            return new OkObjectResult(_troopService.GetKingdomTroops(kingdomId));
         }
     }
 }

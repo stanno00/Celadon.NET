@@ -41,7 +41,9 @@ namespace DotNetTribes
                     FarmHP = 100,
                     MineHP = 100,
                     AcademyHP = 150,
-                    TroopHP = 20
+                    TroopHP = 20,
+                    KingdomX = 101,
+                    KingdomY = 101
                 });
         }
         public ApplicationContext(DbContextOptions options) : base(options)

@@ -55,5 +55,16 @@ namespace DotNetTribes.Controllers
             var response = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
             return new OkObjectResult(response);
         }
+
+        [Authorize]
+        [HttpPost("nearest")]
+        public ActionResult<NearbyKingdomsDto> NearestKingdoms([FromBody] RequestMinutesDto minutes,[FromHeader] string authorization
+        )
+        {
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var response = _kingdomService.NearestKingdoms(minutes.Minutes,kingdomId);
+
+            return new ObjectResult(response);
+        }
     }
 }

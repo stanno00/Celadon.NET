@@ -4,14 +4,16 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220321151410_AddCoordinates")]
+    partial class AddCoordinates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,12 +85,6 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("FarmHP")
                         .HasColumnType("int");
 
-                    b.Property<int>("KingdomX")
-                        .HasColumnType("int");
-
-                    b.Property<int>("KingdomY")
-                        .HasColumnType("int");
-
                     b.Property<int>("MineAllLevelsCost")
                         .HasColumnType("int");
 
@@ -144,8 +140,6 @@ namespace DotNetTribes.Migrations
                             FarmAllLevelsCost = 100,
                             FarmAllLevelsDuration = 60,
                             FarmHP = 100,
-                            KingdomX = 101,
-                            KingdomY = 101,
                             MineAllLevelsCost = 100,
                             MineAllLevesDuration = 60,
                             MineHP = 100,

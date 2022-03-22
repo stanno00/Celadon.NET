@@ -24,5 +24,8 @@ namespace DotNetTribes.Services
         public int TroopBuildingTime(int level);
 
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level);
+        
+        public int KingdomX();
+        public int KingdomY();
     }
 }

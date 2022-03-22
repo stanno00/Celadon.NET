@@ -115,6 +115,16 @@ namespace DotNetTribes.Services
         {
             return level * _r.TroopAllLevelsDuration;
         }
+
+        public int KingdomX()
+        {
+            return _r.KingdomX;
+        }
+        
+        public int KingdomY()
+        {
+            return _r.KingdomY;
+        }
         
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level)
         {

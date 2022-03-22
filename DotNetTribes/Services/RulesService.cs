@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using DotNetTribes.DTOs;
+using DotNetTribes.Enums;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 
@@ -115,7 +116,23 @@ namespace DotNetTribes.Services
         {
             return level * _r.TroopAllLevelsDuration;
         }
-        
+
+        public int BuildingResourceGeneration(Building building)
+        {
+            var resourceGeneration = 0;
+            switch (building.Type)
+            {
+                case BuildingType.Mine:
+                    resourceGeneration = _r.MineALlLevelsGoldGeneration;
+                    break;
+                case BuildingType.Farm:
+                    resourceGeneration = _r.FarmAllLevelsFoodGeneration;
+                    break;
+            }
+
+            return building.Level * resourceGeneration + 5;
+        }
+
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level)
         {
             switch (type)

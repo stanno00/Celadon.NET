@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetTribes.ActionFilters;
 using DotNetTribes.Services;
 using DotNetTribes.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -60,6 +61,7 @@ namespace DotNetTribes
                 };
             });
 
+            services.AddScoped<UpdateResourceAttribute>();
             services.AddTransient<IResourceService, ResourceService>();
             services.AddTransient<IUserService, UserService>();
             services.AddSingleton<ITimeService, TimeService>();

@@ -130,5 +130,10 @@ namespace DotNetTribes.Services
                     .ToList()
             };
         }
+        
+        public void CheckTrainingFinished()
+        {
+            
+        }
     }
 }

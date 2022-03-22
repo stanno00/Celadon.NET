@@ -95,7 +95,7 @@ namespace DotNetTribes.Services
                 }
             }
         }
-        
+
         private int CalculateStorageLimit(Kingdom kingdom)
         {
             return _rules.StorageLimit(kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall)!.Level) - (kingdom.Troops.Count + kingdom.TroopsWorkedOn.Count);

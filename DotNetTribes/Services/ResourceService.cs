@@ -11,30 +11,34 @@ namespace DotNetTribes.Services
     {
         private readonly ApplicationContext _applicationContext;
         private readonly ITimeService _timeService;
-        private readonly IRulesService _rules;
+        private readonly IRulesService _rulesService;
 
-        public ResourceService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rules)
+        public ResourceService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rulesService)
         {
             _applicationContext = applicationContext;
             _timeService = timeService;
-            _rules = rules;
+            _rulesService = rulesService;
         }
 
-        private void UpdateSingleResource(Resource resource)
+        private void UpdateSingleResource(Resource resource, int kingdomId)
         {
-            var minutesPassedSinceLastUpdate = (int)_timeService.MinutesSince(resource.UpdatedAt);
+            var minutesPassedSinceLastUpdate = (int) _timeService.MinutesSince(resource.UpdatedAt);
 
             // Unless a minute passes this method wont run
             if (minutesPassedSinceLastUpdate <= 0) return;
-            
+
+            if (resource.Type == ResourceType.Food && resource.Generation < 0)
+            {
+                FeedTroopsWithInsufficientFood(kingdomId);
+            }
+
             resource.Amount += minutesPassedSinceLastUpdate * resource.Generation;
             resource.UpdatedAt = _timeService.GetCurrentSeconds();
-
         }
 
-        private void UpdateKingdomResources(int kingdomId)
+        public void UpdateKingdomResources(int kingdomId)
         {
-            // Getting all resources from kingdom 
+            // Getting all resource generation buildings from kingdom 
             var kingdomResources = _applicationContext.Resources
                 .Where(r => r.KingdomId == kingdomId)
                 .ToList();
@@ -42,7 +46,16 @@ namespace DotNetTribes.Services
             // Updating each resource
             foreach (var resource in kingdomResources)
             {
-                UpdateSingleResource(resource);
+                var building = _applicationContext.Buildings.FirstOrDefault(b =>
+                    b.KingdomId == kingdomId && b.Type == GetBuildingTypeByResourceType(resource.Type));
+
+                if (building == null) continue;
+
+                //resource.Generation = _rulesService.BuildingResourceGeneration(building);
+                resource.Generation = resource.Type == ResourceType.Food
+                    ? (_rulesService.BuildingResourceGeneration(building) - CalculateTroopConsumption(kingdomId))
+                    : _rulesService.BuildingResourceGeneration(building);
+                UpdateSingleResource(resource, kingdomId);
             }
 
             _applicationContext.SaveChanges();
@@ -52,7 +65,7 @@ namespace DotNetTribes.Services
         {
             // Updating all resources before returning values to controller
             UpdateKingdomResources(kingdomId);
-            
+
             var kingdomResourceDtoList = _applicationContext.Resources
                 .Where(r => r.KingdomId == kingdomId)
                 .Select(r => new ResourceDto
@@ -62,7 +75,7 @@ namespace DotNetTribes.Services
                     UpdatedAt = r.UpdatedAt
                 })
                 .ToList();
-            
+
             var resources = new ResourcesDto
             {
                 Resources = kingdomResourceDtoList
@@ -70,35 +83,57 @@ namespace DotNetTribes.Services
 
             return resources;
         }
-        
-        public void FeedTroops(int kingdomId)
+
+        public int CalculateTroopConsumption(int kingdomId)
         {
-            //TODO: Discuss whether the consuming flag is actually needed - unfinished troops not eating is already addressed by its model.
-            var kingdomFood = _applicationContext.Resources.FirstOrDefault(r => r.Type == ResourceType.Food && r.KingdomId == kingdomId);
             var kingdomTroops = _applicationContext.Troops
                 .Where(t => t.KingdomId == kingdomId)
                 .ToList();
             int consumption = 0;
-            //First, adjust the generation.
             foreach (var troop in kingdomTroops)
             {
-                consumption += _rules.TroopFoodConsumption(troop.Level);
+                consumption += _rulesService.TroopFoodConsumption(troop.Level);
             }
-            // The method can't just lower food generation every time it's run - it has to calculate the whole amount, so the implementation of generation is needed here.
-            
-            //kingdomFood.Generation = for farm in farms{generation += rules.FarmFoodGeneration(Farm.Level) - consumption}
-            
-            //then feed the troops
-            
-            /*
-             * if (_timeService.TimeSince(troop.FedAt) <= 60)
-             * {
-             *if (enough food)
-             * {kingdomFood -= consumption}
-             * }
-             * else
-             * {fertilizer hits the ventilator here}             
-             */
+
+            return consumption;
+        }
+
+        private void FeedTroopsWithInsufficientFood(int kigdomId)
+        {
+            int kingdomFood = _applicationContext.Resources
+                .Single(r => r.Type == ResourceType.Food && r.KingdomId == kigdomId).Amount;
+            var kingdomTroops = _applicationContext.Troops
+                .Where(t => t.KingdomId == kigdomId)
+                .OrderBy(t => t.Level)
+                .ToList();
+
+            foreach (var troop in kingdomTroops)
+            {
+                int foodNeeded = _rulesService.TroopFoodConsumption(troop.Level);
+                if (kingdomFood > foodNeeded)
+                {
+                    kingdomFood -= foodNeeded;
+                    troop.UpdatedAt = _timeService.GetCurrentSeconds();
+                }
+                else
+                {
+                    _applicationContext.Troops.Remove(troop);
+                }
+            }
+
+            _applicationContext.SaveChanges();
+        }
+
+        private BuildingType GetBuildingTypeByResourceType(ResourceType resourceType)
+        {
+            var buildingType = resourceType switch
+            {
+                ResourceType.Food => BuildingType.Farm,
+                ResourceType.Gold => BuildingType.Mine,
+                _ => throw new ArgumentOutOfRangeException(nameof(resourceType), resourceType, null)
+            };
+
+            return buildingType;
         }
     }
 }

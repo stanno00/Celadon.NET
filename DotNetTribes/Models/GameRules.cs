@@ -22,10 +22,15 @@
         public int AcademyLevelNDuration { get; set; }
         public int TroopAllLevelsDuration { get; set; }
         public int TownhallHP { get; set; }
+        public int StorageLimit { get; set; }
         public int FarmHP { get; set; }
         public int MineHP { get; set; }
         public int AcademyHP { get; set; }
         public int TroopHP { get; set; }
         public int TroopFoodConsumption { get; set; }
+        
+        public int TroopAttack { get; set; }
+        public int TroopDefense { get; set; }
+        public int TroopCapacity { get; set; }
     }
 }

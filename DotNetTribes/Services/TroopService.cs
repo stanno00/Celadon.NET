@@ -54,50 +54,51 @@ namespace DotNetTribes.Services
 
         public void UpdateTroops(int kingdomId)
         {
-            var troops = _applicationContext.Troops
-                .Where(t => t.KingdomId == kingdomId)
-                .ToList();
-
             var troopsWorkedOn = _applicationContext.TroopsWorkedOn
                 .Where(t => t.KingdomId == kingdomId)
                 .ToList();
 
-            List<UnfinishedTroop> troopsToRemove = new List<UnfinishedTroop>();
-
-            foreach (var troop in troopsWorkedOn)
+            if (troopsWorkedOn.Count != 0)
             {
-                if (troop.FinishedAt < _timeService.GetCurrentSeconds())
+                List<UnfinishedTroop> troopsToRemove = new List<UnfinishedTroop>();
+
+                foreach (var troop in troopsWorkedOn)
                 {
-                    troops.Add(new Troop
+                    if (troop.FinishedAt < _timeService.GetCurrentSeconds())
                     {
-                        //TODO: Add coordinates once they get implemented
-                        KingdomId = kingdomId,
-                        ConsumingFood = true,
-                        Level = troop.Upgrading ? (troop.Level + 1) : troop.Level
-                    });
-                   troopsToRemove.Add(troop);
+                        int level = troop.Upgrading ? (troop.Level + 1) : troop.Level;
+                        _applicationContext.Troops.Add(new Troop
+                        {
+                            //TODO: Add coordinates once they get implemented
+                            ConsumingFood = true,
+                            Level = level,
+                            Attack = _rules.TroopAttack(level),
+                            Defense = _rules.TroopDefense(level),
+                            Capacity = _rules.TroopCapacity(level),
+                            UpdatedAt = _timeService.GetCurrentSeconds(),
+                            KingdomId = troop.KingdomId
+                        });
+                        troopsToRemove.Add(troop);
+                    }
+
+                    troop.UpdatedAt = _timeService.GetCurrentSeconds();
                 }
 
-                troop.UpdatedAt = _timeService.GetCurrentSeconds();
-            }
+                if (troopsToRemove.Count != 0)
+                {
+                    foreach (var troop in troopsToRemove)
+                    {
+                        _applicationContext.TroopsWorkedOn.Remove(troop);
+                    }
 
-            // this is disgusting, find a way to make it better
-            foreach (var troop in troopsToRemove)
-            {
-                _applicationContext.TroopsWorkedOn.Remove(troop);
+                    _applicationContext.SaveChanges();
+                }
             }
-
-            foreach (var troop in troops)
-            {
-                _applicationContext.Troops.Add(troop);
-            }
-
-            _applicationContext.SaveChanges();
         }
 
         public int CalculateStorageLimit(Kingdom kingdom)
         {
-            return _rules.StorageLimit(kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall).Level) - (kingdom.Troops.Count + kingdom.TroopsWorkedOn.Count);
+            return _rules.StorageLimit(kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall)!.Level) - (kingdom.Troops.Count + kingdom.TroopsWorkedOn.Count);
         }
 
         public void PerformChecks(Kingdom kingdom, int requestedAmount, int goldAmount, int orderPrice)

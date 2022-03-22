@@ -118,19 +118,28 @@ namespace DotNetTribes.Services
         
         public int StorageLimit(int townhallLevel)
         {
-            return townhallLevel * 100;
+            return townhallLevel * _r.StorageLimit;
         }
         
         public int TroopCapacity(int troopLevel)
         {
-            return troopLevel * 2;
+            return troopLevel * _r.TroopCapacity;
         }
 
         public int TroopFoodConsumption(int troopLevel)
         {
-            return troopLevel * 2;
+            return troopLevel * _r.TroopFoodConsumption;
         }
         
+        public int TroopAttack(int troopLevel)
+        {
+            return troopLevel * _r.TroopAttack;
+        }
+        
+        public int TroopDefense(int troopLevel)
+        {
+            return troopLevel * _r.TroopDefense;
+        }
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level)
         {
             switch (type)

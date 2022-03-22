@@ -30,8 +30,8 @@ public class ResourceServiceTest
         });
             
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
-
-        var resourceService = new ResourceService(context, timeServiceMock.Object);
+        Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
+        var resourceService = new ResourceService(context, timeServiceMock.Object, ruleServiceMock.Object);
 
         var resources = resourceService.GetKingdomResources(0);
         
@@ -60,8 +60,9 @@ public class ResourceServiceTest
         });
             
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+        Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
-        var resourceService = new ResourceService(context, timeServiceMock.Object);
+        var resourceService = new ResourceService(context, timeServiceMock.Object, ruleServiceMock.Object);
 
         var resources = resourceService.GetKingdomResources(1);
             

@@ -22,7 +22,7 @@ namespace DotNetTribes.Services
             _timeService = timeService;
         }
 
-        public TroopResponseDTO CreateNewTroops(int kingdomId, TroopRequestDTO request)
+        public TroopResponseDTO TrainNewTroops(int kingdomId, TroopRequestDTO request)
         {
             // this large DB call is done to avoid making 5 different, smaller DB calls needed throughout the process.
             var kingdom = _applicationContext.Kingdoms
@@ -31,7 +31,7 @@ namespace DotNetTribes.Services
                 .Include(k => k.Troops)
                 .Include(k => k.TroopsWorkedOn)
                 .FirstOrDefault(k => k.KingdomId == kingdomId);
-            var kingdomGold = kingdom.Resources.FirstOrDefault(r => r.Type == ResourceType.Gold);
+            var kingdomGold = kingdom!.Resources.FirstOrDefault(r => r.Type == ResourceType.Gold);
             var orderPrice = _rules.TroopPrice(1) * request.Number_of_troops;
 
             PerformChecks(kingdom, request.Number_of_troops, kingdomGold!.Amount, orderPrice);
@@ -95,13 +95,13 @@ namespace DotNetTribes.Services
                 }
             }
         }
-
-        public int CalculateStorageLimit(Kingdom kingdom)
+        
+        private int CalculateStorageLimit(Kingdom kingdom)
         {
             return _rules.StorageLimit(kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall)!.Level) - (kingdom.Troops.Count + kingdom.TroopsWorkedOn.Count);
         }
 
-        public void PerformChecks(Kingdom kingdom, int requestedAmount, int goldAmount, int orderPrice)
+        private void PerformChecks(Kingdom kingdom, int requestedAmount, int goldAmount, int orderPrice)
         {
             if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy) == null)
             {
@@ -119,7 +119,7 @@ namespace DotNetTribes.Services
             }
         }
 
-        public List<UnfinishedTroop> CreateNewTroops(int kingdomId, int amount, List<UnfinishedTroop> troopsWorkedOn)
+        private List<UnfinishedTroop> CreateNewTroops(int kingdomId, int amount, List<UnfinishedTroop> troopsWorkedOn)
         {
             List<UnfinishedTroop> newTroops = new List<UnfinishedTroop>();
 

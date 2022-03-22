@@ -49,7 +49,7 @@ namespace DotNetTribes.Controllers
         [HttpPost("troops")]
         public ActionResult<TroopResponseDTO> CreateTroops([FromHeader] string authorization, [FromBody] TroopRequestDTO request)
         {
-            return new OkObjectResult(_troopService.CreateNewTroops(_jwtService.GetKingdomIdFromJwt(authorization), request));
+            return new OkObjectResult(_troopService.TrainNewTroops(_jwtService.GetKingdomIdFromJwt(authorization), request));
         }
         
         [Authorize]

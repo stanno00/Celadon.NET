@@ -11,11 +11,13 @@ namespace DotNetTribes.Services
     {
         private readonly ApplicationContext _applicationContext;
         private readonly ITimeService _timeService;
+        private readonly IRulesService _rules;
 
-        public ResourceService(ApplicationContext applicationContext, ITimeService timeService)
+        public ResourceService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rules)
         {
             _applicationContext = applicationContext;
             _timeService = timeService;
+            _rules = rules;
         }
 
         private void UpdateSingleResource(Resource resource)
@@ -67,6 +69,36 @@ namespace DotNetTribes.Services
             };
 
             return resources;
+        }
+        
+        public void FeedTroops(int kingdomId)
+        {
+            //TODO: Discuss whether the consuming flag is actually needed - unfinished troops not eating is already addressed by its model.
+            var kingdomFood = _applicationContext.Resources.FirstOrDefault(r => r.Type == ResourceType.Food && r.KingdomId == kingdomId);
+            var kingdomTroops = _applicationContext.Troops
+                .Where(t => t.KingdomId == kingdomId)
+                .ToList();
+            int consumption = 0;
+            //First, adjust the generation.
+            foreach (var troop in kingdomTroops)
+            {
+                consumption += _rules.TroopFoodConsumption(troop.Level);
+            }
+            // The method can't just lower food generation every time it's run - it has to calculate the whole amount, so the implementation of generation is needed here.
+            
+            //kingdomFood.Generation = for farm in farms{generation += rules.FarmFoodGeneration(Farm.Level) - consumption}
+            
+            //then feed the troops
+            
+            /*
+             * if (_timeService.TimeSince(troop.FedAt) <= 60)
+             * {
+             *if (enough food)
+             * {kingdomFood -= consumption}
+             * }
+             * else
+             * {fertilizer hits the ventilator here}             * 
+             */
         }
     }
 }

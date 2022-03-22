@@ -44,7 +44,8 @@ namespace DotNetTribes
                     FarmHP = 100,
                     MineHP = 100,
                     AcademyHP = 150,
-                    TroopHP = 20
+                    TroopHP = 20,
+                    TroopFoodConsumption = 2
                 });
         }
 

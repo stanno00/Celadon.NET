@@ -26,5 +26,6 @@
         public int MineHP { get; set; }
         public int AcademyHP { get; set; }
         public int TroopHP { get; set; }
+        public int TroopFoodConsumption { get; set; }
     }
 }

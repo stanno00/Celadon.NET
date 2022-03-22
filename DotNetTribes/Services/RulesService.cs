@@ -125,6 +125,11 @@ namespace DotNetTribes.Services
         {
             return troopLevel * 2;
         }
+
+        public int TroopFoodConsumption(int troopLevel)
+        {
+            return troopLevel * 2;
+        }
         
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level)
         {

@@ -26,6 +26,7 @@ namespace DotNetTribes.Services
         public int StorageLimit(int townhallLevel);
 
         public int TroopCapacity(int troopLevel);
+        public int TroopFoodConsumption(int troopLevel);
 
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level);
     }

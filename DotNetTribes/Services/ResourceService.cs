@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using DotNetTribes.DTOs;
-using DotNetTribes.Enums;
 using DotNetTribes.Models;
 
 namespace DotNetTribes.Services
@@ -30,7 +27,7 @@ namespace DotNetTribes.Services
 
         }
 
-        private void UpdateKingdomResources(int kingdomId)
+        public void UpdateKingdomResources(int kingdomId)
         {
             // Getting all resources from kingdom 
             var kingdomResources = _applicationContext.Resources

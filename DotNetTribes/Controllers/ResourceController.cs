@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DotNetTribes.DTOs;
+﻿using DotNetTribes.DTOs;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

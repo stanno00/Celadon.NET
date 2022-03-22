@@ -4,14 +4,16 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220319143500_ResourceGenerationAddedToRules")]
+    partial class ResourceGenerationAddedToRules
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,12 +87,6 @@ namespace DotNetTribes.Migrations
 
                     b.Property<int>("FarmHP")
                         .HasColumnType("int");
-                    
-                    b.Property<int>("KingdomX")
-                        .HasColumnType("int");
-
-                    b.Property<int>("KingdomY")
-                        .HasColumnType("int");
 
                     b.Property<int>("MineALlLevelsGoldGeneration")
                         .HasColumnType("int");
@@ -151,8 +147,6 @@ namespace DotNetTribes.Migrations
                             FarmAllLevelsDuration = 60,
                             FarmAllLevelsFoodGeneration = 5,
                             FarmHP = 100,
-                            KingdomX = 101,
-                            KingdomY = 101,
                             MineALlLevelsGoldGeneration = 5,
                             MineAllLevelsCost = 100,
                             MineAllLevesDuration = 60,
@@ -176,12 +170,6 @@ namespace DotNetTribes.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("KingdomX")
-                        .HasColumnType("int");
-
-                    b.Property<int>("KingdomY")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

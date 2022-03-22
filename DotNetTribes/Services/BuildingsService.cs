@@ -13,12 +13,14 @@ namespace DotNetTribes.Services
         private readonly ApplicationContext _applicationContext;
         private readonly ITimeService _timeService;
         private readonly IRulesService _rules;
+        private readonly IResourceService _resourceService;
 
-        public BuildingsService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rules)
+        public BuildingsService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rules, IResourceService resourceService)
         {
             _applicationContext = applicationContext;
             _timeService = timeService;
             _rules = rules;
+            _resourceService = resourceService;
         }
 
 
@@ -82,18 +84,21 @@ namespace DotNetTribes.Services
 
         public BuildingResponseDTO UpgradeBuilding(int kingdomId, int buildingId)
         {
-            var building =
-                _applicationContext.Buildings.FirstOrDefault(
-                    b => b.BuildingId == buildingId && b.KingdomId == kingdomId);
+            var kingdom = _applicationContext.Kingdoms
+                .Include(k => k.Resources)
+                .Include(k => k.Buildings)
+                .Single(k => k.KingdomId == kingdomId);
             
-            if (building == null)
+            var buildingToBeUpgraded = kingdom.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
+            
+            if (buildingToBeUpgraded == null)
             {
                 throw new BuildingCreationException("Building does not exist!");
             }
-            
-            var townHallLevel = _applicationContext.Buildings.Single(b => b.Type == BuildingType.TownHall && b.KingdomId == kingdomId).Level;
-            var buildingType = building.Type;
-            var buildingLevel = building.Level;
+
+            var townHallLevel = kingdom.Buildings.First(b => b.Type == BuildingType.TownHall).Level;
+            var buildingType = buildingToBeUpgraded.Type;
+            var buildingLevel = buildingToBeUpgraded.Level;
             var buildingNextLevel = buildingLevel + 1;
             
             if (buildingLevel >= townHallLevel && buildingType != BuildingType.TownHall)
@@ -103,8 +108,8 @@ namespace DotNetTribes.Services
 
             var upgradeBuilding = _rules.GetBuildingDetails(buildingType, buildingNextLevel);
 
-            var gold =
-                _applicationContext.Resources.Single(r => r.KingdomId == kingdomId && r.Type == ResourceType.Gold);
+            var gold = kingdom.Resources.Single(r => r.Type == ResourceType.Gold);
+            var food = kingdom.Resources.Single(r => r.Type == ResourceType.Food);
 
             if (gold.Amount < upgradeBuilding.BuildingPrice)
             {
@@ -112,19 +117,31 @@ namespace DotNetTribes.Services
             }
 
             gold.Amount -= upgradeBuilding.BuildingPrice;
-            building.Hp = upgradeBuilding.BuildingHP;
-            building.Level = buildingNextLevel;
+            buildingToBeUpgraded.Hp = upgradeBuilding.BuildingHP;
+            buildingToBeUpgraded.Level = buildingNextLevel;
+            buildingToBeUpgraded.Started_at = _timeService.GetCurrentSeconds();
+            buildingToBeUpgraded.Finished_at = buildingToBeUpgraded.Started_at + upgradeBuilding.BuildingDuration;
+
+            switch (buildingToBeUpgraded.Type)
+            {
+                case BuildingType.Mine:
+                    gold.UpdatedAt = buildingToBeUpgraded.Finished_at;
+                    break;
+                case BuildingType.Farm:
+                    food.UpdatedAt = buildingToBeUpgraded.Finished_at;
+                    break;
+            }
             
             _applicationContext.SaveChanges();
 
             var response = new BuildingResponseDTO()
             {
                 Id = buildingId,
-                Type = building.Type.ToString(),
+                Type = buildingToBeUpgraded.Type.ToString(),
                 Level = buildingNextLevel,
-                Hp = building.Hp,
-                Started_at = _timeService.GetCurrentSeconds().ToString(),
-                Finished_at = ((int)_timeService.GetCurrentSeconds() + upgradeBuilding.BuildingDuration).ToString()
+                Hp = buildingToBeUpgraded.Hp,
+                Started_at = buildingToBeUpgraded.Started_at.ToString(),
+                Finished_at = buildingToBeUpgraded.Finished_at.ToString()
             };
 
             return response;

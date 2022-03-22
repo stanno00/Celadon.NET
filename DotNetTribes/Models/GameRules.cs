@@ -15,7 +15,9 @@
         public int TownhallLevelOneDuration { get; set; }
         public int TownhallLevelNDuration { get; set; }
         public int FarmAllLevelsDuration { get; set; }
+        public int FarmAllLevelsFoodGeneration { get; set; }
         public int MineAllLevesDuration { get; set; }
+        public int MineALlLevelsGoldGeneration { get; set; }
         public int AcademyLevelOneDuration { get; set; }
         public int AcademyLevelNDuration { get; set; }
         public int TroopAllLevelsDuration { get; set; }

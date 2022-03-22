@@ -1,4 +1,6 @@
-﻿using DotNetTribes.DTOs;
+﻿using System;
+using DotNetTribes.ActionFilters;
+using DotNetTribes.DTOs;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DotNetTribes.Controllers
 {
     [Route("kingdom")]
+    [ServiceFilter(typeof(UpdateResourceAttribute))]
     public class KingdomController
     {
         private readonly IKingdomService _kingdomService;

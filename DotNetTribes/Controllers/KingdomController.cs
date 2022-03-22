@@ -58,5 +58,17 @@ namespace DotNetTribes.Controllers
             var response = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
             return new OkObjectResult(response);
         }
+        
+        [HttpGet("buildings")]
+        [Authorize]
+        public ActionResult<KingdomBuildingsDto> Buildings([FromHeader] string authorization)
+        {
+            int id = _jwtService.GetKingdomIdFromJwt(authorization);
+            var buildings = _kingdomService.GetExistingBuildings(id);
+            return new KingdomBuildingsDto()
+            {
+                Buildings = buildings
+            };
+        }
     }
 }

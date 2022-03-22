@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using DotNetTribes.DTOs;
@@ -31,6 +32,22 @@ namespace DotNetTribes.Services
                 Troops = kingdom.Troops
             };
             return kingdomDto;
+        }
+        
+        public List<BuildingResponseDTO> GetExistingBuildings(int kingdomId)
+        {
+            var buildings = _applicationContext.Buildings
+                .Where(k => k.KingdomId == kingdomId)
+                .Select(b => new BuildingResponseDTO()
+                {
+                    Id = b.BuildingId,
+                    Type = b.Type.ToString(),
+                    Level = b.Level,
+                    Hp = b.Hp,
+                    Started_at = b.Started_at.ToString(),
+                    Finished_at = b.Finished_at.ToString()
+                }).ToList();
+            return buildings;
         }
     }
 }

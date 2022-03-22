@@ -97,7 +97,7 @@ namespace DotNetTribes.Services
              * {kingdomFood -= consumption}
              * }
              * else
-             * {fertilizer hits the ventilator here}             * 
+             * {fertilizer hits the ventilator here}             
              */
         }
     }

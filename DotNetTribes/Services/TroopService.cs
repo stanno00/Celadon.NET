@@ -120,5 +120,15 @@ namespace DotNetTribes.Services
             }
             return newTroops;
         }
+
+        public KingdomTroopsDTO GetKingdomTroops(int kingdomId)
+        {
+            return new KingdomTroopsDTO
+            {
+                Troops = _applicationContext.Troops
+                    .Where(t => t.KingdomId == kingdomId)
+                    .ToList()
+            };
+        }
     }
 }

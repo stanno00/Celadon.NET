@@ -27,26 +27,14 @@ namespace DotNetTribes.Controllers
         [Authorize]
         public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
         {
-            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            
-            KingdomDto kingdom = _kingdomService.KingdomInfo(kingdomId);
-
-            if (kingdom == null)
-            {
-                return new BadRequestObjectResult("Ops something is wrong");
-            }
-
-            return new OkObjectResult(kingdom);
+            return new OkObjectResult(_kingdomService.KingdomInfo(_jwtService.GetKingdomIdFromJwt(authorization)));
         }
 
         [Authorize]
         [HttpPost("buildings")]
         public ActionResult<KingdomDto> CreateNewBuilding([FromHeader] string authorization, [FromBody] BuildingRequestDTO request)
         {
-            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var response = _buildingsService.CreateNewBuilding(kingdomId, request);
-
-            return new OkObjectResult(response);
+            return new OkObjectResult(_buildingsService.CreateNewBuilding(_jwtService.GetKingdomIdFromJwt(authorization), request));
         }
 
         [Authorize]
@@ -54,19 +42,21 @@ namespace DotNetTribes.Controllers
         public ActionResult<BuildingResponseDTO> UpgradeBuilding([FromHeader] string authorization,
             [FromRoute] int buildingId)
         {
-            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var response = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
-            return new OkObjectResult(response);
+            return new OkObjectResult(_buildingsService.UpgradeBuilding(_jwtService.GetKingdomIdFromJwt(authorization), buildingId));
         }
 
         [Authorize]
         [HttpPost("troops")]
         public ActionResult<TroopResponseDTO> CreateTroops([FromHeader] string authorization, [FromBody] TroopRequestDTO request)
         {
-            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var response = _troopService.CreateNewTroops(kingdomId, request);
-
-            return new OkObjectResult(response);
+            return new OkObjectResult(_troopService.CreateNewTroops(_jwtService.GetKingdomIdFromJwt(authorization), request));
+        }
+        
+        [Authorize]
+        [HttpGet("troops")]
+        public ActionResult<KingdomTroopsDTO> GetKingdomTroops([FromHeader]string authorization)
+        {
+            return new OkObjectResult(_troopService.GetKingdomTroops(_jwtService.GetKingdomIdFromJwt(authorization)));
         }
     }
 }

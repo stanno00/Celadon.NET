@@ -41,6 +41,8 @@ namespace DotNetTribes.Services
 
         public void UpdateKingdomResources(int kingdomId)
         {
+            
+            
             // Getting all resource generating buildings from the kingdom 
             var kingdomResources = _applicationContext.Resources
                 .Where(r => r.KingdomId == kingdomId)

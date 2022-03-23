@@ -43,11 +43,8 @@ namespace DotNetTribes.Services
             {
                 KingdomName = kingdom.Name,
                 Username = kingdom.User?.Username,
-                Buildings = new BuildingsDTO
-                {
-                    Buildings = kingdomBuildingDtoList
-                },
-                Resources = _resourceService.GetKingdomResources(kingdomId),
+                Buildings = kingdom.Buildings,                    
+                Resources = kingdom.Resources,
                 Troops = kingdom.Troops
             };
             return kingdomDto;

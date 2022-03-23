@@ -29,14 +29,18 @@ namespace DotNetTribes.Controllers
         [Authorize]
         public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
         {
-            return new OkObjectResult(_kingdomService.KingdomInfo(_jwtService.GetKingdomIdFromJwt(authorization)));
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var result = _kingdomService.KingdomInfo(kingdomId);
+            return new OkObjectResult(result);
         }
 
         [Authorize]
         [HttpPost("buildings")]
         public ActionResult<KingdomDto> CreateNewBuilding([FromHeader] string authorization, [FromBody] BuildingRequestDTO request)
         {
-            return new OkObjectResult(_buildingsService.CreateNewBuilding(_jwtService.GetKingdomIdFromJwt(authorization), request));
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var result = _buildingsService.CreateNewBuilding(kingdomId, request);
+            return new OkObjectResult(result);
         }
 
         [Authorize]
@@ -44,14 +48,18 @@ namespace DotNetTribes.Controllers
         public ActionResult<BuildingResponseDTO> UpgradeBuilding([FromHeader] string authorization,
             [FromRoute] int buildingId)
         {
-            return new OkObjectResult(_buildingsService.UpgradeBuilding(_jwtService.GetKingdomIdFromJwt(authorization), buildingId));
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var result = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
+            return new OkObjectResult(result);
         }
 
         [Authorize]
         [HttpPost("troops")]
         public ActionResult<TroopResponseDTO> CreateTroops([FromHeader] string authorization, [FromBody] TroopRequestDTO request)
         {
-            return new OkObjectResult(_troopService.TrainNewTroops(_jwtService.GetKingdomIdFromJwt(authorization), request));
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var result = _troopService.TrainNewTroops(kingdomId, request);
+            return new OkObjectResult(result);
         }
         
         [Authorize]

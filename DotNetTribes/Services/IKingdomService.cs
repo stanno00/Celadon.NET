@@ -1,9 +1,12 @@
-﻿using DotNetTribes.DTOs;
+﻿using System.Collections.Generic;
+using DotNetTribes.DTOs;
 
 namespace DotNetTribes.Services
 {
     public interface IKingdomService
     {
         KingdomDto KingdomInfo(int kingdomId);
+
+        public List<BuildingResponseDTO> GetExistingBuildings(int kingdomId);
     }
 }

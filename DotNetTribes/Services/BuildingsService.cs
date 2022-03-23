@@ -62,8 +62,8 @@ namespace DotNetTribes.Services
                 Type = toBeAdded.Type.ToString(),
                 Level = toBeAdded.Level,
                 Hp = toBeAdded.Hp,
-                Started_at = toBeAdded.Started_at.ToString(),
-                Finished_at = toBeAdded.Finished_at.ToString(),
+                Started_at = toBeAdded.Started_at,
+                Finished_at = toBeAdded.Finished_at,
                 Id = toBeAdded.BuildingId
             };
         }
@@ -140,8 +140,8 @@ namespace DotNetTribes.Services
                 Type = buildingToBeUpgraded.Type.ToString(),
                 Level = buildingNextLevel,
                 Hp = buildingToBeUpgraded.Hp,
-                Started_at = buildingToBeUpgraded.Started_at.ToString(),
-                Finished_at = buildingToBeUpgraded.Finished_at.ToString()
+                Started_at = buildingToBeUpgraded.Started_at,
+                Finished_at = buildingToBeUpgraded.Finished_at
             };
 
             return response;

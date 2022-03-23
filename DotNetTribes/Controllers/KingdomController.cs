@@ -1,5 +1,4 @@
-﻿using System;
-using DotNetTribes.ActionFilters;
+﻿using DotNetTribes.ActionFilters;
 using DotNetTribes.DTOs;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -61,8 +60,7 @@ namespace DotNetTribes.Controllers
 
         [Authorize]
         [HttpPost("nearest")]
-        public ActionResult<NearbyKingdomsDto> NearestKingdoms([FromBody] RequestMinutesDto minutes,[FromHeader] string authorization
-        )
+        public ActionResult<NearbyKingdomsDto> NearestKingdoms([FromBody] RequestMinutesDto minutes,[FromHeader] string authorization)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var response = _kingdomService.NearestKingdoms(minutes.Minutes,kingdomId);

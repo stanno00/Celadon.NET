@@ -1,5 +1,4 @@
-﻿using System.Dynamic;
-using DotNetTribes.Models;
+﻿using DotNetTribes.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotNetTribes

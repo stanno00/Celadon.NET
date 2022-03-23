@@ -44,8 +44,8 @@ namespace DotNetTribes.Services
                     Type = b.Type.ToString(),
                     Level = b.Level,
                     Hp = b.Hp,
-                    Started_at = b.Started_at.ToString(),
-                    Finished_at = b.Finished_at.ToString()
+                    Started_at = b.Started_at,
+                    Finished_at = b.Finished_at
                 }).ToList();
             return buildings;
         }

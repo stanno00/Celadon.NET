@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -69,51 +70,18 @@ namespace DotNetTribes.Services
         {
             int minutes = 0;
 
-            if (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
+            if (myKingdomX > kingdomUnderAttackX)
             {
-                // enemy is top left
-                if (myKingdomX > kingdomUnderAttackX && myKingdomY > kingdomUnderAttackY)
-                {
-                    while (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
-                    {
-                        myKingdomX--;
-                        myKingdomY--;
-                        minutes++;
-                    }
-                }
+                kingdomUnderAttackX += (myKingdomX - kingdomUnderAttackX) * 2;
+            }
+
+            if (myKingdomY > kingdomUnderAttackY)
+            {
+                kingdomUnderAttackY += (myKingdomX - kingdomUnderAttackY) * 2;
             }
 
             if (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
             {
-                // enemy is top right
-                if (myKingdomX < kingdomUnderAttackX && myKingdomY > kingdomUnderAttackY)
-                {
-                    while (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
-                    {
-                        myKingdomX++;
-                        myKingdomY--;
-                        minutes++;
-                    }
-                }
-            }
-
-            if (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
-            {
-                // enemy is bottom left
-                if (myKingdomX > kingdomUnderAttackX && myKingdomY < kingdomUnderAttackY)
-                {
-                    while (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
-                    {
-                        myKingdomX--;
-                        myKingdomY++;
-                        minutes++;
-                    }
-                }
-            }
-
-            if (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
-            {
-                // enemy is bottom right
                 if (myKingdomX < kingdomUnderAttackX && myKingdomY < kingdomUnderAttackY)
                 {
                     while (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
@@ -125,31 +93,11 @@ namespace DotNetTribes.Services
                 }
             }
 
-            // kingdoms are on the same X 
-            if (myKingdomX == kingdomUnderAttackX && myKingdomY > kingdomUnderAttackY)
-            {
-                while (myKingdomY != kingdomUnderAttackY)
-                {
-                    myKingdomY--;
-                    minutes++;
-                }
-            }
-
             if (myKingdomX == kingdomUnderAttackX && myKingdomY < kingdomUnderAttackY)
             {
                 while (myKingdomY != kingdomUnderAttackY)
                 {
                     myKingdomY++;
-                    minutes++;
-                }
-            }
-
-            // kingdoms are on the same Y
-            if (myKingdomY == kingdomUnderAttackY && myKingdomX > kingdomUnderAttackX)
-            {
-                while (myKingdomX != kingdomUnderAttackX)
-                {
-                    myKingdomX--;
                     minutes++;
                 }
             }

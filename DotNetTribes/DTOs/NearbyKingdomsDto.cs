@@ -6,5 +6,7 @@
         public string KingdomName { get; set; }
         public int KingdomCoordinateX { get; set; }
         public int KingdomCoordinateY { get; set; }
+
+        public int MinutesToArrive { get; set; }
     }
 }

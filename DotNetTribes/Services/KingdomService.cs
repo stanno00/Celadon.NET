@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using DotNetTribes.DTOs;
+using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 
 namespace DotNetTribes.Services
@@ -24,7 +25,7 @@ namespace DotNetTribes.Services
                 .Include(k => k.Troops)
                 .Include(k => k.User)
                 .Single(k => k.KingdomId == kingdomId);
-            
+
             KingdomDto kingdomDto = new KingdomDto()
             {
                 KingdomName = kingdom.Name,
@@ -36,73 +37,50 @@ namespace DotNetTribes.Services
             return kingdomDto;
         }
 
-        public object NearestKingdoms( int minutes,int kingdomId)
+        public object NearestKingdoms(int minutes, int kingdomId)
         {
-            // todo if minutes are less than 2 return error message It takes at least two minutes to move one square!
-
-            var kingdom = _applicationContext.Kingdoms.Single(k => k.KingdomId == kingdomId);
+            if (minutes < 2)
+            {
+                throw new KingdomReceiveMinutesLessThanTwo("It takes at least two minutes to move one square!");
+            }
 
             List<NearbyKingdomsDto> kingdomsDtos = new List<NearbyKingdomsDto>();
+            var myKingdom = _applicationContext.Kingdoms.Single(k => k.KingdomId == kingdomId);
 
-            var mapStartingXCoordinates = kingdom.KingdomX - (minutes / 2);
-            var mapStartingYCoordinates = kingdom.KingdomY - (minutes / 2);
-            
-            var minutesDecreaseX = DecreasingOptionsX(mapStartingXCoordinates);
-            var minutesDecreaseY = DecreasingOptionsY(mapStartingYCoordinates);
-            
-            mapStartingXCoordinates = DecreasingPossibleOptionsX(mapStartingXCoordinates);
-            mapStartingYCoordinates = DecreasingPossibleOptionsY(mapStartingYCoordinates);
-            
-            if (kingdom.KingdomX == 99) { minutesDecreaseX--; }
-
-            if (kingdom.KingdomY == 99) { minutesDecreaseY--; }
-
-            for (int i = mapStartingYCoordinates; i <= mapStartingYCoordinates + (minutes - minutesDecreaseY); i++)
+            foreach (var kingdom in _applicationContext.Kingdoms)
             {
-                for (int j = mapStartingXCoordinates; j <= mapStartingXCoordinates + (minutes - minutesDecreaseX); j++)
+                int minutesToKingdom = ShortestPath(myKingdom.KingdomX, myKingdom.KingdomY, kingdom.KingdomX,
+                    kingdom.KingdomY);
+                if (minutesToKingdom <= minutes && myKingdom.KingdomId != kingdom.KingdomId)
                 {
-                    if (_applicationContext.Kingdoms.Any(k => k.KingdomX == j && k.KingdomY == i))
+                    kingdomsDtos.Add(new NearbyKingdomsDto()
                     {
-                        var kingdomFound = _applicationContext.Kingdoms
-                            .Single(k => k.KingdomX == j && k.KingdomY == i && kingdomId != k.KingdomId);
-                        
-                        kingdomsDtos.Add(new NearbyKingdomsDto()
-                        {
-                            KingdomId = kingdomFound.KingdomId,
-                            KingdomName = kingdomFound.Name,
-                            KingdomCoordinateX = kingdomFound.KingdomX,
-                            KingdomCoordinateY = kingdomFound.KingdomY
-                        });
-                    }
+                        KingdomId = kingdom.KingdomId,
+                        KingdomName = kingdom.Name,
+                        KingdomCoordinateX = kingdom.KingdomX,
+                        KingdomCoordinateY = kingdom.KingdomY,
+                        MinutesToArrive = minutesToKingdom
+                    });
                 }
             }
 
             return kingdomsDtos;
         }
 
-        public int ShortestPath(int myKingdomId, int attackOn)
+        public int ShortestPath(int myKingdomX, int myKingdomY, int kingdomUnderAttackX, int kingdomUnderAttackY)
         {
-            int steps = 0;
-            
-            var myKingdom = _applicationContext.Kingdoms.Single(k => k.KingdomId == myKingdomId);
-            var kingdomUnderAttack = _applicationContext.Kingdoms.Single(k => k.KingdomId == attackOn);
-
-            var myKingdomX = myKingdom.KingdomX;
-            var myKingdomY = myKingdom.KingdomY;
-            
-            var kingdomUnderAttackX = kingdomUnderAttack.KingdomX;
-            var kingdomUnderAttackY = kingdomUnderAttack.KingdomY;
+            int minutes = 0;
 
             if (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
             {
                 // enemy is top left
                 if (myKingdomX > kingdomUnderAttackX && myKingdomY > kingdomUnderAttackY)
                 {
-                    while (myKingdomX != kingdomUnderAttackX || myKingdomY != kingdomUnderAttackY)
+                    while (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
                     {
                         myKingdomX--;
                         myKingdomY--;
-                        steps++;
+                        minutes++;
                     }
                 }
             }
@@ -112,11 +90,11 @@ namespace DotNetTribes.Services
                 // enemy is top right
                 if (myKingdomX < kingdomUnderAttackX && myKingdomY > kingdomUnderAttackY)
                 {
-                    while (myKingdomX != kingdomUnderAttackX || myKingdomY != kingdomUnderAttackY)
+                    while (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
                     {
                         myKingdomX++;
                         myKingdomY--;
-                        steps++;
+                        minutes++;
                     }
                 }
             }
@@ -126,11 +104,11 @@ namespace DotNetTribes.Services
                 // enemy is bottom left
                 if (myKingdomX > kingdomUnderAttackX && myKingdomY < kingdomUnderAttackY)
                 {
-                    while (myKingdomX != kingdomUnderAttackX || myKingdomY != kingdomUnderAttackY)
+                    while (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
                     {
                         myKingdomX--;
                         myKingdomY++;
-                        steps++;
+                        minutes++;
                     }
                 }
             }
@@ -140,11 +118,11 @@ namespace DotNetTribes.Services
                 // enemy is bottom right
                 if (myKingdomX < kingdomUnderAttackX && myKingdomY < kingdomUnderAttackY)
                 {
-                    while (myKingdomX != kingdomUnderAttackX || myKingdomY != kingdomUnderAttackY)
+                    while (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
                     {
                         myKingdomX++;
                         myKingdomY++;
-                        steps++;
+                        minutes++;
                     }
                 }
             }
@@ -155,72 +133,39 @@ namespace DotNetTribes.Services
                 while (myKingdomY != kingdomUnderAttackY)
                 {
                     myKingdomY--;
-                    steps++;
+                    minutes++;
                 }
             }
-            
+
             if (myKingdomX == kingdomUnderAttackX && myKingdomY < kingdomUnderAttackY)
             {
                 while (myKingdomY != kingdomUnderAttackY)
                 {
                     myKingdomY++;
-                    steps++;
+                    minutes++;
                 }
             }
-            
+
             // kingdoms are on the same Y
             if (myKingdomY == kingdomUnderAttackY && myKingdomX > kingdomUnderAttackX)
             {
                 while (myKingdomX != kingdomUnderAttackX)
                 {
                     myKingdomX--;
-                    steps++;
+                    minutes++;
                 }
             }
+
             if (myKingdomY == kingdomUnderAttackY && myKingdomX < kingdomUnderAttackX)
             {
                 while (myKingdomX != kingdomUnderAttackX)
                 {
                     myKingdomX++;
-                    steps++;
+                    minutes++;
                 }
             }
 
-            return steps;
-        }
-        
-        private static int DecreasingOptionsY(int mapStartingYCoordinates)
-        {
-            var result = 0;
-            if (mapStartingYCoordinates < 0) { return Math.Abs(mapStartingYCoordinates); }
-
-            if (mapStartingYCoordinates >= 100) { result = mapStartingYCoordinates - 100; }
-
-            return Math.Abs(result);
-        }
-
-        private static int DecreasingOptionsX(int mapStartingXCoordinates)
-        {
-            var result = 0;
-            if (mapStartingXCoordinates < 0) { return Math.Abs(mapStartingXCoordinates); }
-
-            if (mapStartingXCoordinates >= 100) { result = mapStartingXCoordinates - 100; }
-
-            return Math.Abs(result);
-        }
-        
-        private static int DecreasingPossibleOptionsX(int x)
-        {
-            if (x < 0) { x = 0; }
-            if (x > 100) { x = 100; }
-            return x;
-        }
-        
-        private static int DecreasingPossibleOptionsY(int y)
-        {
-            if (y < 0) { y = 0; }
-            if (y > 100) { y = 100; }
-            return y;
+            return minutes * 2;
         }
     }
 }

@@ -85,11 +85,11 @@ namespace DotNetTribes.Migrations
 
                     b.Property<int>("FarmHP")
                         .HasColumnType("int");
-                    
-                    b.Property<int>("KingdomX")
+
+                    b.Property<int>("MapBoundariesX")
                         .HasColumnType("int");
 
-                    b.Property<int>("KingdomY")
+                    b.Property<int>("MapBoundariesY")
                         .HasColumnType("int");
 
                     b.Property<int>("MineALlLevelsGoldGeneration")
@@ -151,8 +151,8 @@ namespace DotNetTribes.Migrations
                             FarmAllLevelsDuration = 60,
                             FarmAllLevelsFoodGeneration = 5,
                             FarmHP = 100,
-                            KingdomX = 101,
-                            KingdomY = 101,
+                            MapBoundariesX = 101,
+                            MapBoundariesY = 101,
                             MineALlLevelsGoldGeneration = 5,
                             MineAllLevelsCost = 100,
                             MineAllLevesDuration = 60,

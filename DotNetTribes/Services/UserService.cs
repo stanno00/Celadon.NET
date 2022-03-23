@@ -28,15 +28,14 @@ namespace DotNetTribes.Services
         {
             Random random = new Random();
 
-            // do while
             int coordinatesX = 0;
             int coordinatesY = 0;
 
             do
             {
-                coordinatesX = random.Next(_rules.KingdomX());
-                coordinatesY = random.Next(_rules.KingdomY());
-            } while (!_applicationContext.Kingdoms.Any(k => k.KingdomX == coordinatesX && k.KingdomY == coordinatesY));
+                coordinatesX = random.Next(_rules.MapBoundariesX());
+                coordinatesY = random.Next(_rules.MapBoundariesY());
+            } while (_applicationContext.Kingdoms.Any(k => k.KingdomX == coordinatesX && k.KingdomY == coordinatesY));
             
             int[] coordinates = new int[2];
             coordinates[0] = coordinatesX;

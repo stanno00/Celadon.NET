@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220322135422_Coordinates")]
-    partial class Coordinates
+    [Migration("20220323094655_MapBoundaries")]
+    partial class MapBoundaries
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -82,13 +82,19 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("FarmAllLevelsDuration")
                         .HasColumnType("int");
 
+                    b.Property<int>("FarmAllLevelsFoodGeneration")
+                        .HasColumnType("int");
+
                     b.Property<int>("FarmHP")
                         .HasColumnType("int");
 
-                    b.Property<int>("KingdomX")
+                    b.Property<int>("MapBoundariesX")
                         .HasColumnType("int");
 
-                    b.Property<int>("KingdomY")
+                    b.Property<int>("MapBoundariesY")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MineALlLevelsGoldGeneration")
                         .HasColumnType("int");
 
                     b.Property<int>("MineAllLevelsCost")
@@ -145,9 +151,11 @@ namespace DotNetTribes.Migrations
                             AcademyLevelOneDuration = 90,
                             FarmAllLevelsCost = 100,
                             FarmAllLevelsDuration = 60,
+                            FarmAllLevelsFoodGeneration = 5,
                             FarmHP = 100,
-                            KingdomX = 101,
-                            KingdomY = 101,
+                            MapBoundariesX = 101,
+                            MapBoundariesY = 101,
+                            MineALlLevelsGoldGeneration = 5,
                             MineAllLevelsCost = 100,
                             MineAllLevesDuration = 60,
                             MineHP = 100,

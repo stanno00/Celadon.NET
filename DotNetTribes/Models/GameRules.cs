@@ -26,7 +26,7 @@
         public int MineHP { get; set; }
         public int AcademyHP { get; set; }
         public int TroopHP { get; set; }
-        public int KingdomX { get; set; }
-        public int KingdomY { get; set; }
+        public int MapBoundariesX { get; set; }
+        public int MapBoundariesY { get; set; }
     }
 }

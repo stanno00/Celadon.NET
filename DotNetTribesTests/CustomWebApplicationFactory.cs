@@ -51,7 +51,9 @@ public class CustomWebApplicationFactory<TStartup>
                     TownhallLevelOneDuration = 120,
                     TownhallLevelNDuration = 60,
                     FarmAllLevelsDuration = 60,
+                    FarmAllLevelsFoodGeneration = 5,
                     MineAllLevesDuration = 60,
+                    MineALlLevelsGoldGeneration = 5,
                     AcademyLevelOneDuration = 90,
                     AcademyLevelNDuration = 60,
                     TroopAllLevelsDuration = 30,
@@ -59,7 +61,9 @@ public class CustomWebApplicationFactory<TStartup>
                     FarmHP = 100,
                     MineHP = 100,
                     AcademyHP = 150,
-                    TroopHP = 20
+                    TroopHP = 20,
+                    MapBoundariesX = 101,
+                    MapBoundariesY = 101
                 });
                 
                 db.Users.Add(new User()

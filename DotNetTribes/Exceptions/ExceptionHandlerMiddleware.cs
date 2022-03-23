@@ -47,6 +47,10 @@ namespace DotNetTribes.Exceptions
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
                     
+                    case KingdomReceiveMinutesLessThanTwo e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
+                    
                     case KingdomNameAlreadyTakenException e:
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;

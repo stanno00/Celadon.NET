@@ -117,14 +117,14 @@ namespace DotNetTribes.Services
             return level * _r.TroopAllLevelsDuration;
         }
         
-        public int KingdomX()
+        public int MapBoundariesX()
         {
-            return _r.KingdomX;
+            return _r.MapBoundariesX;
         }
         
-        public int KingdomY()
+        public int MapBoundariesY()
         {
-            return _r.KingdomY;
+            return _r.MapBoundariesY;
         }
         
         public int BuildingResourceGeneration(Building building)

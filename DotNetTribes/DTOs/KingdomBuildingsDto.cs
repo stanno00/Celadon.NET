@@ -5,6 +5,6 @@ namespace DotNetTribes.DTOs
 {
     public class KingdomBuildingsDto
     {
-        public ICollection<Building> Buildings { get; set; }
+        public ICollection<BuildingResponseDTO> Buildings { get; set; }
     }
 }

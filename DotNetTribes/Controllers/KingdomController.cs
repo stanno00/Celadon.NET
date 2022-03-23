@@ -62,5 +62,17 @@ namespace DotNetTribes.Controllers
             _troopService.UpdateTroops(kingdomId);
             return new OkObjectResult(_troopService.GetKingdomTroops(kingdomId));
         }
+        
+        [HttpGet("buildings")]
+        [Authorize]
+        public ActionResult<KingdomBuildingsDto> Buildings([FromHeader] string authorization)
+        {
+            int id = _jwtService.GetKingdomIdFromJwt(authorization);
+            var buildings = _kingdomService.GetExistingBuildings(id);
+            return new KingdomBuildingsDto()
+            {
+                Buildings = buildings
+            };
+        }
     }
 }

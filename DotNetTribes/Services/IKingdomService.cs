@@ -1,4 +1,5 @@
-﻿using DotNetTribes.DTOs;
+﻿using System.Collections.Generic;
+using DotNetTribes.DTOs;
 
 namespace DotNetTribes.Services
 {
@@ -6,5 +7,6 @@ namespace DotNetTribes.Services
     {
         KingdomDto KingdomInfo(int kingdomId);
         object NearestKingdoms(int minutes,int kingdomId);
+        public List<BuildingResponseDTO> GetExistingBuildings(int kingdomId);
     }
 }

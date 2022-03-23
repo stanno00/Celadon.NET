@@ -13,9 +13,10 @@ namespace DotNetTribes.Controllers
         private readonly IKingdomService _kingdomService;
         private readonly IJwtService _jwtService;
         private readonly IBuildingsService _buildingsService;
-        
-        
-        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService)
+
+
+        public KingdomController(IKingdomService kingdomService, IJwtService jwtService,
+            IBuildingsService buildingsService)
         {
             _kingdomService = kingdomService;
             _jwtService = jwtService;
@@ -27,7 +28,7 @@ namespace DotNetTribes.Controllers
         public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            
+
             KingdomDto kingdom = _kingdomService.KingdomInfo(kingdomId);
 
             if (kingdom == null)
@@ -40,7 +41,8 @@ namespace DotNetTribes.Controllers
 
         [Authorize]
         [HttpPost("buildings")]
-        public ActionResult<KingdomDto> CreateNewBuilding([FromHeader] string authorization, [FromBody] BuildingRequestDTO request)
+        public ActionResult<KingdomDto> CreateNewBuilding([FromHeader] string authorization,
+            [FromBody] BuildingRequestDTO request)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var response = _buildingsService.CreateNewBuilding(kingdomId, request);
@@ -60,12 +62,25 @@ namespace DotNetTribes.Controllers
 
         [Authorize]
         [HttpPost("nearest")]
-        public ActionResult<NearbyKingdomsDto> NearestKingdoms([FromBody] RequestMinutesDto minutes,[FromHeader] string authorization)
+        public ActionResult<NearbyKingdomsDto> NearestKingdoms([FromBody] RequestMinutesDto minutes,
+            [FromHeader] string authorization)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var response = _kingdomService.NearestKingdoms(minutes.Minutes,kingdomId);
+            var response = _kingdomService.NearestKingdoms(minutes.Minutes, kingdomId);
 
             return new ObjectResult(response);
+        }
+
+        [HttpGet("buildings")]
+        [Authorize]
+        public ActionResult<KingdomBuildingsDto> Buildings([FromHeader] string authorization)
+        {
+            int id = _jwtService.GetKingdomIdFromJwt(authorization);
+            var buildings = _kingdomService.GetExistingBuildings(id);
+            return new KingdomBuildingsDto()
+            {
+                Buildings = buildings
+            };
         }
     }
 }

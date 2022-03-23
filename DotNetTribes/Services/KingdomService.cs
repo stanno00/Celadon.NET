@@ -165,5 +165,21 @@ namespace DotNetTribes.Services
 
             return minutes * 2;
         }
+
+        public List<BuildingResponseDTO> GetExistingBuildings(int kingdomId)
+        {
+            var buildings = _applicationContext.Buildings
+                .Where(k => k.KingdomId == kingdomId)
+                .Select(b => new BuildingResponseDTO()
+                {
+                    Id = b.BuildingId,
+                    Type = b.Type.ToString(),
+                    Level = b.Level,
+                    Hp = b.Hp,
+                    Started_at = b.Started_at,
+                    Finished_at = b.Finished_at
+                }).ToList();
+            return buildings;
+        }
     }
 }

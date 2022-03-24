@@ -6,28 +6,36 @@ namespace DotNetTribes.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "KingdomY",
+            migrationBuilder.AddColumn<int>(
+                name: "MapBoundariesX",
                 table: "GameRules",
-                newName: "MapBoundariesY");
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
 
-            migrationBuilder.RenameColumn(
-                name: "KingdomX",
+            migrationBuilder.AddColumn<int>(
+                name: "MapBoundariesY",
                 table: "GameRules",
-                newName: "MapBoundariesX");
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "MapBoundariesY",
-                table: "GameRules",
-                newName: "KingdomY");
-
-            migrationBuilder.RenameColumn(
+            migrationBuilder.AddColumn<int>(
                 name: "MapBoundariesX",
                 table: "GameRules",
-                newName: "KingdomX");
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "MapBoundariesY",
+                table: "GameRules",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
     }
 }

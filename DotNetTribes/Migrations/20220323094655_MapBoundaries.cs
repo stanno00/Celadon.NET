@@ -11,14 +11,14 @@ namespace DotNetTribes.Migrations
                 table: "GameRules",
                 type: "int",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 101);
 
             migrationBuilder.AddColumn<int>(
                 name: "MapBoundariesY",
                 table: "GameRules",
                 type: "int",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 101);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -28,14 +28,14 @@ namespace DotNetTribes.Migrations
                 table: "GameRules",
                 type: "int",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 101);
 
             migrationBuilder.AddColumn<int>(
                 name: "MapBoundariesY",
                 table: "GameRules",
                 type: "int",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 101);
         }
     }
 }

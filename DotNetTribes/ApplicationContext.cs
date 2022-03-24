@@ -9,7 +9,6 @@ namespace DotNetTribes
         public DbSet<Kingdom> Kingdoms { get; set; }
         public DbSet<Resource> Resources { get; set; }
         public DbSet<Troop> Troops { get; set; }
-        public DbSet<UnfinishedTroop> TroopsWorkedOn { get; set; }
         public DbSet<Building> Buildings { get; set; }
         public DbSet<User> Users { get; set; }
 

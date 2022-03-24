@@ -2,6 +2,6 @@
 {
     public class TroopRequestDTO
     {
-        public int Number_of_troops { get; set; }
+        public int NumberOfTroops { get; set; }
     }
 }

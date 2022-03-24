@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Enums;
@@ -27,7 +26,7 @@ namespace DotNetTribes.Services
             // Unless a minute passes this method won't run
             if (minutesPassedSinceLastUpdate <= 0) return;
 
-            
+
             //In the case that we have an army larger than we can feed, we try to do so before adding the new food to the kingdom's stores,
             //so that consumption is adjusted for how much food we get in this tick. This intends to prevent a scenario where we reach negative food.
             if (resource.Type == ResourceType.Food && resource.Generation < 0)
@@ -41,8 +40,6 @@ namespace DotNetTribes.Services
 
         public void UpdateKingdomResources(int kingdomId)
         {
-            
-            
             // Getting all resource generating buildings from the kingdom 
             var kingdomResources = _applicationContext.Resources
                 .Where(r => r.KingdomId == kingdomId)
@@ -97,19 +94,22 @@ namespace DotNetTribes.Services
             int consumption = 0;
             foreach (var troop in kingdomTroops)
             {
-                consumption += _rulesService.TroopFoodConsumption(troop.Level);
+                if (troop.ConsumingFood)
+                {
+                    consumption += _rulesService.TroopFoodConsumption(troop.Level);
+                }
             }
 
             return consumption;
         }
 
-        private void FeedTroopsWithInsufficientFood(int kigdomId)
+        private void FeedTroopsWithInsufficientFood(int kingdomId)
         {
             var kingdomFood = _applicationContext.Resources
-                .Single(r => r.Type == ResourceType.Food && r.KingdomId == kigdomId);
+                .Single(r => r.Type == ResourceType.Food && r.KingdomId == kingdomId);
             var kingdomTroops = _applicationContext.Troops
-                .Where(t => t.KingdomId == kigdomId)
-                .OrderBy(t => t.Level)
+                .Where(t => t.KingdomId == kingdomId && t.ConsumingFood)
+                .OrderByDescending(t => t.Level)
                 .ToList();
             foreach (var troop in kingdomTroops)
             {
@@ -124,9 +124,9 @@ namespace DotNetTribes.Services
                     _applicationContext.Troops.Remove(troop);
                 }
             }
-            
+
             //The moment troops starve to death, they stop consuming food. Therefore, the value needs to be recalculated:
-            kingdomFood.Generation = CalculateTroopConsumption(kigdomId);
+            kingdomFood.Generation = CalculateTroopConsumption(kingdomId);
             _applicationContext.SaveChanges();
         }
 

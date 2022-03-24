@@ -4,6 +4,7 @@ using DotNetTribes.DTOs.Troops;
 using DotNetTribes.Enums;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 
@@ -31,18 +32,19 @@ namespace DotNetTribes.Services
                 .Include(k => k.Buildings)
                 .Include(k => k.Resources)
                 .Include(k => k.Troops)
-                .Include(k => k.TroopsWorkedOn)
                 .FirstOrDefault(k => k.KingdomId == kingdomId);
             var kingdomGold = kingdom!.Resources.FirstOrDefault(r => r.Type == ResourceType.Gold);
-            var orderPrice = _rules.TroopPrice(1) * request.Number_of_troops;
+            var orderPrice = _rules.TroopPrice(1) * request.NumberOfTroops;
+            var troopsInProgress = kingdom.Troops
+                .Where(t => t.FinishedAt > _timeService.GetCurrentSeconds())
+                .ToList();
+            PerformTrainingChecks(kingdom, request.NumberOfTroops, kingdomGold!.Amount, orderPrice);
 
-            PerformChecks(kingdom, request.Number_of_troops, kingdomGold!.Amount, orderPrice);
-
-            List<UnfinishedTroop> newTroops = CreateNewTroops(kingdomId, request.Number_of_troops, kingdom.TroopsWorkedOn.ToList());
+            var newTroops = CreateNewTroops(kingdomId, request.NumberOfTroops, troopsInProgress);
 
             foreach (var troop in newTroops)
             {
-                kingdom.TroopsWorkedOn.Add(troop);
+                kingdom.Troops.Add(troop);
             }
 
             kingdomGold.Amount -= orderPrice;
@@ -56,102 +58,140 @@ namespace DotNetTribes.Services
 
         public void UpdateTroops(int kingdomId)
         {
-            var troopsWorkedOn = _applicationContext.TroopsWorkedOn
-                .Where(t => t.KingdomId == kingdomId)
+            var troopsInProgress = _applicationContext.Troops
+                .Where(t => t.KingdomId == kingdomId && t.FinishedAt < _timeService.GetCurrentSeconds())
+                .OrderBy(t => t.FinishedAt)
                 .ToList();
 
-            if (troopsWorkedOn.Count != 0)
+            if (troopsInProgress.Count != 0)
             {
-                List<UnfinishedTroop> troopsToRemove = new List<UnfinishedTroop>();
-
-                foreach (var troop in troopsWorkedOn)
+                foreach (var troop in troopsInProgress)
                 {
                     if (troop.FinishedAt < _timeService.GetCurrentSeconds())
                     {
                         int level = troop.Upgrading ? (troop.Level + 1) : troop.Level;
-                        _applicationContext.Troops.Add(new Troop
-                        {
-                            //TODO: Add coordinates once they get implemented
-                            ConsumingFood = true,
-                            Level = level,
-                            Attack = _rules.TroopAttack(level),
-                            Defense = _rules.TroopDefense(level),
-                            Capacity = _rules.TroopCapacity(level),
-                            UpdatedAt = _timeService.GetCurrentSeconds(),
-                            KingdomId = troop.KingdomId
-                        });
-                        troopsToRemove.Add(troop);
+                        troop.ConsumingFood = true;
+                        troop.Level = level;
+                        troop.Attack = _rules.TroopAttack(level);
+                        troop.Defense = _rules.TroopDefense(level);
+                        troop.Capacity = _rules.TroopCapacity(level);
+                        // this might not work, test if it behaves correctly
+                        troop.Upgrading = false;
                     }
-
-                    troop.UpdatedAt = _timeService.GetCurrentSeconds();
                 }
 
-                if (troopsToRemove.Count != 0)
-                {
-                    foreach (var troop in troopsToRemove)
-                    {
-                        _applicationContext.TroopsWorkedOn.Remove(troop);
-                    }
-
-                    //Once a soldier (or a bunch of them) are created, they start eating. Fortunately, the methods are implemented in such a way that
-                    //unless enough time has passed, only the generation will be updated, not the actual amount.
-                    _resourceService.UpdateKingdomResources(kingdomId);
-                    _applicationContext.SaveChanges();
-                }
+                //Once a soldier (or a bunch of them) are created, they start eating. Fortunately, the methods are implemented in such a way that
+                //unless enough time has passed, only the generation will be updated, not the actual amount.
+                _resourceService.UpdateKingdomResources(kingdomId);
+                _applicationContext.SaveChanges();
             }
         }
 
         private int CalculateStorageLimit(Kingdom kingdom)
+    {
+        //TODO : ask about requirements for townhall - forgot to build it on a new account and got nullpointerException here
+        return _rules.StorageLimit(kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall)!.Level) - (kingdom.Troops.Count);
+    }
+
+    private void PerformTrainingChecks(Kingdom kingdom, int requestedAmount, int goldAmount, int orderPrice)
+    {
+        if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy) == null)
         {
-            return _rules.StorageLimit(kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall)!.Level) - (kingdom.Troops.Count + kingdom.TroopsWorkedOn.Count);
+            throw new TroopCreationException("You need an academy to be able to train troops.");
         }
 
-        private void PerformChecks(Kingdom kingdom, int requestedAmount, int goldAmount, int orderPrice)
+        if (CalculateStorageLimit(kingdom) < requestedAmount)
         {
-            if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy) == null)
-            {
-                throw new TroopCreationException("You need an academy to be able to train troops.");
-            }
-
-            if (CalculateStorageLimit(kingdom) < requestedAmount)
-            {
-                throw new TroopCreationException("Insufficient troop capacity.");
-            }
-
-            if (orderPrice > goldAmount)
-            {
-                throw new TroopCreationException("Not enough gold.");
-            }
+            throw new TroopCreationException("Insufficient troop capacity.");
         }
 
-        private List<UnfinishedTroop> CreateNewTroops(int kingdomId, int amount, List<UnfinishedTroop> troopsWorkedOn)
+        if (orderPrice > goldAmount)
         {
-            List<UnfinishedTroop> newTroops = new List<UnfinishedTroop>();
-
-            for (int i = 0; i < amount; i++)
-            {
-                newTroops.Add(new UnfinishedTroop
-                {
-                    //The starting time is decided on whether there are other troops being worked on (Built or upgraded). If there aren't, training starts now. If there are, it starts as soon as the last troop is finished training.
-                    StartedAt = troopsWorkedOn.Count == 0 ? _timeService.GetCurrentSeconds() + i * _rules.TroopBuildingTime(1) : troopsWorkedOn.Last().FinishedAt + i * _rules.TroopBuildingTime(1),
-                    FinishedAt =
-                        troopsWorkedOn.Count == 0 ? _timeService.GetCurrentSeconds() + (i + 1) * _rules.TroopBuildingTime(1) : troopsWorkedOn.Last().FinishedAt + (i + 1) * _rules.TroopBuildingTime(1),
-                    Level = 1,
-                    KingdomId = kingdomId
-                });
-            }
-
-            return newTroops;
-        }
-
-        public KingdomTroopsDTO GetKingdomTroops(int kingdomId)
-        {
-            return new KingdomTroopsDTO
-            {
-                Troops = _applicationContext.Troops
-                    .Where(t => t.KingdomId == kingdomId)
-                    .ToList()
-            };
+            throw new TroopCreationException("Not enough gold.");
         }
     }
+
+    private List<Troop> CreateNewTroops(int kingdomId, int amount, List<Troop> troopsInProgress)
+    {
+        var newTroops = new List<Troop>();
+
+        for (int i = 0; i < amount; i++)
+        {
+            newTroops.Add(new Troop
+            {
+                StartedAt = troopsInProgress.Count == 0 ? _timeService.GetCurrentSeconds() + i * _rules.TroopBuildingTime(1) : troopsInProgress.Last().FinishedAt + i * _rules.TroopBuildingTime(1),
+                FinishedAt =
+                    troopsInProgress.Count == 0 ? _timeService.GetCurrentSeconds() + (i + 1) * _rules.TroopBuildingTime(1) : troopsInProgress.Last().FinishedAt + (i + 1) * _rules.TroopBuildingTime(1),
+                Level = 1,
+                Attack = _rules.TroopAttack(1),
+                Defense = _rules.TroopDefense(1),
+                Capacity = _rules.TroopCapacity(1),
+                ConsumingFood = false,
+                Upgrading = false,
+                KingdomId = kingdomId
+            });
+        }
+        
+        return newTroops;
+    }
+
+    public KingdomTroopsDTO GetKingdomTroops(int kingdomId)
+    {
+        return new KingdomTroopsDTO
+        {
+            Troops = _applicationContext.Troops
+                .Where(t => t.KingdomId == kingdomId)
+                .ToList()
+        };
+    }
+/*
+    public KingdomTroopsDTO UpgradeTroops(int kingdomId, TroopUpgradeRequestDTO request)
+    {
+        var troopsToUpgrade = PerformUpgradeChecksAndReturnTroopsToUpgrade(kingdomId, request);
+        List<Troop> troopsForResponse = new List<Troop>();
+
+        foreach (var troop in troopsToUpgrade)
+        {
+            var level = troop.Level + 1;
+            troopsForResponse.Add(new Troop
+            {
+                KingdomId = kingdomId,
+                Level = level,
+                Attack = _rules.TroopAttack(level),
+                Defense = _rules.TroopDefense(level),
+                Capacity = _rules.TroopCapacity(level),
+            });
+        }
+
+        var responseDTO = new KingdomTroopsDTO(
+        )
+    }*/
+
+    private List<Troop> PerformUpgradeChecksAndReturnTroopsToUpgrade(int kingdomId, TroopUpgradeRequestDTO request)
+    {
+        //Check that the troops we want to upgrade actually belong to the kingdom
+        List<Troop> troopsToUpgrade = new List<Troop>();
+        foreach (var troopId in request.TroopIds)
+        {
+            var troop = _applicationContext.Troops.FirstOrDefault(t => t.TroopId == troopId);
+            if (troop.KingdomId != kingdomId)
+            {
+                throw new TroopCreationException("Invalid Troop ID.");
+            }
+
+            troopsToUpgrade.Add(troop);
+        }
+
+        troopsToUpgrade = troopsToUpgrade.OrderBy(t => t.Level).ToList();
+
+        //Check that the best troop's level after upgrade isn't higher than the academy's
+        if ((troopsToUpgrade[0].Level + 1) > _applicationContext.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy && b.KingdomId == kingdomId).Level)
+        {
+            throw new TroopCreationException("Upgrade not allowed, academy level too low.");
+        }
+
+        return troopsToUpgrade;
+    }
+}
+
 }

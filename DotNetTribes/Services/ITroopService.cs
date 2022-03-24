@@ -2,7 +2,7 @@
 
 namespace DotNetTribes.Services
 {
-    public interface ITroopService
+   public interface ITroopService
     {
         public TroopResponseDTO TrainNewTroops(int kingdomId, TroopRequestDTO request);
 

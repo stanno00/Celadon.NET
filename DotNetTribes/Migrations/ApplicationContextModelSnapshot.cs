@@ -242,37 +242,8 @@ namespace DotNetTribes.Migrations
                     b.Property<bool>("ConsumingFood")
                         .HasColumnType("bit");
 
-                    b.Property<int>("CoordinateX")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CoordinateY")
-                        .HasColumnType("int");
-
                     b.Property<int>("Defense")
                         .HasColumnType("int");
-
-                    b.Property<int>("KingdomId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
-
-                    b.Property<long>("UpdatedAt")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("TroopId");
-
-                    b.HasIndex("KingdomId");
-
-                    b.ToTable("Troops");
-                });
-
-            modelBuilder.Entity("DotNetTribes.Models.UnfinishedTroop", b =>
-                {
-                    b.Property<long>("UnfinishedTroopId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<long>("FinishedAt")
                         .HasColumnType("bigint");
@@ -292,11 +263,11 @@ namespace DotNetTribes.Migrations
                     b.Property<bool>("Upgrading")
                         .HasColumnType("bit");
 
-                    b.HasKey("UnfinishedTroopId");
+                    b.HasKey("TroopId");
 
                     b.HasIndex("KingdomId");
 
-                    b.ToTable("TroopsWorkedOn");
+                    b.ToTable("Troops");
                 });
 
             modelBuilder.Entity("DotNetTribes.Models.User", b =>
@@ -355,15 +326,6 @@ namespace DotNetTribes.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DotNetTribes.Models.UnfinishedTroop", b =>
-                {
-                    b.HasOne("DotNetTribes.Models.Kingdom", null)
-                        .WithMany("TroopsWorkedOn")
-                        .HasForeignKey("KingdomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DotNetTribes.Models.User", b =>
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", "Kingdom")
@@ -382,8 +344,6 @@ namespace DotNetTribes.Migrations
                     b.Navigation("Resources");
 
                     b.Navigation("Troops");
-
-                    b.Navigation("TroopsWorkedOn");
 
                     b.Navigation("User");
                 });

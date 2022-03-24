@@ -59,6 +59,7 @@ namespace DotNetTribes.Services
         {
             var troopsInProgress = _applicationContext.Troops
                 .Where(t => t.KingdomId == kingdomId && t.FinishedAt < _timeService.GetCurrentSeconds())
+                .OrderBy(t => t.FinishedAt)
                 .ToList();
 
             if (troopsInProgress.Count != 0)
@@ -209,6 +210,7 @@ namespace DotNetTribes.Services
         {
             if (troopsInProgress.Count != 0)
             {
+                //Both 
                 return troopsInProgress.Last().FinishedAt;
             }
 

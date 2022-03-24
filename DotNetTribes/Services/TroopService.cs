@@ -4,9 +4,8 @@ using DotNetTribes.DTOs.Troops;
 using DotNetTribes.Enums;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
+
 
 namespace DotNetTribes.Services
 {
@@ -109,20 +108,21 @@ namespace DotNetTribes.Services
 
             for (int i = 0; i < amount; i++)
             {
-                newTroops.Add(new Troop
+                var troop = new Troop
                 {
-                    StartedAt = troopsInProgress.Count == 0 ? _timeService.GetCurrentSeconds() + i * _rules.TroopBuildingTime(1) : troopsInProgress.Last().FinishedAt + i * _rules.TroopBuildingTime(1),
-                    FinishedAt =
-                        troopsInProgress.Count == 0
-                            ? _timeService.GetCurrentSeconds() + (i + 1) * _rules.TroopBuildingTime(1)
-                            : troopsInProgress.Last().FinishedAt + (i + 1) * _rules.TroopBuildingTime(1),
+                    StartedAt = GetTroopStartTime(troopsInProgress),
+                    /*troopsInProgress.Count == 0 ? _timeService.GetCurrentSeconds() + i * _rules.TroopBuildingTime(1) : troopsInProgress.Last().FinishedAt + i * _rules.TroopBuildingTime(1)*/
+                    FinishedAt = GetTroopFinishTime(troopsInProgress, 1),
                     Level = 1,
                     Attack = _rules.TroopAttack(1),
                     Defense = _rules.TroopDefense(1),
                     Capacity = _rules.TroopCapacity(1),
                     ConsumingFood = false,
                     KingdomId = kingdomId
-                });
+                };
+                //This call is required so that the next iteration of the loop has correct data to work with.
+                troopsInProgress.Add(troop);
+                newTroops.Add(troop);
             }
 
             return newTroops;
@@ -152,15 +152,19 @@ namespace DotNetTribes.Services
                 troop.ConsumingFood = false;
                 troop.Level = level;
                 //create a function for this
-                troop.StartedAt = troopsInProgress.Count == 0
-                    ? _timeService.GetCurrentSeconds() + (troopsToUpgrade.IndexOf(troop) * _rules.TroopBuildingTime(level))
-                    : troopsInProgress.Last().FinishedAt + ((troopsToUpgrade.IndexOf(troop) * _rules.TroopBuildingTime(1)));
-                troop.FinishedAt = troopsInProgress.Count == 0
-                    ? _timeService.GetCurrentSeconds() + (troopsToUpgrade.IndexOf(troop) + 1) * _rules.TroopBuildingTime(1)
-                    : troopsInProgress.Last().FinishedAt + (troopsToUpgrade.IndexOf(troop) + 1) * _rules.TroopBuildingTime(1);
+                troop.StartedAt = GetTroopStartTime(troopsInProgress);
+                /*
+                troopsInProgress.Count == 0
+                ? _timeService.GetCurrentSeconds() + (troopsToUpgrade.IndexOf(troop) * _rules.TroopBuildingTime(level))
+                : troopsInProgress.Last().FinishedAt + ((troopsToUpgrade.IndexOf(troop) * _rules.TroopBuildingTime(1)));*/
+                troop.FinishedAt = GetTroopFinishTime(troopsInProgress, level);
+                /*troopsInProgress.Count == 0
+                ? _timeService.GetCurrentSeconds() + (troopsToUpgrade.IndexOf(troop) + 1) * _rules.TroopBuildingTime(1)
+                : troopsInProgress.Last().FinishedAt + (troopsToUpgrade.IndexOf(troop) + 1) * _rules.TroopBuildingTime(1);*/
                 troop.Attack = _rules.TroopAttack(level);
                 troop.Defense = _rules.TroopDefense(level);
                 troop.Capacity = _rules.TroopCapacity(level);
+                troopsInProgress.Add(troop);
             }
 
             _applicationContext.SaveChanges();
@@ -180,7 +184,7 @@ namespace DotNetTribes.Services
             foreach (var troopId in request.TroopIds)
             {
                 var troop = _applicationContext.Troops.FirstOrDefault(t => t.TroopId == troopId);
-                if (troop.KingdomId != kingdomId)
+                if (troop!.KingdomId != kingdomId)
                 {
                     throw new TroopCreationException("Invalid Troop ID.");
                 }
@@ -192,7 +196,7 @@ namespace DotNetTribes.Services
             troopsToUpgrade = troopsToUpgrade.OrderBy(t => t.Level).ToList();
 
             //Check that the best troop's level after upgrade isn't higher than the academy's
-            if ((troopsToUpgrade[0].Level + 1) > _applicationContext.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy && b.KingdomId == kingdomId).Level)
+            if ((troopsToUpgrade[0].Level + 1) > _applicationContext.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy && b.KingdomId == kingdomId)!.Level)
             {
                 throw new TroopCreationException("Upgrade not allowed, academy level too low.");
             }
@@ -207,6 +211,26 @@ namespace DotNetTribes.Services
 
 
             return troopsToUpgrade;
+        }
+
+        private long GetTroopStartTime(List<Troop> troopsInProgress)
+        {
+            if (troopsInProgress.Count != 0)
+            {
+                return troopsInProgress.Last().FinishedAt;
+            }
+
+            return _timeService.GetCurrentSeconds();
+        }
+
+        private long GetTroopFinishTime(List<Troop> troopsInProgress, int level)
+        {
+            if (troopsInProgress.Count != 0)
+            {
+                return troopsInProgress.Last().FinishedAt + _rules.TroopBuildingTime(level);
+            }
+
+            return _timeService.GetCurrentSeconds() + _rules.TroopBuildingTime(level);
         }
     }
 }

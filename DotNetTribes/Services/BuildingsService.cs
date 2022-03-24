@@ -41,6 +41,13 @@ namespace DotNetTribes.Services
                 .Include(r => r.Resources)
                 .FirstOrDefault(k => k.KingdomId == kingdomId);
 
+            var hasAcademy = kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy);
+
+            if (request.Type == "Marketplace" && hasAcademy == null)
+            {
+                throw new BuildingCreationException("Academy required");
+            }
+
             var kingdomGold = kingdom.Resources.FirstOrDefault(r => r.Type.Equals(ResourceType.Gold));
 
             BuildingDetailsDTO buildingDetails = _rules.GetBuildingDetails(requestedBuilding, 1);

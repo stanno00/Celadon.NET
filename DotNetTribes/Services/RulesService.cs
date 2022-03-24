@@ -56,6 +56,21 @@ namespace DotNetTribes.Services
         {
             return level * _r.TroopAllLevelsCost;
         }
+
+        public int MarketplacePrice(int level)
+        {
+            if (level == 1)
+            {
+                return _r.MarketplaceLevelOneCost;
+            }
+
+            return level * _r.MarketplaceAllLevelsCost;
+        }
+
+        public int MarketplaceTradeAmount(int level)
+        {
+            return level * _r.MarketplaceMaxResources;
+        }
         
         public int TownhallHP(int level)
         {
@@ -80,6 +95,11 @@ namespace DotNetTribes.Services
         public int TroopHp(int level)
         {
             return level * _r.TroopHP;
+        }
+
+        public int MarketplaceHP(int level)
+        {
+            return level * _r.MarketplaceHP;
         }
         
         public int TownhallBuildingTime(int level)
@@ -115,6 +135,16 @@ namespace DotNetTribes.Services
         public int TroopBuildingTime(int level)
         {
             return level * _r.TroopAllLevelsDuration;
+        }
+
+        public int MarketplaceBuildingTime(int level)
+        {
+            if (level == 1)
+            {
+                return _r.MarketplaceLevelOneDuration;
+            }
+
+            return level * _r.MarketplaceAllLevelsDuration;
         }
 
         public int BuildingResourceGeneration(Building building)
@@ -164,6 +194,13 @@ namespace DotNetTribes.Services
                         BuildingPrice = AcademyPrice(level),
                         BuildingHP = AcademyHP(level),
                         BuildingDuration = AcademyBuildingTime(level)
+                    };
+                case BuildingType.Marketplace:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = MarketplacePrice(level),
+                        BuildingHP = MarketplaceHP(level),
+                        BuildingDuration = MarketplaceBuildingTime(level)
                     };
                 default:
                     throw new BuildingCreationException("This should not happen under any circumstances. Recommended actions:" +

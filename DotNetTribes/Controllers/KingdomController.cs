@@ -96,15 +96,15 @@ namespace DotNetTribes.Controllers
                 Buildings = buildings
             };
         }
-        /*
+        
         [Authorize]
         [HttpPut("troops")]
         public ActionResult<KingdomTroopsDTO> UpgradeTroops([FromHeader]string authorization, [FromBody]TroopUpgradeRequestDTO request)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            // var result = _troopService.UpgradeTroops(kingdomId, request)
+            var result = _troopService.UpgradeTroops(kingdomId, request);
 
             return new OkObjectResult(result);
-        }*/
+        }
     }
 }

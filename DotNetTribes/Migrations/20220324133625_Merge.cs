@@ -2,7 +2,7 @@
 
 namespace DotNetTribes.Migrations
 {
-    public partial class RemoveTWO : Migration
+    public partial class Merge : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -39,7 +39,9 @@ namespace DotNetTribes.Migrations
                     TroopFoodConsumption = table.Column<int>(type: "int", nullable: false),
                     TroopAttack = table.Column<int>(type: "int", nullable: false),
                     TroopDefense = table.Column<int>(type: "int", nullable: false),
-                    TroopCapacity = table.Column<int>(type: "int", nullable: false)
+                    TroopCapacity = table.Column<int>(type: "int", nullable: false),
+                    MapBoundariesX = table.Column<int>(type: "int", nullable: false),
+                    MapBoundariesY = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -52,7 +54,9 @@ namespace DotNetTribes.Migrations
                 {
                     KingdomId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    KingdomX = table.Column<int>(type: "int", nullable: false),
+                    KingdomY = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,7 +121,6 @@ namespace DotNetTribes.Migrations
                     FinishedAt = table.Column<long>(type: "bigint", nullable: false),
                     UpdatedAt = table.Column<long>(type: "bigint", nullable: false),
                     ConsumingFood = table.Column<bool>(type: "bit", nullable: false),
-                    Upgrading = table.Column<bool>(type: "bit", nullable: false),
                     Level = table.Column<int>(type: "int", nullable: false),
                     Attack = table.Column<int>(type: "int", nullable: false),
                     Defense = table.Column<int>(type: "int", nullable: false),
@@ -158,8 +161,8 @@ namespace DotNetTribes.Migrations
 
             migrationBuilder.InsertData(
                 table: "GameRules",
-                columns: new[] { "GameRulesId", "AcademyHP", "AcademyLevelNCost", "AcademyLevelNDuration", "AcademyLevelOneCost", "AcademyLevelOneDuration", "FarmAllLevelsCost", "FarmAllLevelsDuration", "FarmAllLevelsFoodGeneration", "FarmHP", "MineALlLevelsGoldGeneration", "MineAllLevelsCost", "MineAllLevesDuration", "MineHP", "Name", "StartingFood", "StartingGold", "StorageLimit", "TownhallAllLevelsCost", "TownhallHP", "TownhallLevelNDuration", "TownhallLevelOneDuration", "TroopAllLevelsCost", "TroopAllLevelsDuration", "TroopAttack", "TroopCapacity", "TroopDefense", "TroopFoodConsumption", "TroopHP" },
-                values: new object[] { 1, 150, 100, 60, 150, 90, 100, 60, 5, 100, 5, 100, 60, 100, "Production", 500, 500, 100, 200, 200, 60, 120, 25, 30, 10, 2, 5, 2, 20 });
+                columns: new[] { "GameRulesId", "AcademyHP", "AcademyLevelNCost", "AcademyLevelNDuration", "AcademyLevelOneCost", "AcademyLevelOneDuration", "FarmAllLevelsCost", "FarmAllLevelsDuration", "FarmAllLevelsFoodGeneration", "FarmHP", "MapBoundariesX", "MapBoundariesY", "MineALlLevelsGoldGeneration", "MineAllLevelsCost", "MineAllLevesDuration", "MineHP", "Name", "StartingFood", "StartingGold", "StorageLimit", "TownhallAllLevelsCost", "TownhallHP", "TownhallLevelNDuration", "TownhallLevelOneDuration", "TroopAllLevelsCost", "TroopAllLevelsDuration", "TroopAttack", "TroopCapacity", "TroopDefense", "TroopFoodConsumption", "TroopHP" },
+                values: new object[] { 1, 150, 100, 60, 150, 90, 100, 60, 5, 100, 101, 101, 5, 100, 60, 100, "Production", 500, 500, 100, 200, 200, 60, 120, 25, 30, 10, 2, 5, 2, 20 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Buildings_KingdomId",

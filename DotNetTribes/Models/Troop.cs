@@ -8,7 +8,6 @@
         public long FinishedAt { get; set; }
         public long UpdatedAt { get; set; }
         public bool ConsumingFood { get; set; }
-        public bool Upgrading { get; set; }
         public int Level { get; set; }
         public int Attack { get; set; }
         public int Defense { get; set; }

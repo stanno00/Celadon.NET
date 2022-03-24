@@ -274,9 +274,6 @@ namespace DotNetTribes.Migrations
                     b.Property<long>("UpdatedAt")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("Upgrading")
-                        .HasColumnType("bit");
-
                     b.HasKey("TroopId");
 
                     b.HasIndex("KingdomId");

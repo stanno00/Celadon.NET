@@ -29,8 +29,23 @@ namespace DotNetTribes.Services
             {
                 KingdomName = kingdom.Name,
                 Username = kingdom.User?.Username,
-                Buildings = kingdom.Buildings,
-                Resources = kingdom.Resources,
+                Buildings = kingdom.Buildings.Select(b => new BuildingResponseDTO
+                {
+                    Hp = b.Hp,
+                    Level = b.Level,
+                    Finished_at = b.Finished_at,
+                    Started_at = b.Started_at,
+                    Type = b.Type.ToString()
+                })
+                    .ToList(),
+                Resources = kingdom.Resources.Select(r => new ResourceDto
+                {
+                    Amount = r.Amount,
+                    Type = r.Type.ToString(),
+                    UpdatedAt = r.UpdatedAt,
+                    Generation = r.Generation
+                })
+                    .ToList(),
                 Troops = kingdom.Troops
             };
             return kingdomDto;

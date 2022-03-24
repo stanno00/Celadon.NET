@@ -1,5 +1,4 @@
 ﻿using DotNetTribes.DTOs;
-using DotNetTribes.Models;
 
 namespace DotNetTribes.Services
 {

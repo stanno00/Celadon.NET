@@ -1,11 +1,7 @@
 using System;
 using DotNetTribes.Services;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using DotNetTribes.ActionFilters;
-using DotNetTribes.Services;
 using DotNetTribes.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;

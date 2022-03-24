@@ -13,14 +13,16 @@ namespace DotNetTribes.Controllers
         private readonly IKingdomService _kingdomService;
         private readonly IJwtService _jwtService;
         private readonly IBuildingsService _buildingsService;
+        private readonly IResourceService _resourceService;
 
 
         public KingdomController(IKingdomService kingdomService, IJwtService jwtService,
-            IBuildingsService buildingsService)
+            IBuildingsService buildingsService, IResourceService resourceService)
         {
             _kingdomService = kingdomService;
             _jwtService = jwtService;
             _buildingsService = buildingsService;
+            _resourceService = resourceService;
         }
 
         [HttpGet]
@@ -37,6 +39,19 @@ namespace DotNetTribes.Controllers
             }
 
             return new OkObjectResult(kingdom);
+        }
+        
+        [HttpGet("resource")]
+        [Authorize]
+        public ActionResult<ResourcesDto> GetKingdomResources([FromHeader] string authorization)
+        {
+            var kingdomResources = _resourceService.GetKingdomResources(_jwtService.GetKingdomIdFromJwt(authorization));
+            if (kingdomResources.Resources.Count == 0)
+            {
+                return new BadRequestObjectResult("Bad request!");
+            }
+
+            return new OkObjectResult(kingdomResources);
         }
 
         [Authorize]
@@ -56,8 +71,8 @@ namespace DotNetTribes.Controllers
             [FromRoute] int buildingId)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var response = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
-            return new OkObjectResult(response);
+            var responseBuilding = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
+            return new OkObjectResult(responseBuilding);
         }
 
         [Authorize]

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DotNetTribes.Models;
 
 namespace DotNetTribes.DTOs
@@ -8,8 +7,8 @@ namespace DotNetTribes.DTOs
     {
         public string KingdomName { get; set; }
         public string Username { get; set; }
-        public ICollection<Building> Buildings { get; set; }
+        public List<BuildingResponseDTO> Buildings { get; set; }
         public ICollection<Troop> Troops { get; set; }
-        public ICollection<Resource> Resources { get; set; }
+        public ICollection<ResourceDto> Resources { get; set; }
     }
 }

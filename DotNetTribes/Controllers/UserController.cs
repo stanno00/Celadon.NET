@@ -1,5 +1,4 @@
-﻿using System;
-using DotNetTribes.DTOs;
+﻿using DotNetTribes.DTOs;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Mvc;
 

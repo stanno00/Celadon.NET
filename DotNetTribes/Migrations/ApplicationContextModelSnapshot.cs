@@ -86,24 +86,6 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("FarmHP")
                         .HasColumnType("int");
 
-                    b.Property<int>("MarketplaceAllLevelsCost")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceAllLevelsDuration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceHP")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceLevelOneCost")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceLevelOneDuration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceMaxResources")
-                        .HasColumnType("int");
-
                     b.Property<int>("MineALlLevelsGoldGeneration")
                         .HasColumnType("int");
 
@@ -163,12 +145,6 @@ namespace DotNetTribes.Migrations
                             FarmAllLevelsDuration = 60,
                             FarmAllLevelsFoodGeneration = 5,
                             FarmHP = 100,
-                            MarketplaceAllLevelsCost = 100,
-                            MarketplaceAllLevelsDuration = 10,
-                            MarketplaceHP = 100,
-                            MarketplaceLevelOneCost = 1,
-                            MarketplaceLevelOneDuration = 1,
-                            MarketplaceMaxResources = 75,
                             MineALlLevelsGoldGeneration = 5,
                             MineAllLevelsCost = 100,
                             MineAllLevesDuration = 60,

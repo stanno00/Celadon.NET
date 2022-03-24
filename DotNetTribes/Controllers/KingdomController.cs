@@ -1,6 +1,8 @@
 ﻿using System;
 using DotNetTribes.ActionFilters;
 using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Trade;
+using DotNetTribes.Enums;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +16,15 @@ namespace DotNetTribes.Controllers
         private readonly IKingdomService _kingdomService;
         private readonly IJwtService _jwtService;
         private readonly IBuildingsService _buildingsService;
+        private readonly IResourceService _resourceService;
         
         
-        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService)
+        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService, IResourceService resourceService)
         {
             _kingdomService = kingdomService;
             _jwtService = jwtService;
             _buildingsService = buildingsService;
+            _resourceService = resourceService;
         }
 
         [HttpGet]
@@ -68,6 +72,19 @@ namespace DotNetTribes.Controllers
             return new KingdomBuildingsDto()
             {
                 Buildings = buildings
+            };
+        }
+
+        [Authorize]
+        [HttpPost("offer")]
+        public ActionResult<ResponseDTO> Offer([FromHeader] string authorization,
+            [FromBody] TradeRequestDTO tradeRequestDto)
+        {
+            int id = _jwtService.GetKingdomIdFromJwt(authorization);
+            bool accepted = _resourceService.ValidateTradeOffer(id, tradeRequestDto);
+            return new ResponseDTO()
+            {
+                status = "ok"
             };
         }
     }

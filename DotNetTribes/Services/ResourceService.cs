@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Trade;
 using DotNetTribes.Enums;
 using DotNetTribes.Models;
 
@@ -85,6 +87,25 @@ namespace DotNetTribes.Services
             };
 
             return buildingType;
+        }
+        
+        public bool ValidateTradeOffer(int id, TradeRequestDTO tradeRequestDto)
+        {
+            UpdateKingdomResources(id);
+            var resource = _applicationContext.Resources.Where(t => t.Type == tradeRequestDto.offered_resource.type)
+                .FirstOrDefault(k => k.KingdomId == id);
+            var resourcesAvailable = resource.Amount;
+
+            if (resource.Type == tradeRequestDto.offered_resource.type)
+            {
+                throw new TargetException("You can't trade for the same resource");
+            }
+            if (resourcesAvailable < tradeRequestDto.offered_resource.amount)
+            {
+                throw new TargetException($"Not enough {resource.Type}");
+            }
+
+            return true;
         }
     }
 }

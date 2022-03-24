@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Trade;
 
 namespace DotNetTribes.Services
 {
@@ -7,5 +8,7 @@ namespace DotNetTribes.Services
     {
         ResourcesDto GetKingdomResources(int kingdomId);
         void UpdateKingdomResources(int kingdomId);
+        
+        bool ValidateTradeOffer(int id, TradeRequestDTO tradeRequestDto);
     }
 }

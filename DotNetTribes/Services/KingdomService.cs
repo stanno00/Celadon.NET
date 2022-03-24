@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Trade;
 
 namespace DotNetTribes.Services
 {

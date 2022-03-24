@@ -32,5 +32,9 @@
         public int TroopAttack { get; set; }
         public int TroopDefense { get; set; }
         public int TroopCapacity { get; set; }
+
+        public int MapBoundariesX { get; set; }
+        public int MapBoundariesY { get; set; }
+
     }
 }

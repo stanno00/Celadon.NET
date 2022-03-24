@@ -1,6 +1,6 @@
-using DotNetTribes.DTOs;
-using DotNetTribes.DTOs.Troops;
 using DotNetTribes.ActionFilters;
+ using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Troops;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +18,7 @@ namespace DotNetTribes.Controllers
         
         
         public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService, ITroopService troopService)
+
         {
             _kingdomService = kingdomService;
             _jwtService = jwtService;
@@ -32,11 +33,13 @@ namespace DotNetTribes.Controllers
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var result = _kingdomService.KingdomInfo(kingdomId);
             return new OkObjectResult(result);
+
         }
 
         [Authorize]
         [HttpPost("buildings")]
-        public ActionResult<KingdomDto> CreateNewBuilding([FromHeader] string authorization, [FromBody] BuildingRequestDTO request)
+        public ActionResult<KingdomDto> CreateNewBuilding([FromHeader] string authorization,
+            [FromBody] BuildingRequestDTO request)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var result = _buildingsService.CreateNewBuilding(kingdomId, request);
@@ -61,7 +64,18 @@ namespace DotNetTribes.Controllers
             var result = _troopService.TrainNewTroops(kingdomId, request);
             return new OkObjectResult(result);
         }
-        
+
+        [Authorize]
+        [HttpGet("nearest/{minutes}")]
+        public ActionResult<NearbyKingdomsDto> NearestKingdoms([FromRoute] int minutes,
+            [FromHeader] string authorization)
+        {
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var response = _kingdomService.NearestKingdoms(minutes, kingdomId);
+
+            return new ObjectResult(response);
+        }
+
         [Authorize]
         [HttpGet("troops")]
         public ActionResult<KingdomTroopsDTO> GetKingdomTroops([FromHeader]string authorization)

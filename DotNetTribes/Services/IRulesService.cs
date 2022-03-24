@@ -31,5 +31,8 @@ namespace DotNetTribes.Services
 
 
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level);
+        
+        public int MapBoundariesX();
+        public int MapBoundariesY();
     }
 }

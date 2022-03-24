@@ -139,6 +139,16 @@ namespace DotNetTribes.Services
             return troopLevel * _r.TroopDefense;
         }
 
+        public int MapBoundariesX()
+        {
+            return _r.MapBoundariesX;
+        }
+        
+        public int MapBoundariesY()
+        {
+            return _r.MapBoundariesY;
+        }
+        
         public int BuildingResourceGeneration(Building building)
         {
             var resourceGeneration = 0;
@@ -154,7 +164,7 @@ namespace DotNetTribes.Services
 
             return building.Level * resourceGeneration + 5;
         }
-
+        
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level)
         {
             switch (type)

@@ -4,14 +4,16 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220321151410_AddCoordinates")]
+    partial class AddCoordinates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,19 +82,7 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("FarmAllLevelsDuration")
                         .HasColumnType("int");
 
-                    b.Property<int>("FarmAllLevelsFoodGeneration")
-                        .HasColumnType("int");
-
                     b.Property<int>("FarmHP")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MapBoundariesX")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MapBoundariesY")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MineALlLevelsGoldGeneration")
                         .HasColumnType("int");
 
                     b.Property<int>("MineAllLevelsCost")
@@ -149,11 +139,7 @@ namespace DotNetTribes.Migrations
                             AcademyLevelOneDuration = 90,
                             FarmAllLevelsCost = 100,
                             FarmAllLevelsDuration = 60,
-                            FarmAllLevelsFoodGeneration = 5,
                             FarmHP = 100,
-                            MapBoundariesX = 101,
-                            MapBoundariesY = 101,
-                            MineALlLevelsGoldGeneration = 5,
                             MineAllLevelsCost = 100,
                             MineAllLevesDuration = 60,
                             MineHP = 100,

@@ -30,5 +30,8 @@ namespace DotNetTribes.Services
         public int BuildingResourceGeneration(Building building);
 
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level);
+        
+        public int MapBoundariesX();
+        public int MapBoundariesY();
     }
 }

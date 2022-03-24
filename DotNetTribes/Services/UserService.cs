@@ -24,11 +24,32 @@ namespace DotNetTribes.Services
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
+        private int[] KingdomCoordinates()
+        {
+            Random random = new Random();
+
+            int coordinatesX = 0;
+            int coordinatesY = 0;
+
+            do
+            {
+                coordinatesX = random.Next(_rules.MapBoundariesX());
+                coordinatesY = random.Next(_rules.MapBoundariesY());
+            } while (_applicationContext.Kingdoms.Any(k => k.KingdomX == coordinatesX && k.KingdomY == coordinatesY));
+            
+            int[] coordinates = new int[2];
+            coordinates[0] = coordinatesX;
+            coordinates[1] = coordinatesY;
+            return coordinates;
+        }
+
         public RegisterUserResponseDTO RegisterUser(RegisterUserRequestDTO userCredentials)
         {
             HandleMissingFields(userCredentials);
             CheckIfFieldsAreNotTaken(userCredentials);
             CheckIfPasswordIsLongEnough(userCredentials.Password, 8);
+
+            int[] coordinates = KingdomCoordinates();
 
             var user = new User()
             {
@@ -38,6 +59,8 @@ namespace DotNetTribes.Services
                 Kingdom = new Kingdom()
                 {
                     Name = userCredentials.KingdomName,
+                    KingdomX = coordinates[0],
+                    KingdomY = coordinates[1],
                     Resources = new List<Resource>
                     {
                         new Resource

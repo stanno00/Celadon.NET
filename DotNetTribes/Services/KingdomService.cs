@@ -31,6 +31,7 @@ namespace DotNetTribes.Services
                 Username = kingdom.User?.Username,
                 Buildings = kingdom.Buildings.Select(b => new BuildingResponseDTO
                 {
+                    Id = b.BuildingId,
                     Hp = b.Hp,
                     Level = b.Level,
                     Finished_at = b.Finished_at,

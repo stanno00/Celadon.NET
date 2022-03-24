@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using DotNetTribes.DTOs;
+using DotNetTribes.Exceptions;
 
 namespace DotNetTribes.Services
 {
@@ -22,7 +24,7 @@ namespace DotNetTribes.Services
                 .Include(k => k.Troops)
                 .Include(k => k.User)
                 .Single(k => k.KingdomId == kingdomId);
-            
+
             KingdomDto kingdomDto = new KingdomDto()
             {
                 KingdomName = kingdom.Name,
@@ -33,7 +35,52 @@ namespace DotNetTribes.Services
             };
             return kingdomDto;
         }
-        
+
+        public object NearestKingdoms(int minutes, int kingdomId)
+        {
+            if (minutes < 2)
+            {
+                throw new KingdomReceiveMinutesLessThanTwo("It takes at least two minutes to move one square!");
+            }
+
+            List<NearbyKingdomsDto> kingdomsDtos = new List<NearbyKingdomsDto>();
+            var myKingdom = _applicationContext.Kingdoms.Single(k => k.KingdomId == kingdomId);
+
+            foreach (var kingdom in _applicationContext.Kingdoms)
+            {
+                int minutesToKingdom = ShortestPath(myKingdom.KingdomX, myKingdom.KingdomY, kingdom.KingdomX,
+                    kingdom.KingdomY);
+                if (minutesToKingdom <= minutes && myKingdom.KingdomId != kingdom.KingdomId)
+                {
+                    kingdomsDtos.Add(new NearbyKingdomsDto()
+                    {
+                        KingdomId = kingdom.KingdomId,
+                        KingdomName = kingdom.Name,
+                        KingdomCoordinateX = kingdom.KingdomX,
+                        KingdomCoordinateY = kingdom.KingdomY,
+                        MinutesToArrive = minutesToKingdom
+                    });
+                }
+            }
+
+            return kingdomsDtos;
+        }
+
+        public int ShortestPath(int myKingdomX, int myKingdomY, int kingdomUnderAttackX, int kingdomUnderAttackY)
+        {
+            int minutes = 0;
+
+            var resultX = Math.Abs(myKingdomX - kingdomUnderAttackX);
+            var resultY = Math.Abs(myKingdomY - kingdomUnderAttackY);
+            
+            if (resultX >= resultY)
+            {
+                return resultX * 2;
+            }
+            
+            return resultY * 2;
+        }
+
         public List<BuildingResponseDTO> GetExistingBuildings(int kingdomId)
         {
             var buildings = _applicationContext.Buildings

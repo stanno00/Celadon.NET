@@ -70,48 +70,15 @@ namespace DotNetTribes.Services
         {
             int minutes = 0;
 
-            if (myKingdomX > kingdomUnderAttackX)
+            var resultX = Math.Abs(myKingdomX - kingdomUnderAttackX);
+            var resultY = Math.Abs(myKingdomY - kingdomUnderAttackY);
+            
+            if (resultX >= resultY)
             {
-                kingdomUnderAttackX += (myKingdomX - kingdomUnderAttackX) * 2;
+                return resultX * 2;
             }
-
-            if (myKingdomY > kingdomUnderAttackY)
-            {
-                kingdomUnderAttackY += (myKingdomX - kingdomUnderAttackY) * 2;
-            }
-
-            if (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
-            {
-                if (myKingdomX < kingdomUnderAttackX && myKingdomY < kingdomUnderAttackY)
-                {
-                    while (myKingdomX != kingdomUnderAttackX && myKingdomY != kingdomUnderAttackY)
-                    {
-                        myKingdomX++;
-                        myKingdomY++;
-                        minutes++;
-                    }
-                }
-            }
-
-            if (myKingdomX == kingdomUnderAttackX && myKingdomY < kingdomUnderAttackY)
-            {
-                while (myKingdomY != kingdomUnderAttackY)
-                {
-                    myKingdomY++;
-                    minutes++;
-                }
-            }
-
-            if (myKingdomY == kingdomUnderAttackY && myKingdomX < kingdomUnderAttackX)
-            {
-                while (myKingdomX != kingdomUnderAttackX)
-                {
-                    myKingdomX++;
-                    minutes++;
-                }
-            }
-
-            return minutes * 2;
+            
+            return resultY * 2;
         }
 
         public List<BuildingResponseDTO> GetExistingBuildings(int kingdomId)

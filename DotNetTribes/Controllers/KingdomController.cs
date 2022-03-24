@@ -61,7 +61,7 @@ namespace DotNetTribes.Controllers
         public ActionResult<TroopResponseDTO> CreateTroops([FromHeader] string authorization, [FromBody] TroopRequestDTO request)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var result = _troopService.TrainNewTroops(kingdomId, request);
+            var result = _troopService.TrainTroops(kingdomId, request);
             return new OkObjectResult(result);
         }
 

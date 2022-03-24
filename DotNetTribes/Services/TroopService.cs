@@ -24,7 +24,7 @@ namespace DotNetTribes.Services
             _resourceService = resourceService;
         }
 
-        public TroopResponseDTO TrainNewTroops(int kingdomId, TroopRequestDTO request)
+        public TroopResponseDTO TrainTroops(int kingdomId, TroopRequestDTO request)
         {
             // this large DB call is done to avoid making 5 different, smaller DB calls needed throughout the process.
             var kingdom = _applicationContext.Kingdoms
@@ -153,14 +153,7 @@ namespace DotNetTribes.Services
                 troop.Level = level;
                 //create a function for this
                 troop.StartedAt = GetTroopStartTime(troopsInProgress);
-                /*
-                troopsInProgress.Count == 0
-                ? _timeService.GetCurrentSeconds() + (troopsToUpgrade.IndexOf(troop) * _rules.TroopBuildingTime(level))
-                : troopsInProgress.Last().FinishedAt + ((troopsToUpgrade.IndexOf(troop) * _rules.TroopBuildingTime(1)));*/
                 troop.FinishedAt = GetTroopFinishTime(troopsInProgress, level);
-                /*troopsInProgress.Count == 0
-                ? _timeService.GetCurrentSeconds() + (troopsToUpgrade.IndexOf(troop) + 1) * _rules.TroopBuildingTime(1)
-                : troopsInProgress.Last().FinishedAt + (troopsToUpgrade.IndexOf(troop) + 1) * _rules.TroopBuildingTime(1);*/
                 troop.Attack = _rules.TroopAttack(level);
                 troop.Defense = _rules.TroopDefense(level);
                 troop.Capacity = _rules.TroopCapacity(level);
@@ -208,7 +201,6 @@ namespace DotNetTribes.Services
             {
                 throw new TroopCreationException("Not enough gold to upgrade.");
             }
-
 
             return troopsToUpgrade;
         }

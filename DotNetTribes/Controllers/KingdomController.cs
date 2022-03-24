@@ -61,12 +61,12 @@ namespace DotNetTribes.Controllers
         }
 
         [Authorize]
-        [HttpPost("nearest")]
-        public ActionResult<NearbyKingdomsDto> NearestKingdoms([FromBody] RequestMinutesDto minutes,
+        [HttpGet("nearest/{minutes}")]
+        public ActionResult<NearbyKingdomsDto> NearestKingdoms([FromRoute] int minutes,
             [FromHeader] string authorization)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var response = _kingdomService.NearestKingdoms(minutes.Minutes, kingdomId);
+            var response = _kingdomService.NearestKingdoms(minutes, kingdomId);
 
             return new ObjectResult(response);
         }

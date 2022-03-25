@@ -3,14 +3,16 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220325082201_ReworkedTroops")]
+    partial class ReworkedTroops
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,24 +93,6 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("MapBoundariesY")
                         .HasColumnType("int");
 
-                    b.Property<int>("MarketplaceAllLevelsCost")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceAllLevelsDuration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceHP")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceLevelOneCost")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceLevelOneDuration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceMaxResources")
-                        .HasColumnType("int");
-
                     b.Property<int>("MineALlLevelsGoldGeneration")
                         .HasColumnType("int");
 
@@ -185,12 +169,6 @@ namespace DotNetTribes.Migrations
                             FarmHP = 100,
                             MapBoundariesX = 101,
                             MapBoundariesY = 101,
-                            MarketplaceAllLevelsCost = 100,
-                            MarketplaceAllLevelsDuration = 10,
-                            MarketplaceHP = 100,
-                            MarketplaceLevelOneCost = 1,
-                            MarketplaceLevelOneDuration = 1,
-                            MarketplaceMaxResources = 75,
                             MineALlLevelsGoldGeneration = 5,
                             MineAllLevelsCost = 100,
                             MineAllLevesDuration = 60,
@@ -232,44 +210,6 @@ namespace DotNetTribes.Migrations
                     b.HasKey("KingdomId");
 
                     b.ToTable("Kingdoms");
-                });
-
-            modelBuilder.Entity("DotNetTribes.Models.Offer", b =>
-                {
-                    b.Property<int>("OfferId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AmountOffered")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AmountRequired")
-                        .HasColumnType("int");
-
-                    b.Property<long>("Finished_at")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Started_at")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("TypeOffered")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("TypeRequired")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int?>("UserAcceptedId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserOfferId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OfferId");
-
-                    b.ToTable("Offers");
                 });
 
             modelBuilder.Entity("DotNetTribes.Models.Resource", b =>

@@ -1,7 +1,7 @@
-﻿using DotNetTribes.ActionFilters;
+using DotNetTribes.ActionFilters;
 using DotNetTribes.DTOs;
 using DotNetTribes.DTOs.Trade;
-using DotNetTribes.Enums;
+using DotNetTribes.DTOs.Troops;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,12 +16,15 @@ namespace DotNetTribes.Controllers
         private readonly IJwtService _jwtService;
         private readonly IBuildingsService _buildingsService;
         private readonly IResourceService _resourceService;
-        
-        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService, IResourceService resourceService)
+        private readonly ITroopService _troopService;
+
+        public KingdomController(IKingdomService kingdomService, IJwtService jwtService,
+            IBuildingsService buildingsService, ITroopService troopService, IResourceService resourceService)
         {
             _kingdomService = kingdomService;
             _jwtService = jwtService;
             _buildingsService = buildingsService;
+            _troopService = troopService;
             _resourceService = resourceService;
         }
 
@@ -30,15 +33,8 @@ namespace DotNetTribes.Controllers
         public ActionResult<KingdomDto> KingdomInfo([FromHeader] string authorization)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-
-            KingdomDto kingdom = _kingdomService.KingdomInfo(kingdomId);
-
-            if (kingdom == null)
-            {
-                return new BadRequestObjectResult("Ops something is wrong");
-            }
-
-            return new OkObjectResult(kingdom);
+            var result = _kingdomService.KingdomInfo(kingdomId);
+            return new OkObjectResult(result);
         }
 
         [Authorize]
@@ -47,9 +43,8 @@ namespace DotNetTribes.Controllers
             [FromBody] BuildingRequestDTO request)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var response = _buildingsService.CreateNewBuilding(kingdomId, request);
-
-            return new OkObjectResult(response);
+            var result = _buildingsService.CreateNewBuilding(kingdomId, request);
+            return new OkObjectResult(result);
         }
 
         [Authorize]
@@ -58,8 +53,18 @@ namespace DotNetTribes.Controllers
             [FromRoute] int buildingId)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var response = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
-            return new OkObjectResult(response);
+            var result = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
+            return new OkObjectResult(result);
+        }
+
+        [Authorize]
+        [HttpPost("troops")]
+        public ActionResult<TroopResponseDTO> CreateTroops([FromHeader] string authorization,
+            [FromBody] TroopRequestDTO request)
+        {
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var result = _troopService.TrainTroops(kingdomId, request);
+            return new OkObjectResult(result);
         }
 
         [Authorize]
@@ -73,8 +78,17 @@ namespace DotNetTribes.Controllers
             return new ObjectResult(response);
         }
 
-        [HttpGet("buildings")]
         [Authorize]
+        [HttpGet("troops")]
+        public ActionResult<KingdomTroopsDTO> GetKingdomTroops([FromHeader] string authorization)
+        {
+            var kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            _troopService.UpdateTroops(kingdomId);
+            return new OkObjectResult(_troopService.GetKingdomTroops(kingdomId));
+        }
+
+        [Authorize]
+        [HttpGet("buildings")]
         public ActionResult<KingdomBuildingsDto> Buildings([FromHeader] string authorization)
         {
             int id = _jwtService.GetKingdomIdFromJwt(authorization);
@@ -100,6 +114,7 @@ namespace DotNetTribes.Controllers
                     status = "Not ok"
                 };
             }
+
             return new ResponseDTO()
             {
                 status = "ok"
@@ -119,11 +134,22 @@ namespace DotNetTribes.Controllers
                     status = "Not ok"
                 };
             }
-            
+
             return new ResponseDTO
             {
                 status = "ok"
             };
+        }
+
+        [Authorize]
+        [HttpPut("troops")]
+        public ActionResult<KingdomTroopsDTO> UpgradeTroops([FromHeader] string authorization,
+            [FromBody] TroopUpgradeRequestDTO request)
+        {
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var result = _troopService.UpgradeTroops(kingdomId, request);
+
+            return new OkObjectResult(result);
         }
     }
 }

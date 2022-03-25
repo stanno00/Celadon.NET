@@ -23,7 +23,6 @@ namespace DotNetTribes.Services
             _resourceService = resourceService;
         }
 
-
         public BuildingResponseDTO CreateNewBuilding(int kingdomId, BuildingRequestDTO request)
         {
             if (string.IsNullOrEmpty(request.Type))
@@ -40,6 +39,18 @@ namespace DotNetTribes.Services
                 .Include(b => b.Buildings)
                 .Include(r => r.Resources)
                 .FirstOrDefault(k => k.KingdomId == kingdomId);
+            
+            if(requestedBuilding == BuildingType.Academy)
+            {
+                if (kingdom!.Buildings.FirstOrDefault(b => b.Type == BuildingType.Farm) == null)
+                {
+                    throw new BuildingCreationException("You need a farm to be able to construct an Academy.");
+                }
+                if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Mine) == null)
+                {
+                    throw new BuildingCreationException("You need a mine to be able to construct an Academy.");
+                }
+            }
 
             var hasAcademy = kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy);
 
@@ -48,14 +59,14 @@ namespace DotNetTribes.Services
                 throw new BuildingCreationException("Academy required");
             }
 
-            var kingdomGold = kingdom.Resources.FirstOrDefault(r => r.Type.Equals(ResourceType.Gold));
+            var kingdomGold = kingdom!.Resources.FirstOrDefault(r => r.Type.Equals(ResourceType.Gold));
 
             BuildingDetailsDTO buildingDetails = _rules.GetBuildingDetails(requestedBuilding, 1);
             Building toBeAdded =
                 CreateNewBuilding(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration, requestedBuilding);
 
 
-            if (buildingDetails.BuildingPrice > kingdomGold.Amount)
+            if (buildingDetails.BuildingPrice > kingdomGold!.Amount)
             {
                 throw new BuildingCreationException("Gold needed.");
             }
@@ -141,7 +152,7 @@ namespace DotNetTribes.Services
             
             _applicationContext.SaveChanges();
 
-            var response = new BuildingResponseDTO()
+            var response = new BuildingResponseDTO
             {
                 Id = buildingId,
                 Type = buildingToBeUpgraded.Type.ToString(),

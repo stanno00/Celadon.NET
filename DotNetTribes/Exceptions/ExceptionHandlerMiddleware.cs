@@ -72,6 +72,10 @@ namespace DotNetTribes.Exceptions
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
                     
+                    case TroopCreationException e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
+                    
                     default:
                         // unhandled error
                         response.StatusCode = (int) HttpStatusCode.InternalServerError;

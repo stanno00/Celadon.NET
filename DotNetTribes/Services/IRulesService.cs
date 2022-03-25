@@ -27,7 +27,13 @@ namespace DotNetTribes.Services
         public int TroopBuildingTime(int level);
         public int MarketplaceBuildingTime(int level);
 
+        public int StorageLimit(int townhallLevel);
+        public int TroopCapacity(int troopLevel);
+        public int TroopFoodConsumption(int troopLevel);
+        public int TroopAttack(int troopLevel);
+        public int TroopDefense(int troopLevel);
         public int BuildingResourceGeneration(Building building);
+
 
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level);
         

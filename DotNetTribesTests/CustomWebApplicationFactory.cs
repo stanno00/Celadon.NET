@@ -79,8 +79,29 @@ public class CustomWebApplicationFactory<TStartup>
                         Buildings = new List<Building>(),
                         Resources = new List<Resource>(),
                         Troops = new List<Troop>(),
+                        KingdomX = 50,
+                        KingdomY = 50
                     },
                     KingdomId = 1
+                });
+                
+                db.Users.Add(new User()
+                {
+                    Email = "SecondrealEmail@Test.dummy",
+                    Username = "Hrnik SecondTest",
+                    UserId = 2,
+                    HashedPassword = "$2a$11$EtdJ7HIRZihSF/WLmYf8HOnGD1VThPLGV3lg4PGnVan4IvOXD0.Ru",
+                    Kingdom = new Kingdom()
+                    {
+                        Name = "Second Cool Kingdom Name",
+                        KingdomId = 2,
+                        Buildings = new List<Building>(),
+                        Resources = new List<Resource>(),
+                        Troops = new List<Troop>(),
+                        KingdomX = 60,
+                        KingdomY = 60
+                    },
+                    KingdomId = 2
                 });
                 db.SaveChanges();
 

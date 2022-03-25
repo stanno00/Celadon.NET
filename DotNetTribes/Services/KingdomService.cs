@@ -68,7 +68,7 @@ namespace DotNetTribes.Services
             return kingdomsDtos;
         }
 
-        public int ShortestPath(int myKingdomX, int myKingdomY, int kingdomUnderAttackX, int kingdomUnderAttackY)
+        private int ShortestPath(int myKingdomX, int myKingdomY, int kingdomUnderAttackX, int kingdomUnderAttackY)
         {
             int minutes = 0;
 

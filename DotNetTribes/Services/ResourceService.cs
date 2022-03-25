@@ -146,8 +146,6 @@ namespace DotNetTribes.Services
         
         public bool ValidateTradeOffer(int id, TradeRequestDTO tradeRequestDto)
         {
-            // UpdateKingdomResources(id);
-            // var kingdom = _applicationContext.Kingdoms.FirstOrDefault(k => k.KingdomId == id);
             var hasMarketplace = _applicationContext.Buildings.Where(b => b.Type == BuildingType.Marketplace).FirstOrDefault(k => k.KingdomId == id);
             if (hasMarketplace == null)
             {

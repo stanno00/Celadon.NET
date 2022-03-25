@@ -43,7 +43,7 @@ namespace DotNetTribesTests.Unit
             });
             context.SaveChanges();
 
-            var result = new KingdomService(context).KingdomInfo(1);
+            var result = new KingdomService(context,iResourceServiceMock.Object).KingdomInfo(1);
 
             Assert.Equal("Benq", result.KingdomName);
             Assert.Equal("Hrnik", result.Username);

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220325123819_Offer")]
+    [Migration("20220325125125_Offer")]
     partial class Offer
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,48 @@ namespace DotNetTribes.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.14")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("DotNetTribes.Models.Battle", b =>
+                {
+                    b.Property<int>("BattleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("ArriveAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("AttackerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DefenderId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("FightStart")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("FoodStolen")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GoldStolen")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LostTroopsAttacker")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LostTroopsDefender")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ReturnAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("WinnerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BattleId");
+
+                    b.ToTable("Battles");
+                });
 
             modelBuilder.Entity("DotNetTribes.Models.Building", b =>
                 {
@@ -247,7 +289,10 @@ namespace DotNetTribes.Migrations
                     b.Property<int?>("BuyerId")
                         .HasColumnType("int");
 
-                    b.Property<long>("Finished_at")
+                    b.Property<long>("Created_at")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Expire_at")
                         .HasColumnType("bigint");
 
                     b.Property<int>("PayingAmount")
@@ -266,9 +311,6 @@ namespace DotNetTribes.Migrations
                     b.Property<string>("SellingType")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<long>("Started_at")
-                        .HasColumnType("bigint");
 
                     b.HasKey("OfferId");
 

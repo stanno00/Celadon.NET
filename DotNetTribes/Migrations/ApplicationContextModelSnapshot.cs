@@ -287,7 +287,10 @@ namespace DotNetTribes.Migrations
                     b.Property<int?>("BuyerId")
                         .HasColumnType("int");
 
-                    b.Property<long>("Finished_at")
+                    b.Property<long>("Created_at")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Expire_at")
                         .HasColumnType("bigint");
 
                     b.Property<int>("PayingAmount")
@@ -306,9 +309,6 @@ namespace DotNetTribes.Migrations
                     b.Property<string>("SellingType")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<long>("Started_at")
-                        .HasColumnType("bigint");
 
                     b.HasKey("OfferId");
 

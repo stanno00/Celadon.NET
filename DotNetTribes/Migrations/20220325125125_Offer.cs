@@ -60,8 +60,8 @@ namespace DotNetTribes.Migrations
                     PayingType = table.Column<string>(type: "nvarchar(20)", nullable: false),
                     PayingAmount = table.Column<int>(type: "int", nullable: false),
                     BuyerId = table.Column<int>(type: "int", nullable: true),
-                    Started_at = table.Column<long>(type: "bigint", nullable: false),
-                    Finished_at = table.Column<long>(type: "bigint", nullable: false)
+                    Created_at = table.Column<long>(type: "bigint", nullable: false),
+                    Expire_at = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {

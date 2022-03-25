@@ -14,7 +14,7 @@ namespace DotNetTribes.Models
         public ResourceType PayingType { get; set; }
         public int PayingAmount { get; set; }
         public int? BuyerId { get; set; }
-        public long Started_at { get; set; }
-        public long Finished_at { get; set; }
+        public long Created_at { get; set; }
+        public long Expire_at { get; set; }
     }
 }

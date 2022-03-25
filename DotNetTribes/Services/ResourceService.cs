@@ -145,7 +145,7 @@ namespace DotNetTribes.Services
         
         public bool ValidateTradeOffer(int id, TradeRequestDTO tradeRequestDto)
         {
-            UpdateKingdomResources(id);
+            // UpdateKingdomResources(id);
             // var kingdom = _applicationContext.Kingdoms.FirstOrDefault(k => k.KingdomId == id);
             var hasMarketplace = _applicationContext.Buildings.Where(b => b.Type == BuildingType.Marketplace).FirstOrDefault(k => k.KingdomId == id);
             if (hasMarketplace == null)
@@ -181,8 +181,8 @@ namespace DotNetTribes.Services
                 SellerId = id,
                 PayingType = tradeRequestDto.wanted_resource.type,
                 PayingAmount = tradeRequestDto.wanted_resource.amount,
-                Started_at = _timeService.GetCurrentSeconds(),
-                Finished_at = _timeService.GetCurrentSeconds() + DateTimeOffset.Now.AddSeconds(30).ToUnixTimeSeconds(),
+                Created_at = _timeService.GetCurrentSeconds(),
+                Expire_at = _timeService.GetCurrentSeconds() + 86400
             };
             _applicationContext.Add(offer);
             _applicationContext.SaveChanges();
@@ -199,7 +199,7 @@ namespace DotNetTribes.Services
             }
             
             var offer = _applicationContext.Offers.FirstOrDefault(o => o.OfferId == offerId);
-            if (offer == null || offer.Finished_at < _timeService.GetCurrentSeconds())
+            if (offer == null || offer.Expire_at < _timeService.GetCurrentSeconds())
             {
                 throw new TargetException("Offer doesn't exist");
             }
@@ -232,7 +232,7 @@ namespace DotNetTribes.Services
             sellerResourcePlus.Amount += offer.PayingAmount;
 
             offer.BuyerId = id;
-            offer.Finished_at = _timeService.GetCurrentSeconds();
+            offer.Expire_at = _timeService.GetCurrentSeconds();
 
             _applicationContext.SaveChanges();
             
@@ -241,7 +241,7 @@ namespace DotNetTribes.Services
 
         public void UpdateOffers()
         {
-            var offers = _applicationContext.Offers.Where(o => o.Finished_at < _timeService.GetCurrentSeconds() && o.BuyerId == null);
+            var offers = _applicationContext.Offers.Where(o => o.Expire_at < _timeService.GetCurrentSeconds() && o.BuyerId == null).ToList();
             foreach (var i in offers)
             {
                 var id = _applicationContext.Users.FirstOrDefault(u => u.UserId == i.SellerId);

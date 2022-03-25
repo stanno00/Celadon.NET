@@ -47,6 +47,10 @@ namespace DotNetTribes.Exceptions
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
                     
+                    case KingdomReceiveMinutesLessThanTwo e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
+                    
                     case KingdomNameAlreadyTakenException e:
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
@@ -65,6 +69,10 @@ namespace DotNetTribes.Exceptions
                     // User registrations exceptions - END
                     
                     case BuildingCreationException e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
+                    
+                    case TroopCreationException e:
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
                     

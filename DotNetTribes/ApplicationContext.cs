@@ -1,5 +1,4 @@
-﻿using System.Dynamic;
-using DotNetTribes.Models;
+﻿using DotNetTribes.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotNetTribes
@@ -45,12 +44,20 @@ namespace DotNetTribes
                     FarmHP = 100,
                     MineHP = 100,
                     AcademyHP = 150,
-                    TroopHP = 20
+                    TroopHP = 20,
+                    TroopFoodConsumption = 2,
+                    TroopAttack = 10,
+                    TroopDefense = 5,
+                    TroopCapacity = 2,
+                    StorageLimit = 100,
+                    MapBoundariesX = 101,
+                    MapBoundariesY = 101
+
                 });
         }
+
         public ApplicationContext(DbContextOptions options) : base(options)
         {
-            
         }
     }
 }

@@ -1,5 +1,3 @@
-using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Exceptions;

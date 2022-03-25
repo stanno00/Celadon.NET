@@ -12,11 +12,13 @@ namespace DotNetTribes.Services
     {
         private readonly ApplicationContext _applicationContext;
         private readonly IRulesService _rules;
+        private readonly ITimeService _timeService;
 
-        public UserService(ApplicationContext applicationContext, IRulesService rules)
+        public UserService(ApplicationContext applicationContext, IRulesService rules, ITimeService timeService)
         {
             _applicationContext = applicationContext;
             _rules = rules;
+            _timeService = timeService;
         }
 
         public string HashPassword(string password)
@@ -66,12 +68,16 @@ namespace DotNetTribes.Services
                         new Resource
                         {
                             Type = ResourceType.Gold,
-                            Amount = _rules.StartingGold()
+                            Amount = _rules.StartingGold(),
+                            UpdatedAt = _timeService.GetCurrentSeconds(),
+                            Generation = 0
                         },
                         new Resource
                         {
                             Type = ResourceType.Food,
-                            Amount = _rules.StartingFood()
+                            Amount = _rules.StartingFood(),
+                            UpdatedAt = _timeService.GetCurrentSeconds(),
+                            Generation = 0
                         }
                     }
                 }

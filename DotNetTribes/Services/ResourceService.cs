@@ -29,7 +29,7 @@ namespace DotNetTribes.Services
 
             //In the case that we have an army larger than we can feed, we try to do so before adding the new food to the kingdom's stores,
             //so that consumption is adjusted for how much food we get in this tick. This intends to prevent a scenario where we reach negative food.
-            if (resource.Type == ResourceType.Food && resource.Generation < 0)
+            if (resource.Type == ResourceType.Food && resource.Amount < CalculateTroopConsumption(kingdomId))
             {
                 FeedTroopsWithInsufficientFood(kingdomId);
             }
@@ -121,12 +121,11 @@ namespace DotNetTribes.Services
                 }
                 else
                 {
+                    kingdomFood.Generation += _rulesService.TroopFoodConsumption(troop.Level);
                     _applicationContext.Troops.Remove(troop);
                 }
             }
-
-            //The moment troops starve to death, they stop consuming food. Therefore, the value needs to be recalculated:
-            kingdomFood.Generation = CalculateTroopConsumption(kingdomId);
+            
             _applicationContext.SaveChanges();
         }
 

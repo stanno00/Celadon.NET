@@ -30,16 +30,10 @@ namespace DotNetTribes
         {
             var connectionString = Environment.GetEnvironmentVariable("DB_URL");
             var SECRET_KEY = Environment.GetEnvironmentVariable("SECRET_KEY");
-            services.AddDbContext<ApplicationContext>(options =>
-            {
-                options.UseSqlServer(connectionString);
-            });
-            
-            services.AddControllers().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            });
-            
+            services.AddDbContext<ApplicationContext>(options => { options.UseSqlServer(connectionString); });
+
+            services.AddControllers().AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; });
+
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -66,7 +60,7 @@ namespace DotNetTribes
             services.AddTransient<IKingdomService, KingdomService>();
             services.AddTransient<IRulesService, RulesService>();
             services.AddTransient<IBuildingsService, BuildingsService>();
-
+            services.AddTransient<ITroopService, TroopService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,17 +72,14 @@ namespace DotNetTribes
             }
 
             app.UseAuthentication();
-            
+
             app.UseRouting();
 
             app.UseAuthorization();
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

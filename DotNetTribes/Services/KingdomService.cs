@@ -10,10 +10,12 @@ namespace DotNetTribes.Services
     public class KingdomService : IKingdomService
     {
         private readonly ApplicationContext _applicationContext;
+        private readonly IResourceService _resourceService;
 
-        public KingdomService(ApplicationContext applicationContext)
+        public KingdomService(ApplicationContext applicationContext, IResourceService resourceService)
         {
             _applicationContext = applicationContext;
+            _resourceService = resourceService;
         }
 
         public KingdomDto KingdomInfo(int kingdomId)
@@ -24,7 +26,7 @@ namespace DotNetTribes.Services
                 .Include(k => k.Troops)
                 .Include(k => k.User)
                 .Single(k => k.KingdomId == kingdomId);
-
+            
             KingdomDto kingdomDto = new KingdomDto()
             {
                 KingdomName = kingdom.Name,
@@ -82,7 +84,7 @@ namespace DotNetTribes.Services
             return kingdomsDtos;
         }
 
-        public int ShortestPath(int myKingdomX, int myKingdomY, int kingdomUnderAttackX, int kingdomUnderAttackY)
+        private int ShortestPath(int myKingdomX, int myKingdomY, int kingdomUnderAttackX, int kingdomUnderAttackY)
         {
             int minutes = 0;
 

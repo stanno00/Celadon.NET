@@ -153,6 +153,12 @@ namespace DotNetTribes.Services
             {
                 throw new TargetException("You don't have a Marketplace");
             }
+
+            var maxTradeAmount = _rulesService.MarketplaceTradeAmount(hasMarketplace.Level);
+            if (maxTradeAmount < tradeRequestDto.offered_resource.amount || maxTradeAmount < tradeRequestDto.wanted_resource.amount)
+            {
+                throw new TargetException("Your marketplace isn't high enough level to trade this amount");
+            }
             
             Resource resource = _applicationContext.Resources.Where(t => t.Type == tradeRequestDto.offered_resource.type)
                 .FirstOrDefault(k => k.KingdomId == id);
@@ -171,13 +177,13 @@ namespace DotNetTribes.Services
 
             var offer = new Offer
             {
-                TypeOffered = tradeRequestDto.offered_resource.type,
-                AmountOffered = tradeRequestDto.offered_resource.amount,
-                UserOfferId = id,
-                TypeRequired = tradeRequestDto.wanted_resource.type,
-                AmountRequired = tradeRequestDto.wanted_resource.amount,
+                SellingType = tradeRequestDto.offered_resource.type,
+                SellingAmount = tradeRequestDto.offered_resource.amount,
+                SellerId = id,
+                PayingType = tradeRequestDto.wanted_resource.type,
+                PayingAmount = tradeRequestDto.wanted_resource.amount,
                 Started_at = _timeService.GetCurrentSeconds(),
-                Finished_at = _timeService.GetCurrentSeconds() + DateTimeOffset.Now.AddHours(24).ToUnixTimeSeconds()
+                Finished_at = _timeService.GetCurrentSeconds() + DateTimeOffset.Now.AddSeconds(30).ToUnixTimeSeconds(),
             };
             _applicationContext.Add(offer);
             _applicationContext.SaveChanges();
@@ -199,33 +205,54 @@ namespace DotNetTribes.Services
                 throw new TargetException("Offer doesn't exist");
             }
 
-            if (offer.UserOfferId == id)
+            if (offer.SellerId == id)
             {
-                throw new TargetException("You can't accept your trade offer");
+                throw new TargetException("You can't accept your own trade offer");
             }
-            
-            var ResourceRequired = _applicationContext.Resources.Where(t => t.Type == offer.TypeRequired);
-            var ResourceOffered = _applicationContext.Resources.Where(t => t.Type == offer.TypeOffered);
 
-            if (ResourceRequired.FirstOrDefault(k => k.KingdomId == id).Amount < offer.AmountRequired)
+            var maxTradeAmount = _rulesService.MarketplaceTradeAmount(hasMarketplace.Level);
+            if (maxTradeAmount < offer.SellingAmount || maxTradeAmount < offer.PayingAmount)
             {
-                throw new TargetException($"Not enough {offer.TypeRequired}");
+                throw new TargetException("Your marketplace isn't high enough level to trade this amount");
             }
             
-            Resource buyerResourceMinus = _applicationContext.Resources.Where(t => t.Type == offer.TypeRequired).FirstOrDefault(k => k.KingdomId == id);
-            buyerResourceMinus.Amount -= offer.AmountRequired;
+            var ResourceRequired = _applicationContext.Resources.Where(t => t.Type == offer.PayingType);
+            var ResourceOffered = _applicationContext.Resources.Where(t => t.Type == offer.SellingType);
+
+            if (ResourceRequired.FirstOrDefault(k => k.KingdomId == id).Amount < offer.PayingAmount)
+            {
+                throw new TargetException($"Not enough {offer.PayingType}");
+            }
+            
+            Resource buyerResourceMinus = _applicationContext.Resources.Where(t => t.Type == offer.PayingType).FirstOrDefault(k => k.KingdomId == id);
+            buyerResourceMinus.Amount -= offer.PayingAmount;
             Resource buyerResourcePlus = ResourceOffered.FirstOrDefault(k => k.KingdomId == id);
-            buyerResourcePlus.Amount += offer.AmountOffered;
+            buyerResourcePlus.Amount += offer.SellingAmount;
             
-            Resource sellerResourcePlus = ResourceRequired.FirstOrDefault(k => k.KingdomId == offer.UserOfferId);
-            sellerResourcePlus.Amount += offer.AmountRequired;
+            Resource sellerResourcePlus = ResourceRequired.FirstOrDefault(k => k.KingdomId == offer.SellerId);
+            sellerResourcePlus.Amount += offer.PayingAmount;
 
-            offer.UserAcceptedId = id;
+            offer.BuyerId = id;
             offer.Finished_at = _timeService.GetCurrentSeconds();
 
             _applicationContext.SaveChanges();
             
             return true;
+        }
+
+        public void UpdateOffers()
+        {
+            var offers = _applicationContext.Offers.Where(o => o.Finished_at < _timeService.GetCurrentSeconds() && o.BuyerId == null);
+            foreach (var i in offers)
+            {
+                var id = _applicationContext.Users.FirstOrDefault(u => u.UserId == i.SellerId);
+
+                Resource resource = _applicationContext.Resources.Where(r => r.Type == i.SellingType)
+                    .FirstOrDefault(k => k.KingdomId == id.KingdomId);
+                resource.Amount += i.SellingAmount;
+            }
+
+            _applicationContext.SaveChanges();
         }
     }
 }

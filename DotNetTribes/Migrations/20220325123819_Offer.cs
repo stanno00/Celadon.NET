@@ -54,12 +54,12 @@ namespace DotNetTribes.Migrations
                 {
                     OfferId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TypeOffered = table.Column<string>(type: "nvarchar(20)", nullable: false),
-                    AmountOffered = table.Column<int>(type: "int", nullable: false),
-                    UserOfferId = table.Column<int>(type: "int", nullable: false),
-                    TypeRequired = table.Column<string>(type: "nvarchar(20)", nullable: false),
-                    AmountRequired = table.Column<int>(type: "int", nullable: false),
-                    UserAcceptedId = table.Column<int>(type: "int", nullable: true),
+                    SellingType = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    SellingAmount = table.Column<int>(type: "int", nullable: false),
+                    SellerId = table.Column<int>(type: "int", nullable: false),
+                    PayingType = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    PayingAmount = table.Column<int>(type: "int", nullable: false),
+                    BuyerId = table.Column<int>(type: "int", nullable: true),
                     Started_at = table.Column<long>(type: "bigint", nullable: false),
                     Finished_at = table.Column<long>(type: "bigint", nullable: false)
                 },

@@ -7,13 +7,13 @@ namespace DotNetTribes.Models
     {
         public int OfferId { get; set; }
         [Column(TypeName = "nvarchar(20)")]
-        public ResourceType TypeOffered { get; set; }
-        public int AmountOffered { get; set; }
-        public int UserOfferId { get; set; }
+        public ResourceType SellingType { get; set; }
+        public int SellingAmount { get; set; }
+        public int SellerId { get; set; }
         [Column(TypeName = "nvarchar(20)")]
-        public ResourceType TypeRequired { get; set; }
-        public int AmountRequired { get; set; }
-        public int? UserAcceptedId { get; set; }
+        public ResourceType PayingType { get; set; }
+        public int PayingAmount { get; set; }
+        public int? BuyerId { get; set; }
         public long Started_at { get; set; }
         public long Finished_at { get; set; }
     }

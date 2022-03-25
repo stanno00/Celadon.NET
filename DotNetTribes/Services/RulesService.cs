@@ -134,6 +134,15 @@ namespace DotNetTribes.Services
             return level * _r.TroopAllLevelsDuration;
         }
 
+        public int MarketplaceBuildingTime(int level)
+        {
+            if (level == 1)
+            {
+                return _r.MarketplaceLevelOneDuration;
+            }
+
+            return level * _r.MarketplaceAllLevelsDuration;
+        }
 
         public int StorageLimit(int townhallLevel)
         {
@@ -158,16 +167,6 @@ namespace DotNetTribes.Services
         public int TroopDefense(int troopLevel)
         {
             return troopLevel * _r.TroopDefense;
-        }
-
-        public int MarketplaceBuildingTime(int level)
-        {
-            if (level == 1)
-            {
-                return _r.MarketplaceLevelOneDuration;
-            }
-
-            return level * _r.MarketplaceAllLevelsDuration;
         }
 
         public int MapBoundariesX()

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220324142324_Offer")]
+    [Migration("20220325123819_Offer")]
     partial class Offer
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -133,6 +133,9 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("StartingGold")
                         .HasColumnType("int");
 
+                    b.Property<int>("StorageLimit")
+                        .HasColumnType("int");
+
                     b.Property<int>("TownhallAllLevelsCost")
                         .HasColumnType("int");
 
@@ -149,6 +152,18 @@ namespace DotNetTribes.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TroopAllLevelsDuration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TroopAttack")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TroopCapacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TroopDefense")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TroopFoodConsumption")
                         .HasColumnType("int");
 
                     b.Property<int>("TroopHP")
@@ -186,12 +201,17 @@ namespace DotNetTribes.Migrations
                             Name = "Production",
                             StartingFood = 500,
                             StartingGold = 500,
+                            StorageLimit = 100,
                             TownhallAllLevelsCost = 200,
                             TownhallHP = 200,
                             TownhallLevelNDuration = 60,
                             TownhallLevelOneDuration = 120,
                             TroopAllLevelsCost = 25,
                             TroopAllLevelsDuration = 30,
+                            TroopAttack = 10,
+                            TroopCapacity = 2,
+                            TroopDefense = 5,
+                            TroopFoodConsumption = 2,
                             TroopHP = 20
                         });
                 });
@@ -224,31 +244,31 @@ namespace DotNetTribes.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AmountOffered")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AmountRequired")
+                    b.Property<int?>("BuyerId")
                         .HasColumnType("int");
 
                     b.Property<long>("Finished_at")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("PayingAmount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PayingType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("SellerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SellingAmount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SellingType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<long>("Started_at")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("TypeOffered")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("TypeRequired")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int?>("UserAcceptedId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserOfferId")
-                        .HasColumnType("int");
 
                     b.HasKey("OfferId");
 
@@ -292,8 +312,32 @@ namespace DotNetTribes.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("KingdomId")
+                    b.Property<int>("Attack")
                         .HasColumnType("int");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ConsumingFood")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Defense")
+                        .HasColumnType("int");
+
+                    b.Property<long>("FinishedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("KingdomId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<long>("StartedAt")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UpdatedAt")
+                        .HasColumnType("bigint");
 
                     b.HasKey("TroopId");
 
@@ -353,7 +397,9 @@ namespace DotNetTribes.Migrations
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", null)
                         .WithMany("Troops")
-                        .HasForeignKey("KingdomId");
+                        .HasForeignKey("KingdomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DotNetTribes.Models.User", b =>

@@ -11,5 +11,6 @@ namespace DotNetTribes.Services
         
         bool ValidateTradeOffer(int id, TradeRequestDTO tradeRequestDto);
         bool AcceptOffer(int id, int offerId);
+        void UpdateOffers();
     }
 }

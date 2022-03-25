@@ -89,7 +89,7 @@ namespace DotNetTribes.Services
         private int CalculateTroopConsumption(int kingdomId)
         {
             var kingdomTroops = _applicationContext.Troops
-                .Where(t => t.KingdomId == kingdomId)
+                .Where(t => t.KingdomId == kingdomId && t.ConsumingFood)
                 .ToList();
             int consumption = 0;
             foreach (var troop in kingdomTroops)

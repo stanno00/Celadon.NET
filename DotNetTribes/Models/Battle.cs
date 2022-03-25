@@ -1,8 +1,8 @@
 namespace DotNetTribes.Models
 {
-    public class BattleEntity
+    public class Battle
     {
-        public int BattleEntityId { get; set; }
+        public int BattleId { get; set; }
         public int AttackerId { get; set; }
         public int DefenderId { get; set; }
         public long FightStart { get; set; }

@@ -19,48 +19,6 @@ namespace DotNetTribes.Migrations
                 .HasAnnotation("ProductVersion", "5.0.14")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("DotNetTribes.Models.BattleEntity", b =>
-                {
-                    b.Property<int>("BattleEntityId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("ArriveAt")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("AttackerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DefenderId")
-                        .HasColumnType("int");
-
-                    b.Property<long>("FightStart")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("FoodStolen")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GoldStolen")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LostTroopsAttacker")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LostTroopsDefender")
-                        .HasColumnType("int");
-
-                    b.Property<long>("ReturnAt")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("WinnerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BattleEntityId");
-
-                    b.ToTable("BattleEntities");
-                });
-
             modelBuilder.Entity("DotNetTribes.Models.Building", b =>
                 {
                     b.Property<int>("BuildingId")

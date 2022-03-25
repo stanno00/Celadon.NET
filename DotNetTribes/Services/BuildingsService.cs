@@ -55,7 +55,7 @@ namespace DotNetTribes.Services
 
             BuildingDetailsDTO buildingDetails = _rules.GetBuildingDetails(requestedBuilding, 1);
             Building toBeAdded =
-                GetNewBuidlingInformation(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration, requestedBuilding);
+                GetNewBuildingInformation(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration, requestedBuilding);
 
 
             if (buildingDetails.BuildingPrice > kingdomGold!.Amount)
@@ -78,7 +78,7 @@ namespace DotNetTribes.Services
             };
         }
 
-        private Building GetNewBuidlingInformation(int kingdomId, int hp, int duration, BuildingType type)
+        private Building GetNewBuildingInformation(int kingdomId, int hp, int duration, BuildingType type)
         {
             Building newBuilding = new Building
             {
@@ -123,7 +123,7 @@ namespace DotNetTribes.Services
 
             if (gold.Amount < upgradeBuilding.BuildingPrice)
             {
-                throw new BuildingCreationException("You dont have enough gold!");
+                throw new BuildingCreationException("You don't have enough gold!");
             }
 
             gold.Amount -= upgradeBuilding.BuildingPrice;

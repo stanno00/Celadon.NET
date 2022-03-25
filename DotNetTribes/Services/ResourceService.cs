@@ -76,7 +76,8 @@ namespace DotNetTribes.Services
                 {
                     Amount = r.Amount,
                     Type = r.Type.ToString(),
-                    UpdatedAt = r.UpdatedAt
+                    UpdatedAt = r.UpdatedAt,
+                    Generation = r.Generation
                 })
                 .ToList();
 

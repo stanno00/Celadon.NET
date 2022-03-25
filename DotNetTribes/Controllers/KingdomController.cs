@@ -18,12 +18,13 @@ namespace DotNetTribes.Controllers
         private readonly IResourceService _resourceService;
         private readonly ITroopService _troopService;
 
-        public KingdomController(IKingdomService kingdomService, IJwtService jwtService,
-            IBuildingsService buildingsService, ITroopService troopService, IResourceService resourceService)
+        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService, ITroopService troopService, IResourceService resourceService)
         {
+            _resourceService = resourceService;
             _kingdomService = kingdomService;
             _jwtService = jwtService;
             _buildingsService = buildingsService;
+            _resourceService = resourceService;
             _troopService = troopService;
             _resourceService = resourceService;
         }
@@ -35,6 +36,19 @@ namespace DotNetTribes.Controllers
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var result = _kingdomService.KingdomInfo(kingdomId);
             return new OkObjectResult(result);
+        }
+        
+        [HttpGet("resource")]
+        [Authorize]
+        public ActionResult<ResourcesDto> GetKingdomResources([FromHeader] string authorization)
+        {
+            var kingdomResources = _resourceService.GetKingdomResources(_jwtService.GetKingdomIdFromJwt(authorization));
+            if (kingdomResources.Resources.Count == 0)
+            {
+                return new BadRequestObjectResult("Bad request!");
+            }
+
+            return new OkObjectResult(kingdomResources);
         }
 
         [Authorize]
@@ -53,8 +67,8 @@ namespace DotNetTribes.Controllers
             [FromRoute] int buildingId)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var result = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
-            return new OkObjectResult(result);
+            var responseBuilding = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
+            return new OkObjectResult(responseBuilding);
         }
 
         [Authorize]
@@ -65,6 +79,7 @@ namespace DotNetTribes.Controllers
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var result = _troopService.TrainTroops(kingdomId, request);
             return new OkObjectResult(result);
+
         }
 
         [Authorize]

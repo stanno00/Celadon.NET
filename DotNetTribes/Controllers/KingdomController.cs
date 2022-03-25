@@ -92,7 +92,35 @@ namespace DotNetTribes.Controllers
         {
             int id = _jwtService.GetKingdomIdFromJwt(authorization);
             bool accepted = _resourceService.ValidateTradeOffer(id, tradeRequestDto);
+
+            if (!accepted)
+            {
+                return new ResponseDTO()
+                {
+                    status = "Not ok"
+                };
+            }
             return new ResponseDTO()
+            {
+                status = "ok"
+            };
+        }
+
+        [Authorize]
+        [HttpPut("offer/{offerId}")]
+        public ActionResult<ResponseDTO> AcceptingOffer([FromHeader] string authorization, [FromRoute] int offerId)
+        {
+            int id = _jwtService.GetKingdomIdFromJwt(authorization);
+            bool accepted = _resourceService.AcceptOffer(id, offerId);
+            if (!accepted)
+            {
+                return new ResponseDTO()
+                {
+                    status = "Not ok"
+                };
+            }
+            
+            return new ResponseDTO
             {
                 status = "ok"
             };

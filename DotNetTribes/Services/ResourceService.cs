@@ -92,11 +92,12 @@ namespace DotNetTribes.Services
         public bool ValidateTradeOffer(int id, TradeRequestDTO tradeRequestDto)
         {
             UpdateKingdomResources(id);
-            var resource = _applicationContext.Resources.Where(t => t.Type == tradeRequestDto.offered_resource.type)
+            var 
+            Resource resource = _applicationContext.Resources.Where(t => t.Type == tradeRequestDto.offered_resource.type)
                 .FirstOrDefault(k => k.KingdomId == id);
             var resourcesAvailable = resource.Amount;
 
-            if (resource.Type == tradeRequestDto.offered_resource.type)
+            if (tradeRequestDto.wanted_resource.type == tradeRequestDto.offered_resource.type)
             {
                 throw new TargetException("You can't trade for the same resource");
             }
@@ -105,6 +106,54 @@ namespace DotNetTribes.Services
                 throw new TargetException($"Not enough {resource.Type}");
             }
 
+            resource.Amount -= tradeRequestDto.offered_resource.amount;
+
+            var offer = new Offer
+            {
+                TypeOffered = tradeRequestDto.offered_resource.type,
+                AmountOffered = tradeRequestDto.offered_resource.amount,
+                UserOfferId = id,
+                TypeRequired = tradeRequestDto.wanted_resource.type,
+                AmountRequired = tradeRequestDto.wanted_resource.amount,
+                Started_at = _timeService.GetCurrentSeconds(),
+                Finished_at = _timeService.GetCurrentSeconds() + DateTimeOffset.Now.AddHours(24).ToUnixTimeSeconds()
+            };
+            _applicationContext.Add(offer);
+            _applicationContext.SaveChanges();
+
+            return true;
+        }
+
+        public bool AcceptOffer(int id, int offerId)
+        {
+            var offer = _applicationContext.Offers.FirstOrDefault(o => o.OfferId == offerId);
+            if (offer == null || offer.Finished_at < _timeService.GetCurrentSeconds())
+            {
+                throw new TargetException("Offer doesn't exist");
+            }
+            
+            var ResourceRequired = _applicationContext.Resources.Where(t => t.Type == offer.TypeRequired);
+            var ResourceOffered = _applicationContext.Resources.Where(t => t.Type == offer.TypeOffered);
+
+            var kingdom = _applicationContext.Kingdoms.FirstOrDefault(k => k.KingdomId == id);
+            if (ResourceRequired.FirstOrDefault(k => k.KingdomId == id).Amount < offer.AmountRequired)
+            {
+                throw new TargetException($"Not enough {offer.TypeRequired}");
+            }
+            
+            Resource buyerResourceMinus = _applicationContext.Resources.Where(t => t.Type == offer.TypeRequired).FirstOrDefault(k => k.KingdomId == id);
+            buyerResourceMinus.Amount -= offer.AmountRequired;
+            Resource buyerResourcePlus = ResourceOffered.FirstOrDefault(k => k.KingdomId == id);
+            buyerResourcePlus.Amount += offer.AmountOffered;
+            
+            Resource sellerResourcePlus = ResourceRequired.FirstOrDefault(k => k.KingdomId == offer.UserOfferId);
+            sellerResourcePlus.Amount += offer.AmountRequired;
+
+            offer.UserAcceptedId = id;
+            offer.Finished_at = _timeService.GetCurrentSeconds();
+
+            _applicationContext.SaveChanges();
+            
             return true;
         }
     }

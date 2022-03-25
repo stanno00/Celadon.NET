@@ -11,7 +11,7 @@ namespace DotNetTribes.Models
         public int AmountOffered { get; set; }
         public int UserOfferId { get; set; }
         [Column(TypeName = "nvarchar(20)")]
-        public int TypeRequired { get; set; }
+        public ResourceType TypeRequired { get; set; }
         public int AmountRequired { get; set; }
         public int? UserAcceptedId { get; set; }
         public long Started_at { get; set; }

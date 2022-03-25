@@ -10,5 +10,6 @@ namespace DotNetTribes.Services
         void UpdateKingdomResources(int kingdomId);
         
         bool ValidateTradeOffer(int id, TradeRequestDTO tradeRequestDto);
+        bool AcceptOffer(int id, int offerId);
     }
 }

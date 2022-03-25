@@ -13,14 +13,13 @@ namespace DotNetTribes.Services
         private readonly ApplicationContext _applicationContext;
         private readonly ITimeService _timeService;
         private readonly IRulesService _rules;
-        private readonly IResourceService _resourceService;
+        
 
-        public BuildingsService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rules, IResourceService resourceService)
+        public BuildingsService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rules)
         {
             _applicationContext = applicationContext;
             _timeService = timeService;
             _rules = rules;
-            _resourceService = resourceService;
         }
 
         public BuildingResponseDTO CreateNewBuilding(int kingdomId, BuildingRequestDTO request)
@@ -56,7 +55,7 @@ namespace DotNetTribes.Services
 
             BuildingDetailsDTO buildingDetails = _rules.GetBuildingDetails(requestedBuilding, 1);
             Building toBeAdded =
-                CreateNewBuilding(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration, requestedBuilding);
+                GetNewBuidlingInformation(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration, requestedBuilding);
 
 
             if (buildingDetails.BuildingPrice > kingdomGold!.Amount)
@@ -79,7 +78,7 @@ namespace DotNetTribes.Services
             };
         }
 
-        private Building CreateNewBuilding(int kingdomId, int hp, int duration, BuildingType type)
+        private Building GetNewBuidlingInformation(int kingdomId, int hp, int duration, BuildingType type)
         {
             Building newBuilding = new Building
             {

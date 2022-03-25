@@ -30,7 +30,7 @@ namespace DotNetTribesTests.Integration
 
             //Assert
             Assert.Equal("Rado", responseObject.Username);
-            Assert.Equal(2, responseObject.Id);
+            Assert.Equal(3, responseObject.Id);
         }
     }
 }

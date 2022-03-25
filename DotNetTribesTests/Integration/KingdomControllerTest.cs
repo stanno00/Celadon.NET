@@ -52,11 +52,18 @@ namespace DotNetTribesTests.Integration
             // Act
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = client.GetAsync("/kingdom/nearest/2").Result;
+            var response = client.GetAsync("/kingdom/nearest/400").Result;
+            
+            var responseString = response.Content.ReadAsStringAsync().Result;
+
+            var responseObjectList = JsonConvert.DeserializeObject<List<NearbyKingdomsDto>>(responseString);
+            var myObj = responseObjectList[0];
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
+            Assert.Equal("Second Cool Kingdom Name",myObj.KingdomName);
+            Assert.Equal(2,myObj.KingdomId);
+            Assert.Equal(20,myObj.MinutesToArrive);
         }
         
         [Fact]

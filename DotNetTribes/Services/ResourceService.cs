@@ -92,7 +92,13 @@ namespace DotNetTribes.Services
         public bool ValidateTradeOffer(int id, TradeRequestDTO tradeRequestDto)
         {
             UpdateKingdomResources(id);
-            var 
+            // var kingdom = _applicationContext.Kingdoms.FirstOrDefault(k => k.KingdomId == id);
+            var hasMarketplace = _applicationContext.Buildings.Where(b => b.Type == BuildingType.Marketplace).FirstOrDefault(k => k.KingdomId == id);
+            if (hasMarketplace == null)
+            {
+                throw new TargetException("You don't have a Marketplace");
+            }
+            
             Resource resource = _applicationContext.Resources.Where(t => t.Type == tradeRequestDto.offered_resource.type)
                 .FirstOrDefault(k => k.KingdomId == id);
             var resourcesAvailable = resource.Amount;
@@ -126,16 +132,26 @@ namespace DotNetTribes.Services
 
         public bool AcceptOffer(int id, int offerId)
         {
+            var hasMarketplace = _applicationContext.Buildings.Where(b => b.Type == BuildingType.Marketplace).FirstOrDefault(k => k.KingdomId == id);
+            if (hasMarketplace == null)
+            {
+                throw new TargetException("You don't have a Marketplace");
+            }
+            
             var offer = _applicationContext.Offers.FirstOrDefault(o => o.OfferId == offerId);
             if (offer == null || offer.Finished_at < _timeService.GetCurrentSeconds())
             {
                 throw new TargetException("Offer doesn't exist");
             }
+
+            if (offer.UserOfferId == id)
+            {
+                throw new TargetException("You can't accept your trade offer");
+            }
             
             var ResourceRequired = _applicationContext.Resources.Where(t => t.Type == offer.TypeRequired);
             var ResourceOffered = _applicationContext.Resources.Where(t => t.Type == offer.TypeOffered);
 
-            var kingdom = _applicationContext.Kingdoms.FirstOrDefault(k => k.KingdomId == id);
             if (ResourceRequired.FirstOrDefault(k => k.KingdomId == id).Amount < offer.AmountRequired)
             {
                 throw new TargetException($"Not enough {offer.TypeRequired}");

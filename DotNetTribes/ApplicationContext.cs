@@ -14,6 +14,7 @@ namespace DotNetTribes
         public DbSet<GameRules> GameRules { get; set; }
         
         public DbSet<Offer> Offers { get; set; }
+        public DbSet<Battle> Battles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -87,6 +87,7 @@ namespace DotNetTribes.Services
 
         private void PerformTrainingChecks(Kingdom kingdom, int requestedAmount, int goldAmount, int orderPrice)
         {
+            //TODO: add input validation (request == null)
             if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy) == null)
             {
                 throw new TroopCreationException("You need an academy to be able to train troops.");
@@ -210,7 +211,6 @@ namespace DotNetTribes.Services
         {
             if (troopsInProgress.Count != 0)
             {
-                //Both 
                 return troopsInProgress.Last().FinishedAt;
             }
 

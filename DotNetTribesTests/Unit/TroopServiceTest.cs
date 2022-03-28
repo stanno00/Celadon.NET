@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using DotNetTribes;
 using DotNetTribes.DTOs.Troops;
 using DotNetTribes.Enums;
@@ -145,7 +146,7 @@ public class TroopServiceTest
     [Fact]
     public void TrainTroops_WithInsufficientGold_ThrowsException()
     {
-       var kingdom = new Kingdom
+        var kingdom = new Kingdom
         {
             KingdomId = 1,
             Buildings = new List<Building>
@@ -452,7 +453,7 @@ public class TroopServiceTest
 
         Assert.Equal("Invalid Troop ID.", exception.Message);
     }
-    
+
     [Fact]
     public void UpgradeTroops_WithLowLevelAcademy_ThrowsException()
     {
@@ -485,7 +486,7 @@ public class TroopServiceTest
                 }
             }
         };
-        
+
 
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
             .UseInMemoryDatabase("TroopTest9")
@@ -493,7 +494,7 @@ public class TroopServiceTest
 
         var context = new ApplicationContext(optionsBuilder);
 
-    
+
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
 
@@ -512,7 +513,7 @@ public class TroopServiceTest
 
         Assert.Equal("Upgrade not allowed, academy level too low.", exception.Message);
     }
-    
+
     [Fact]
     public void UpgradeTroops_WithInsufficientGold_ThrowsException()
     {
@@ -554,7 +555,7 @@ public class TroopServiceTest
                 }
             }
         };
-        
+
 
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
             .UseInMemoryDatabase("TroopTest10")
@@ -562,7 +563,7 @@ public class TroopServiceTest
 
         var context = new ApplicationContext(optionsBuilder);
 
-    
+
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
 
@@ -585,7 +586,7 @@ public class TroopServiceTest
     }
 
     [Fact]
-    public void UpgradeTroops_WithCorrectInputs_ReturnsCorrectInput()
+    public void UpgradeTroops_WithCorrectInputs_ReturnsCorrectOutput()
     {
         var kingdom = new Kingdom
         {
@@ -655,7 +656,7 @@ public class TroopServiceTest
                 1
             }
         });
-        
+
         Assert.Equal(1, result.Troops[0].TroopId);
         Assert.Equal(1, result.Troops[0].KingdomId);
         Assert.Equal(20, result.Troops[0].Attack);
@@ -664,5 +665,74 @@ public class TroopServiceTest
         Assert.False(result.Troops[0].ConsumingFood);
         Assert.Equal(30, result.Troops[0].StartedAt);
         Assert.Equal(90, result.Troops[0].FinishedAt);
+    }
+
+    [Fact]
+    public void UpdateTroops_WithOneSoldierTrained_ChangesStatus()
+    {
+        var kingdom = new Kingdom
+        {
+            KingdomId = 1,
+            Troops = new List<Troop>
+            {
+                new Troop
+                {
+                    KingdomId = 1,
+                    TroopId = 1,
+                    Attack = 10,
+                    Defense = 5,
+                    Capacity = 2,
+                    ConsumingFood = false,
+                    StartedAt = 0,
+                    FinishedAt = 30,
+                    Level = 1,
+                    UpdatedAt = 0
+                }
+            },
+            Buildings = new List<Building>
+            {
+                new Building
+                {
+                   Type = BuildingType.Farm,
+                   BuildingId = 1,
+                   KingdomId = 1,
+                   Level = 1
+                }
+            },
+            Resources = new List<Resource>
+            {
+                new Resource
+                {
+                    Type = ResourceType.Food,
+                    Amount = 0,
+                    UpdatedAt = 0,
+                    Generation = 0,
+                    KingdomId = 1,
+                    ResourceId = 1
+                }
+            }
+        };
+
+
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("TroopTest12")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+
+
+        context.Kingdoms.Add(kingdom);
+        context.SaveChanges();
+
+        Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
+        Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+        Mock<IResourceService> resourceServiceMock = new Mock<IResourceService>();
+
+        timeServiceMock.Setup(x => x.GetCurrentSeconds()).Returns(60);
+
+        var ts = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object);
+        ts.UpdateTroops(1);
+        
+        Assert.True(context.Troops.Single(t => t.KingdomId == 1).ConsumingFood);
     }
 }

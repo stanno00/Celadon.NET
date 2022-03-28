@@ -16,6 +16,7 @@ namespace DotNetTribesTests.Unit
         {
             //Arrange
             Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
                 .UseInMemoryDatabase("User")
                 .Options;
@@ -31,7 +32,7 @@ namespace DotNetTribesTests.Unit
             };
 
             //Act
-            var result = new UserService(context,iRuleServiceMock.Object).RegisterUser(registerUserRequestDtoTest);
+            var result = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object).RegisterUser(registerUserRequestDtoTest);
 
             //Assert
             Assert.IsType<RegisterUserResponseDTO>(result);
@@ -45,12 +46,13 @@ namespace DotNetTribesTests.Unit
         {
             //Arrange
             Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
                 .UseInMemoryDatabase("password")
                 .Options;
 
             var context = new ApplicationContext(optionsBuilder);
-            var controller = new UserService(context,iRuleServiceMock.Object);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
 
             var registerUserRequestDtoTest = new RegisterUserRequestDTO()
             {
@@ -72,12 +74,13 @@ namespace DotNetTribesTests.Unit
         {
             //Arrange
             Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
                 .UseInMemoryDatabase("email")
                 .Options;
 
             var context = new ApplicationContext(optionsBuilder);
-            var controller = new UserService(context,iRuleServiceMock.Object);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
 
             var registerUserRequestDtoTest = new RegisterUserRequestDTO()
             {
@@ -99,12 +102,13 @@ namespace DotNetTribesTests.Unit
         {
             //Arrange
             Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
                 .UseInMemoryDatabase("username")
                 .Options;
 
             var context = new ApplicationContext(optionsBuilder);
-            var controller = new UserService(context,iRuleServiceMock.Object);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
 
             var registerUserRequestDtoTest = new RegisterUserRequestDTO()
             {
@@ -126,12 +130,13 @@ namespace DotNetTribesTests.Unit
         {
             //Arrange
             Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
                 .UseInMemoryDatabase("passwordShort")
                 .Options;
 
             var context = new ApplicationContext(optionsBuilder);
-            var controller = new UserService(context,iRuleServiceMock.Object);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
 
             var registerUserRequestDtoTest = new RegisterUserRequestDTO()
             {
@@ -154,12 +159,13 @@ namespace DotNetTribesTests.Unit
         {
             //Arrange
             Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
                 .UseInMemoryDatabase("kingdom name")
                 .Options;
 
             var context = new ApplicationContext(optionsBuilder);
-            var controller = new UserService(context,iRuleServiceMock.Object);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
 
             var registerUserRequestDtoTest = new RegisterUserRequestDTO()
             {
@@ -189,12 +195,13 @@ namespace DotNetTribesTests.Unit
         {
             //Arrange
             Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
                 .UseInMemoryDatabase("Username exist")
                 .Options;
 
             var context = new ApplicationContext(optionsBuilder);
-            var controller = new UserService(context,iRuleServiceMock.Object);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
 
             var registerUserRequestDtoTest = new RegisterUserRequestDTO()
             {
@@ -223,12 +230,13 @@ namespace DotNetTribesTests.Unit
         {
             //Arrange
             Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
                 .UseInMemoryDatabase("email exist")
                 .Options;
 
             var context = new ApplicationContext(optionsBuilder);
-            var controller = new UserService(context,iRuleServiceMock.Object);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
 
             var registerUserRequestDtoTest = new RegisterUserRequestDTO()
             {

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using DotNetTribes.DTOs;
 
 namespace DotNetTribes.Models
 {

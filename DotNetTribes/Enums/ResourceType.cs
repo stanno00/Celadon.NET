@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace DotNetTribes.Enums
+﻿namespace DotNetTribes.Enums
 {
     public enum ResourceType
     {

@@ -8,8 +8,8 @@ namespace DotNetTribes.Services
         ResourcesDto GetKingdomResources(int kingdomId);
         void UpdateKingdomResources(int kingdomId);
         
-        bool ValidateTradeOffer(int id, TradeRequestDTO tradeRequestDto);
-        bool AcceptOffer(int id, int offerId);
+        bool ValidateCreateTradeOffer(int id, TradeRequestDTO tradeRequestDto);
+        AcceptOfferResponseDTO AcceptOffer(int id, int offerId);
         void UpdateOffers();
     }
 }

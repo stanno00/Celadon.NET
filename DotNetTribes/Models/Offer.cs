@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using DotNetTribes.DTOs.Trade;
 using DotNetTribes.Enums;
 
 namespace DotNetTribes.Models
@@ -14,7 +15,7 @@ namespace DotNetTribes.Models
         public ResourceType PayingType { get; set; }
         public int PayingAmount { get; set; }
         public int? BuyerId { get; set; }
-        public long Created_at { get; set; }
-        public long Expire_at { get; set; }
+        public long CreatedAt { get; set; }
+        public long ExpireAt { get; set; }
     }
 }

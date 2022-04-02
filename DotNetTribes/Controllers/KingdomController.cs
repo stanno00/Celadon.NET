@@ -120,7 +120,7 @@ namespace DotNetTribes.Controllers
             [FromBody] TradeRequestDTO tradeRequestDto)
         {
             int id = _jwtService.GetKingdomIdFromJwt(authorization);
-            bool accepted = _resourceService.ValidateTradeOffer(id, tradeRequestDto);
+            bool accepted = _resourceService.ValidateCreateTradeOffer(id, tradeRequestDto);
 
             return new ResponseDTO()
             {
@@ -133,7 +133,7 @@ namespace DotNetTribes.Controllers
         public ActionResult<ResponseDTO> AcceptingOffer([FromHeader] string authorization, [FromRoute] int offerId)
         {
             int id = _jwtService.GetKingdomIdFromJwt(authorization);
-            bool accepted = _resourceService.AcceptOffer(id, offerId);
+            AcceptOfferResponseDTO accepted = _resourceService.AcceptOffer(id, offerId);
 
             return new ResponseDTO
             {

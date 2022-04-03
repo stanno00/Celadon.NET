@@ -10,11 +10,11 @@ namespace DotNetTribes.Models
         [Column(TypeName = "nvarchar(20)")]
         public ResourceType SellingType { get; set; }
         public int SellingAmount { get; set; }
-        public int SellerId { get; set; }
+        public int SellerKingdomId { get; set; }
         [Column(TypeName = "nvarchar(20)")]
         public ResourceType PayingType { get; set; }
         public int PayingAmount { get; set; }
-        public int? BuyerId { get; set; }
+        public int? BuyerKingdomId { get; set; }
         public long CreatedAt { get; set; }
         public long ExpireAt { get; set; }
     }

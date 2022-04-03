@@ -2,6 +2,7 @@ using DotNetTribes.ActionFilters;
 using DotNetTribes.DTOs;
 using DotNetTribes.DTOs.Trade;
 using DotNetTribes.DTOs.Troops;
+using DotNetTribes.Models;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -119,12 +120,12 @@ namespace DotNetTribes.Controllers
         public ActionResult<ResponseDTO> Offer([FromHeader] string authorization,
             [FromBody] TradeRequestDTO tradeRequestDto)
         {
-            int id = _jwtService.GetKingdomIdFromJwt(authorization);
-            bool accepted = _resourceService.ValidateCreateTradeOffer(id, tradeRequestDto);
+            int sellerKingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            Offer accepted = _resourceService.ValidateCreateTradeOffer(sellerKingdomId, tradeRequestDto);
 
             return new ResponseDTO()
             {
-                status = "ok"
+                Status = "ok"
             };
         }
 
@@ -132,12 +133,12 @@ namespace DotNetTribes.Controllers
         [HttpPut("offer/{offerId}")]
         public ActionResult<ResponseDTO> AcceptingOffer([FromHeader] string authorization, [FromRoute] int offerId)
         {
-            int id = _jwtService.GetKingdomIdFromJwt(authorization);
-            AcceptOfferResponseDTO accepted = _resourceService.AcceptOffer(id, offerId);
+            int buyerKingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            AcceptOfferResponseDTO accepted = _resourceService.AcceptOffer(buyerKingdomId, offerId);
 
             return new ResponseDTO
             {
-                status = "ok"
+                Status = "ok"
             };
         }
 

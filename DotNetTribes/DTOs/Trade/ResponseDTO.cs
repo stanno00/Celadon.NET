@@ -2,6 +2,6 @@ namespace DotNetTribes.DTOs.Trade
 {
     public class ResponseDTO
     {
-        public string status { get; set; }
+        public string Status { get; set; }
     }
 }

@@ -53,7 +53,7 @@ namespace DotNetTribes.Services
 
             var hasAcademy = kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy);
 
-            if (request.Type == "Marketplace" && hasAcademy == null)
+            if (requestedBuilding is BuildingType.Marketplace or BuildingType.University && hasAcademy == null)
             {
                 throw new BuildingCreationException("Academy required");
             }

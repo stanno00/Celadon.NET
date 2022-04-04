@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220403195325_Changes_Offer")]
-    partial class Changes_Offer
+    [Migration("20220404085411_RenameOffer")]
+    partial class RenameOffer
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -301,6 +301,9 @@ namespace DotNetTribes.Migrations
                     b.Property<string>("PayingType")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("ResourceReturned")
+                        .HasColumnType("bit");
 
                     b.Property<int>("SellerKingdomId")
                         .HasColumnType("int");

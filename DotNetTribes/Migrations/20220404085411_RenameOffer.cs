@@ -2,7 +2,7 @@
 
 namespace DotNetTribes.Migrations
 {
-    public partial class Changes_Offer : Migration
+    public partial class RenameOffer : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -25,10 +25,21 @@ namespace DotNetTribes.Migrations
                 name: "BuyerId",
                 table: "Offers",
                 newName: "BuyerKingdomId");
+
+            migrationBuilder.AddColumn<bool>(
+                name: "ResourceReturned",
+                table: "Offers",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "ResourceReturned",
+                table: "Offers");
+
             migrationBuilder.RenameColumn(
                 name: "SellerKingdomId",
                 table: "Offers",

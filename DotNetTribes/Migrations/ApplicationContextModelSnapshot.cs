@@ -300,6 +300,9 @@ namespace DotNetTribes.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<bool>("ResourceReturned")
+                        .HasColumnType("bit");
+
                     b.Property<int>("SellerKingdomId")
                         .HasColumnType("int");
 

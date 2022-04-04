@@ -149,6 +149,11 @@ namespace DotNetTribes.Services
             return _r.MapBoundariesY;
         }
         
+        public int BlacksmithPrice()
+        {
+                return _r.BlacksmithLevelOneCost;
+        }
+        
         public int BuildingResourceGeneration(Building building)
         {
             var resourceGeneration = 0;

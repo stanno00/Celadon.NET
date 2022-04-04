@@ -51,7 +51,8 @@ namespace DotNetTribes
                     TroopCapacity = 2,
                     StorageLimit = 100,
                     MapBoundariesX = 101,
-                    MapBoundariesY = 101
+                    MapBoundariesY = 101,
+                    BlacksmithLevelOneCost = 150,
 
                 });
         }

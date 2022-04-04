@@ -38,6 +38,14 @@ namespace DotNetTribes.Services
                 .Include(b => b.Buildings)
                 .Include(r => r.Resources)
                 .FirstOrDefault(k => k.KingdomId == kingdomId);
+
+            if (requestedBuilding == BuildingType.Blacksmith)
+            {
+                if (kingdom!.Buildings.FirstOrDefault(b =>b.Type == BuildingType.TownHall) == null)
+                {
+                    throw new BuildingCreationException("You need a Marketplace to be able to construct an Blacksmith.");
+                }
+            }
             
             if(requestedBuilding == BuildingType.Academy)
             {

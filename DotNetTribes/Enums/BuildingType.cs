@@ -6,6 +6,7 @@
         TownHall,
         Farm,
         Mine,
-        Academy
+        Academy,
+        Blacksmith
     }
 }

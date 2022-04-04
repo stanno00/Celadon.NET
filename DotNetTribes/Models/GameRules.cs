@@ -35,6 +35,6 @@
 
         public int MapBoundariesX { get; set; }
         public int MapBoundariesY { get; set; }
-
+        public int BlacksmithLevelOneCost { get; set; }
     }
 }

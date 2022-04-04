@@ -13,6 +13,7 @@ namespace DotNetTribes
 
         public DbSet<GameRules> GameRules { get; set; }
         
+        public DbSet<Offer> Offers { get; set; }
         public DbSet<Battle> Battles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,6 +32,8 @@ namespace DotNetTribes
                     AcademyLevelOneCost = 150,
                     AcademyLevelNCost = 100,
                     TroopAllLevelsCost = 25,
+                    MarketplaceLevelOneCost = 1,
+                    MarketplaceAllLevelsCost = 100,
                     TownhallLevelOneDuration = 120,
                     TownhallLevelNDuration = 60,
                     FarmAllLevelsDuration = 60,
@@ -40,11 +43,15 @@ namespace DotNetTribes
                     AcademyLevelOneDuration = 90,
                     AcademyLevelNDuration = 60,
                     TroopAllLevelsDuration = 30,
+                    MarketplaceLevelOneDuration = 1,
+                    MarketplaceAllLevelsDuration = 10,
+                    MarketplaceMaxResources = 75,
                     TownhallHP = 200,
                     FarmHP = 100,
                     MineHP = 100,
                     AcademyHP = 150,
                     TroopHP = 20,
+                    MarketplaceHP = 100,
                     TroopFoodConsumption = 2,
                     TroopAttack = 10,
                     TroopDefense = 5,

@@ -1,6 +1,8 @@
 using DotNetTribes.ActionFilters;
- using DotNetTribes.DTOs;
+using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Trade;
 using DotNetTribes.DTOs.Troops;
+using DotNetTribes.Models;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,8 +18,7 @@ namespace DotNetTribes.Controllers
         private readonly IBuildingsService _buildingsService;
         private readonly IResourceService _resourceService;
         private readonly ITroopService _troopService;
-        
-        
+
         public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService, ITroopService troopService, IResourceService resourceService)
         {
             _resourceService = resourceService;
@@ -26,6 +27,7 @@ namespace DotNetTribes.Controllers
             _buildingsService = buildingsService;
             _resourceService = resourceService;
             _troopService = troopService;
+            _resourceService = resourceService;
         }
 
         [HttpGet]
@@ -35,7 +37,6 @@ namespace DotNetTribes.Controllers
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var result = _kingdomService.KingdomInfo(kingdomId);
             return new OkObjectResult(result);
-
         }
         
         [HttpGet("resource")]
@@ -73,7 +74,8 @@ namespace DotNetTribes.Controllers
 
         [Authorize]
         [HttpPost("troops")]
-        public ActionResult<TroopResponseDTO> CreateTroops([FromHeader] string authorization, [FromBody] TroopRequestDTO request)
+        public ActionResult<TroopResponseDTO> CreateTroops([FromHeader] string authorization,
+            [FromBody] TroopRequestDTO request)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var result = _troopService.TrainTroops(kingdomId, request);
@@ -94,13 +96,13 @@ namespace DotNetTribes.Controllers
 
         [Authorize]
         [HttpGet("troops")]
-        public ActionResult<KingdomTroopsDTO> GetKingdomTroops([FromHeader]string authorization)
+        public ActionResult<KingdomTroopsDTO> GetKingdomTroops([FromHeader] string authorization)
         {
             var kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             _troopService.UpdateTroops(kingdomId);
             return new OkObjectResult(_troopService.GetKingdomTroops(kingdomId));
         }
-        
+
         [Authorize]
         [HttpGet("buildings")]
         public ActionResult<KingdomBuildingsDto> Buildings([FromHeader] string authorization)
@@ -112,10 +114,38 @@ namespace DotNetTribes.Controllers
                 Buildings = buildings
             };
         }
-        
+
+        [Authorize]
+        [HttpPost("offer")]
+        public ActionResult<ResponseDTO> Offer([FromHeader] string authorization,
+            [FromBody] TradeRequestDTO tradeRequestDto)
+        {
+            int sellerKingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            Offer accepted = _resourceService.ValidateCreateTradeOffer(sellerKingdomId, tradeRequestDto);
+
+            return new ResponseDTO()
+            {
+                Status = "ok"
+            };
+        }
+
+        [Authorize]
+        [HttpPut("offer/{offerId}")]
+        public ActionResult<ResponseDTO> AcceptingOffer([FromHeader] string authorization, [FromRoute] int offerId)
+        {
+            int buyerKingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            AcceptOfferResponseDTO accepted = _resourceService.AcceptOffer(buyerKingdomId, offerId);
+
+            return new ResponseDTO
+            {
+                Status = "ok"
+            };
+        }
+
         [Authorize]
         [HttpPut("troops")]
-        public ActionResult<KingdomTroopsDTO> UpgradeTroops([FromHeader]string authorization, [FromBody]TroopUpgradeRequestDTO request)
+        public ActionResult<KingdomTroopsDTO> UpgradeTroops([FromHeader] string authorization,
+            [FromBody] TroopUpgradeRequestDTO request)
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var result = _troopService.UpgradeTroops(kingdomId, request);

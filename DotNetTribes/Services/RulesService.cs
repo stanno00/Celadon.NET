@@ -54,6 +54,21 @@ namespace DotNetTribes.Services
             return level * _r.TroopAllLevelsCost;
         }
 
+        public int MarketplacePrice(int level)
+        {
+            if (level == 1)
+            {
+                return _r.MarketplaceLevelOneCost;
+            }
+
+            return level * _r.MarketplaceAllLevelsCost;
+        }
+
+        public int MarketplaceTradeAmount(int level)
+        {
+            return level * _r.MarketplaceMaxResources;
+        }
+
         public int TownhallHP(int level)
         {
             return level * _r.TownhallHP;
@@ -77,6 +92,11 @@ namespace DotNetTribes.Services
         public int TroopHp(int level)
         {
             return level * _r.TroopHP;
+        }
+
+        public int MarketplaceHP(int level)
+        {
+            return level * _r.MarketplaceHP;
         }
 
         public int TownhallBuildingTime(int level)
@@ -114,6 +134,16 @@ namespace DotNetTribes.Services
             return level * _r.TroopAllLevelsDuration;
         }
 
+        public int MarketplaceBuildingTime(int level)
+        {
+            if (level == 1)
+            {
+                return _r.MarketplaceLevelOneDuration;
+            }
+
+            return level * _r.MarketplaceAllLevelsDuration;
+        }
+
         public int StorageLimit(int townhallLevel)
         {
             return townhallLevel * _r.StorageLimit;
@@ -143,17 +173,16 @@ namespace DotNetTribes.Services
         {
             return _r.MapBoundariesX;
         }
-        
+
         public int MapBoundariesY()
         {
             return _r.MapBoundariesY;
         }
-        
+
         public int BlacksmithPrice()
         {
                 return _r.BlacksmithLevelOneCost;
         }
-        
         public int BuildingResourceGeneration(Building building)
         {
             var resourceGeneration = 0;
@@ -169,7 +198,7 @@ namespace DotNetTribes.Services
 
             return building.Level * resourceGeneration + 5;
         }
-        
+
         public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level)
         {
             switch (type)
@@ -202,10 +231,18 @@ namespace DotNetTribes.Services
                         BuildingHP = AcademyHP(level),
                         BuildingDuration = AcademyBuildingTime(level)
                     };
+                case BuildingType.Marketplace:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = MarketplacePrice(level),
+                        BuildingHP = MarketplaceHP(level),
+                        BuildingDuration = MarketplaceBuildingTime(level)
+                    };
                 default:
-                    throw new BuildingCreationException("This should not happen under any circumstances. Recommended actions:" +
-                                                        "Troubleshooting, exorcism of the server, throwing heavy objects at high velocities in the direction of" +
-                                                        "the developer's head.");
+                    throw new BuildingCreationException(
+                        "This should not happen under any circumstances. Recommended actions:" +
+                        "Troubleshooting, exorcism of the server, throwing heavy objects at high velocities in the direction of" +
+                        "the developer's head.");
             }
         }
     }

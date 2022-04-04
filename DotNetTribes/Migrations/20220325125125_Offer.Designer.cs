@@ -4,14 +4,16 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220325125125_Offer")]
+    partial class Offer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -284,13 +286,13 @@ namespace DotNetTribes.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BuyerKingdomId")
+                    b.Property<int?>("BuyerId")
                         .HasColumnType("int");
 
-                    b.Property<long>("CreatedAt")
+                    b.Property<long>("Created_at")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ExpireAt")
+                    b.Property<long>("Expire_at")
                         .HasColumnType("bigint");
 
                     b.Property<int>("PayingAmount")
@@ -300,10 +302,7 @@ namespace DotNetTribes.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<bool>("ResourceReturned")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("SellerKingdomId")
+                    b.Property<int>("SellerId")
                         .HasColumnType("int");
 
                     b.Property<int>("SellingAmount")

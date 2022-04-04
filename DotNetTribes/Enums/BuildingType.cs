@@ -7,6 +7,8 @@
         Farm,
         Mine,
         Academy,
-        Blacksmith
+        Blacksmith,
+        Marketplace
+
     }
 }

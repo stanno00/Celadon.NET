@@ -26,6 +26,7 @@ namespace DotNetTribes.ActionFilters
                 
             _resourceService.UpdateKingdomResources(kingdomId);
             _troopService.UpdateTroops(kingdomId);
+            _resourceService.UpdateOffers();
         }
 
         public void OnActionExecuted(ActionExecutedContext context)

@@ -78,6 +78,12 @@ namespace DotNetTribes.Services
                             Amount = _rules.StartingFood(),
                             UpdatedAt = _timeService.GetCurrentSeconds(),
                             Generation = 0
+                        }, new Resource
+                        {
+                            Type = ResourceType.Iron,
+                            Amount = 0, 
+                            UpdatedAt = _timeService.GetCurrentSeconds(),
+                            Generation = 0
                         }
                     }
                 }

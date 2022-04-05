@@ -39,5 +39,11 @@ namespace DotNetTribes.Services
         
         public int MapBoundariesX();
         public int MapBoundariesY();
+
+        public int IronMineBuildingTime(int level);
+
+        public int IronMinePrice(int level);
+
+        public int IronMineHP(int level);
     }
 }

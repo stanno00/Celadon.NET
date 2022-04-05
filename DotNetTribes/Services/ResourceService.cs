@@ -139,6 +139,7 @@ namespace DotNetTribes.Services
             {
                 ResourceType.Food => BuildingType.Farm,
                 ResourceType.Gold => BuildingType.Mine,
+                ResourceType.Iron => BuildingType.IronMine,
                 _ => throw new ArgumentOutOfRangeException(nameof(resourceType), resourceType, null)
             };
 

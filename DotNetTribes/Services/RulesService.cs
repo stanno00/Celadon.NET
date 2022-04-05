@@ -179,6 +179,21 @@ namespace DotNetTribes.Services
             return _r.MapBoundariesY;
         }
 
+        public int IronMineBuildingTime(int level)
+        {
+            return 300 + _r.IronMineDuration * level;
+        }
+        
+        public int IronMinePrice(int level)
+        {
+            return 500 + _r.IronMineCost * level;
+        }
+        
+        public int IronMineHP(int level)
+        {
+            return 300 + 100 * level;
+        }
+
         public int BuildingResourceGeneration(Building building)
         {
             var resourceGeneration = 0;
@@ -190,8 +205,10 @@ namespace DotNetTribes.Services
                 case BuildingType.Farm:
                     resourceGeneration = _r.FarmAllLevelsFoodGeneration;
                     break;
+                case BuildingType.IronMine:
+                    resourceGeneration = _r.IronMineGeneration;
+                    break;
             }
-
             return building.Level * resourceGeneration + 5;
         }
 
@@ -233,6 +250,13 @@ namespace DotNetTribes.Services
                         BuildingPrice = MarketplacePrice(level),
                         BuildingHP = MarketplaceHP(level),
                         BuildingDuration = MarketplaceBuildingTime(level)
+                    };
+                case BuildingType.IronMine:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = IronMinePrice(level),
+                        BuildingHP = IronMineHP(level),
+                        BuildingDuration = IronMineBuildingTime(level)
                     };
                 default:
                     throw new BuildingCreationException(

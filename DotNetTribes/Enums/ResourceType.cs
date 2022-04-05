@@ -3,6 +3,7 @@
     public enum ResourceType
     {
         Food,
-        Gold
+        Gold,
+        Iron
     }
 }

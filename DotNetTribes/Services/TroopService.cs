@@ -226,5 +226,12 @@ namespace DotNetTribes.Services
 
             return _timeService.GetCurrentSeconds() + _rules.TroopBuildingTime(level);
         }
+
+        public List<Troop> GetReadyTroops(int kingdomId)
+        {
+            return _applicationContext.Troops
+                .Where(t => t.KingdomId == kingdomId && t.FinishedAt < _timeService.GetCurrentSeconds() && t.IsHome)
+                .ToList();
+        }
     }
 }

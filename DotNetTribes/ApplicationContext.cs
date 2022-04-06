@@ -58,8 +58,11 @@ namespace DotNetTribes
                     TroopCapacity = 2,
                     StorageLimit = 100,
                     MapBoundariesX = 101,
-                    MapBoundariesY = 101
-
+                    MapBoundariesY = 101,
+                    IronMineCost = 100,
+                    IronMineDuration = 60,
+                    IronMineHP = 100,
+                    IronMineGeneration = 5
                 });
         }
 

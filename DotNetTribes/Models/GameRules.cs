@@ -41,6 +41,10 @@
 
         public int MapBoundariesX { get; set; }
         public int MapBoundariesY { get; set; }
+        public int IronMineCost { get; set; }
+        public int IronMineDuration { get; set; }
+        public int IronMineHP { get; set; }
+        public int IronMineGeneration { get; set; }
 
     }
 }

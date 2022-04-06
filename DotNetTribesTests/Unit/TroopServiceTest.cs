@@ -32,7 +32,13 @@ public class TroopServiceTest
                     BuildingId = 2,
                     KingdomId = 1,
                     Type = BuildingType.Mine
-                }
+                },
+                new Building
+                {
+                BuildingId = 2,
+                KingdomId = 1,
+                Type = BuildingType.TownHall
+            },
             },
             Troops = new List<Troop>(),
             Resources = new List<Resource>

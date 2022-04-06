@@ -52,5 +52,11 @@ namespace DotNetTribes.Services
         public int SpecialTroopScoutHp();
         public int TimeUpgradeForSpecialTroopScout();
         public int TimeUpgradeForSpecialTroopRanger();
+
+        public int IronMineBuildingTime(int level);
+
+        public int IronMinePrice(int level);
+
+        public int IronMineHP(int level);
     }
 }

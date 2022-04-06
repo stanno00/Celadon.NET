@@ -8,7 +8,8 @@
         Mine,
         Academy,
         Blacksmith,
-        Marketplace
+        Marketplace,
+        IronMine
 
     }
 }

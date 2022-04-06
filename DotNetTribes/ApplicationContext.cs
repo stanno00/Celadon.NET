@@ -72,7 +72,10 @@ namespace DotNetTribes
                     TrainingTimeSpecialTroopScout = 300,
                     SpecialTroopScoutHp = 1,
                     CostSpecialTroopScout = 100,
-
+                    IronMineCost = 100,
+                    IronMineDuration = 60,
+                    IronMineHP = 100,
+                    IronMineGeneration = 5
                 });
             base.OnModelCreating(modelBuilder);
         }

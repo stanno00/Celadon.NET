@@ -54,5 +54,10 @@
         public int SpecialTroopScoutHp { get; set; }
         public int TimeUpgradeForSpecialTroopScout { get; set; }
         public int TimeUpgradeForSpecialTroopRanger { get; set; }
+        public int IronMineCost { get; set; }
+        public int IronMineDuration { get; set; }
+        public int IronMineHP { get; set; }
+        public int IronMineGeneration { get; set; }
+        
     }
 }

@@ -90,6 +90,11 @@ namespace DotNetTribes.Services
         private void PerformTrainingChecks(Kingdom kingdom, int requestedAmount, int goldAmount, int orderPrice)
         {
             //TODO: add input validation (request == null)
+            if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall) == null)
+            {
+                throw new TroopCreationException("Build a Townhall first!");
+            }
+            
             if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy) == null)
             {
                 throw new TroopCreationException("You need an academy to be able to train troops.");
@@ -161,7 +166,6 @@ namespace DotNetTribes.Services
                 var troop = new Troop
                 {
                     StartedAt = GetTroopStartTime(troopsInProgress),
-                    /*troopsInProgress.Count == 0 ? _timeService.GetCurrentSeconds() + i * _rules.TroopBuildingTime(1) : troopsInProgress.Last().FinishedAt + i * _rules.TroopBuildingTime(1)*/
                     FinishedAt = GetTroopFinishTime(troopsInProgress, 1),
                     Level = 1,
                     Attack = _rules.TroopAttack(1),

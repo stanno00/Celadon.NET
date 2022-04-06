@@ -65,6 +65,14 @@ namespace DotNetTribes.Services
                     throw new BuildingCreationException("You need a mine to be able to construct an Academy.");
                 }
             }
+            
+            if (requestedBuilding == BuildingType.IronMine)
+            {
+                if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall && b.KingdomId == kingdomId).Level < 5)
+                {
+                    throw new BuildingCreationException("Your Townhall must be at least level 5 to build an Iron Mine.");
+                }
+            }
 
             var hasAcademy = kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy);
 

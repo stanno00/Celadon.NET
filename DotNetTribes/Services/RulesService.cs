@@ -244,6 +244,21 @@ namespace DotNetTribes.Services
             return _r.TimeUpgradeForSpecialTroopRanger;
         }
 
+        public int IronMineBuildingTime(int level)
+        {
+            return 300 + _r.IronMineDuration * level;
+        }
+
+        public int IronMinePrice(int level)
+        {
+            return 500 + _r.IronMineCost * level;
+        }
+
+        public int IronMineHP(int level)
+        {
+            return 300 + 100 * level;
+        }
+
         public int BuildingResourceGeneration(Building building)
         {
             var resourceGeneration = 0;
@@ -254,6 +269,9 @@ namespace DotNetTribes.Services
                     break;
                 case BuildingType.Farm:
                     resourceGeneration = _r.FarmAllLevelsFoodGeneration;
+                    break;
+                case BuildingType.IronMine:
+                    resourceGeneration = _r.IronMineGeneration;
                     break;
             }
 
@@ -305,6 +323,13 @@ namespace DotNetTribes.Services
                         BuildingPrice = BlacksmithPrice(),
                         BuildingHP = BlacksmithHp(),
                         BuildingDuration = BlacksmithBuildingTime()
+                    };
+                case BuildingType.IronMine:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = IronMinePrice(level),
+                        BuildingHP = IronMineHP(level),
+                        BuildingDuration = IronMineBuildingTime(level)
                     };
                 default:
                     throw new BuildingCreationException(

@@ -35,7 +35,7 @@ public class TroopServiceTest
                 },
                 new Building
                 {
-                BuildingId = 2,
+                BuildingId = 3,
                 KingdomId = 1,
                 Type = BuildingType.TownHall
             },

@@ -64,6 +64,11 @@ namespace DotNetTribes.Services
             return level * _r.MarketplaceAllLevelsCost;
         }
 
+        public int UniversityPrice(int level)
+        {
+            return level * _r.UniversityAllLevelCost;
+        }
+
         public int MarketplaceTradeAmount(int level)
         {
             return level * _r.MarketplaceMaxResources;
@@ -97,6 +102,11 @@ namespace DotNetTribes.Services
         public int MarketplaceHP(int level)
         {
             return level * _r.MarketplaceHP;
+        }
+
+        public int UniversityHP(int level)
+        {
+            return level * _r.UniversityHP;
         }
 
         public int TownhallBuildingTime(int level)
@@ -142,6 +152,11 @@ namespace DotNetTribes.Services
             }
 
             return level * _r.MarketplaceAllLevelsDuration;
+        }
+
+        public int UniversityBuildingTime(int level)
+        {
+            return level * _r.UniversityAllLevelDuration;
         }
 
         public int StorageLimit(int townhallLevel)
@@ -233,6 +248,13 @@ namespace DotNetTribes.Services
                         BuildingPrice = MarketplacePrice(level),
                         BuildingHP = MarketplaceHP(level),
                         BuildingDuration = MarketplaceBuildingTime(level)
+                    };
+                case BuildingType.University:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = UniversityPrice(level),
+                        BuildingHP = UniversityHP(level),
+                        BuildingDuration = UniversityBuildingTime(level)
                     };
                 default:
                     throw new BuildingCreationException(

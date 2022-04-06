@@ -13,7 +13,6 @@ namespace DotNetTribes.Services
         private readonly ApplicationContext _applicationContext;
         private readonly ITimeService _timeService;
         private readonly IRulesService _rules;
-        
 
         public BuildingsService(ApplicationContext applicationContext, ITimeService timeService, IRulesService rules)
         {
@@ -41,18 +40,26 @@ namespace DotNetTribes.Services
 
             if (requestedBuilding == BuildingType.Blacksmith)
             {
-                if (kingdom!.Buildings.FirstOrDefault(b =>b.Type == BuildingType.TownHall) == null)
+                if (kingdom!.Buildings.FirstOrDefault(b => b.Type == BuildingType.Marketplace) == null)
                 {
-                    throw new BuildingCreationException("You need a Marketplace to be able to construct an Blacksmith.");
+                    throw new BuildingCreationException(
+                        "You need a Marketplace to be able to construct an Blacksmith.");
+                }
+
+                // check if there is already blacksmith
+                if (kingdom!.Buildings.Where(b => b.Type == BuildingType.Blacksmith).ToList().Count > 1)
+                {
+                    throw new BuildingCreationException("You can have only 1 Blacksmith.");
                 }
             }
-            
-            if(requestedBuilding == BuildingType.Academy)
+
+            if (requestedBuilding == BuildingType.Academy)
             {
                 if (kingdom!.Buildings.FirstOrDefault(b => b.Type == BuildingType.Farm) == null)
                 {
                     throw new BuildingCreationException("You need a farm to be able to construct an Academy.");
                 }
+
                 if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Mine) == null)
                 {
                     throw new BuildingCreationException("You need a mine to be able to construct an Academy.");
@@ -70,7 +77,8 @@ namespace DotNetTribes.Services
 
             BuildingDetailsDTO buildingDetails = _rules.GetBuildingDetails(requestedBuilding, 1);
             Building toBeAdded =
-                GetNewBuildingInformation(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration, requestedBuilding);
+                GetNewBuildingInformation(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration,
+                    requestedBuilding);
 
 
             if (buildingDetails.BuildingPrice > kingdomGold!.Amount)
@@ -113,9 +121,9 @@ namespace DotNetTribes.Services
                 .Include(k => k.Resources)
                 .Include(k => k.Buildings)
                 .Single(k => k.KingdomId == kingdomId);
-            
+
             var buildingToBeUpgraded = kingdom.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
-            
+
             if (buildingToBeUpgraded == null)
             {
                 throw new BuildingCreationException("Building does not exist!");
@@ -125,7 +133,7 @@ namespace DotNetTribes.Services
             var buildingType = buildingToBeUpgraded.Type;
             var buildingLevel = buildingToBeUpgraded.Level;
             var buildingNextLevel = buildingLevel + 1;
-            
+
             if (buildingLevel >= townHallLevel && buildingType != BuildingType.TownHall)
             {
                 throw new BuildingCreationException("Townhall level is too low!");
@@ -156,7 +164,7 @@ namespace DotNetTribes.Services
                     food.UpdatedAt = buildingToBeUpgraded.Finished_at;
                     break;
             }
-            
+
             _applicationContext.SaveChanges();
 
             var response = new BuildingResponseDTO

@@ -181,8 +181,69 @@ namespace DotNetTribes.Services
 
         public int BlacksmithPrice()
         {
-                return _r.BlacksmithLevelOneCost;
+            return _r.BlacksmithLevelOneCost;
         }
+
+        public int BlacksmithHp()
+        {
+            return _r.BlacksmithHp;
+        }
+
+        public int BlacksmithBuildingTime()
+        {
+            return _r.BlacksmithLevelOneDuration;
+        }
+
+        public int TrainingTimeSpecialTroopRanger()
+        {
+            return _r.TrainingTimeSpecialTroopRanger;
+        }
+
+        public int TrainingTimeSpecialTroopScout()
+        {
+            return _r.TrainingTimeSpecialTroopScout;
+        }
+
+        public int CostSpecialTroopScout(int level)
+        {
+            return level * _r.CostSpecialTroopScout;
+        }
+
+        public int CostSpecialTroopRanger(int level)
+        {
+            return level * _r.CostSpecialTroopRanger;
+        }
+
+        public int UpgradeForSpecialTroopRanger()
+        {
+            return _r.UpgradeForSpecialTroopRanger;
+        }
+
+        public int UpgradeForSpecialTroopScout()
+        {
+            return _r.UpgradeForSpecialTroopScout;
+        }
+
+        public int SpecialTroopRangerHp()
+        {
+            return _r.SpecialTroopRangerHp;
+        }
+
+        public int SpecialTroopScoutHp()
+        {
+            return _r.SpecialTroopScoutHp;
+        }
+
+        public int TimeUpgradeForSpecialTroopScout()
+        {
+            return _r.TimeUpgradeForSpecialTroopScout;
+        }
+
+        public int TimeUpgradeForSpecialTroopRanger()
+        {
+            return _r.TimeUpgradeForSpecialTroopRanger;
+        }
+
         public int BuildingResourceGeneration(Building building)
         {
             var resourceGeneration = 0;
@@ -237,6 +298,13 @@ namespace DotNetTribes.Services
                         BuildingPrice = MarketplacePrice(level),
                         BuildingHP = MarketplaceHP(level),
                         BuildingDuration = MarketplaceBuildingTime(level)
+                    };
+                case BuildingType.Blacksmith:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = BlacksmithPrice(),
+                        BuildingHP = BlacksmithHp(),
+                        BuildingDuration = BlacksmithBuildingTime()
                     };
                 default:
                     throw new BuildingCreationException(

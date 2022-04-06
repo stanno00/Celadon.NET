@@ -34,7 +34,7 @@
         public int TroopHP { get; set; }
         public int MarketplaceHP { get; set; }
         public int TroopFoodConsumption { get; set; }
-        
+
         public int TroopAttack { get; set; }
         public int TroopDefense { get; set; }
         public int TroopCapacity { get; set; }
@@ -42,5 +42,17 @@
         public int MapBoundariesX { get; set; }
         public int MapBoundariesY { get; set; }
         public int BlacksmithLevelOneCost { get; set; }
+        public int BlacksmithHp { get; set; }
+        public int BlacksmithLevelOneDuration { get; set; }
+        public int TrainingTimeSpecialTroopRanger { get; set; }
+        public int TrainingTimeSpecialTroopScout { get; set; }
+        public int CostSpecialTroopScout { get; set; }
+        public int CostSpecialTroopRanger { get; set; }
+        public int UpgradeForSpecialTroopRanger { get; set; }
+        public int UpgradeForSpecialTroopScout { get; set; }
+        public int SpecialTroopRangerHp { get; set; }
+        public int SpecialTroopScoutHp { get; set; }
+        public int TimeUpgradeForSpecialTroopScout { get; set; }
+        public int TimeUpgradeForSpecialTroopRanger { get; set; }
     }
 }

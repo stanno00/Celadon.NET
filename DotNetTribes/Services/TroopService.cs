@@ -16,7 +16,8 @@ namespace DotNetTribes.Services
         private readonly ITimeService _timeService;
         private readonly IResourceService _resourceService;
 
-        public TroopService(ApplicationContext applicationContext, IRulesService rules, ITimeService timeService, IResourceService resourceService)
+        public TroopService(ApplicationContext applicationContext, IRulesService rules, ITimeService timeService,
+            IResourceService resourceService)
         {
             _applicationContext = applicationContext;
             _rules = rules;
@@ -39,7 +40,7 @@ namespace DotNetTribes.Services
                 .ToList();
             PerformTrainingChecks(kingdom, request.NumberOfTroops, kingdomGold!.Amount, orderPrice);
 
-            var newTroops = CreateNewTroops(kingdomId, request.NumberOfTroops, troopsInProgress);
+            var newTroops = CreateNewTroops(kingdomId, request.NumberOfTroops, troopsInProgress, null);
 
             foreach (var troop in newTroops)
             {
@@ -82,7 +83,8 @@ namespace DotNetTribes.Services
         private int CalculateStorageLimit(Kingdom kingdom)
         {
             //TODO : ask about requirements for townhall - forgot to build it on a new account and got nullpointerException here
-            return _rules.StorageLimit(kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall)!.Level) - (kingdom.Troops.Count);
+            return _rules.StorageLimit(kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.TownHall)!.Level) -
+                   (kingdom.Troops.Count);
         }
 
         private void PerformTrainingChecks(Kingdom kingdom, int requestedAmount, int goldAmount, int orderPrice)
@@ -104,9 +106,55 @@ namespace DotNetTribes.Services
             }
         }
 
-        private List<Troop> CreateNewTroops(int kingdomId, int amount, List<Troop> troopsInProgress)
+        private List<Troop> CreateNewTroops(int kingdomId, int amount, List<Troop> troopsInProgress, string? name)
         {
             var newTroops = new List<Troop>();
+
+            if (name == BlackSmithTroops.Ranger.ToString())
+            {
+                for (int i = 0; i < amount; i++)
+                {
+                    var troop = new Troop
+                    {
+                        Name = name,
+                        StartedAt = GetTroopStartTime(troopsInProgress),
+                        FinishedAt = GetTroopFinishTime(troopsInProgress, 1),
+                        Level = 1,
+                        Attack = 20,
+                        Defense = 0,
+                        Capacity = _rules.TroopCapacity(1),
+                        ConsumingFood = false,
+                        KingdomId = kingdomId
+                    };
+                    troopsInProgress.Add(troop);
+                    newTroops.Add(troop);
+                }
+
+                return newTroops;
+            }
+
+            if (name == BlackSmithTroops.Scout.ToString())
+            {
+                for (int i = 0; i < amount; i++)
+                {
+                    var troop = new Troop
+                    {
+                        Name = name,
+                        StartedAt = GetTroopStartTime(troopsInProgress),
+                        FinishedAt = GetTroopFinishTime(troopsInProgress, 1),
+                        Level = 1,
+                        Attack = 0,
+                        Defense = 1,
+                        Capacity = _rules.TroopCapacity(1),
+                        ConsumingFood = false,
+                        KingdomId = kingdomId
+                    };
+                    troopsInProgress.Add(troop);
+                    newTroops.Add(troop);
+                }
+
+                return newTroops;
+            }
 
             for (int i = 0; i < amount; i++)
             {
@@ -171,6 +219,89 @@ namespace DotNetTribes.Services
             return responseDTO;
         }
 
+        public TroopResponseDTO TrainSpecialTroops(int kingdomId, TroopRequestDTO request)
+        {
+            var troopsName = request.Name;
+
+            if (troopsName == null || request.NumberOfTroops <= 0)
+            {
+                throw new TroopCreationException("Data not provided correctly");
+            }
+
+            var kingdom = _applicationContext.Kingdoms
+                .Include(k => k.Buildings)
+                .Include(k => k.Resources)
+                .Include(k => k.Troops)
+                .Include(k => k.BuildingUpgrades)
+                .FirstOrDefault(k => k.KingdomId == kingdomId);
+
+
+            if (troopsName == BlackSmithTroops.Ranger.ToString() || troopsName == BlackSmithTroops.Scout.ToString())
+            {
+                var result = CreatingTroopsFromBlacksmith(kingdom, request);
+                return result;
+            }
+
+            throw new TroopCreationException("Special troop with this name does not exist");
+        }
+
+        private TroopResponseDTO CreatingTroopsFromBlacksmith(Kingdom kingdom, TroopRequestDTO request)
+        {
+            var specialTroop = request.Name!;
+
+            if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Blacksmith) == null)
+            {
+                throw new TroopCreationException("You need an Blacksmith to be able to train troops.");
+            }
+
+
+            if (kingdom.BuildingUpgrades.FirstOrDefault(u => u.Name == specialTroop) == null)
+            {
+                throw new TroopCreationException(
+                    "You need to buy an upgrade inside Blacksmith to be able to train the troops.");
+            }
+
+            var kingdomUpgrade = kingdom.BuildingUpgrades.First(u => u.Name == specialTroop);
+
+            if (kingdomUpgrade.FinishedAt > _timeService.GetCurrentSeconds())
+            {
+                throw new TroopCreationException("Your upgrade is not finished yet");
+            }
+
+            var orderPrice = 0;
+
+            if (specialTroop == BlackSmithTroops.Ranger.ToString())
+            {
+                orderPrice = _rules.CostSpecialTroopRanger(1) * request.NumberOfTroops;
+            }
+
+            if (specialTroop != BlackSmithTroops.Scout.ToString())
+            {
+                orderPrice = _rules.CostSpecialTroopScout(1) * request.NumberOfTroops;
+            }
+
+            var kingdomGold = kingdom!.Resources.FirstOrDefault(r => r.Type == ResourceType.Gold);
+            var troopsInProgress = kingdom.Troops
+                .Where(t => t.FinishedAt > _timeService.GetCurrentSeconds())
+                .ToList();
+
+            PerformTrainingChecks(kingdom, request.NumberOfTroops, kingdomGold.Amount, orderPrice);
+
+            var newTroops = CreateNewTroops(kingdom.KingdomId, request.NumberOfTroops, troopsInProgress, request.Name);
+
+            // create method for this code because it is redundant code  
+            foreach (var troop in newTroops)
+            {
+                kingdom.Troops.Add(troop);
+            }
+
+            _applicationContext.SaveChanges();
+            return new TroopResponseDTO
+            {
+                NewTroops = newTroops
+            };
+        }
+
         private List<Troop> PerformUpgradeChecksAndReturnTroopsToUpgrade(int kingdomId, TroopUpgradeRequestDTO request)
         {
             //Check that the troops we want to upgrade actually belong to the kingdom
@@ -191,7 +322,9 @@ namespace DotNetTribes.Services
             troopsToUpgrade = troopsToUpgrade.OrderBy(t => t.Level).ToList();
 
             //Check that the best troop's level after upgrade isn't higher than the academy's
-            if ((troopsToUpgrade[0].Level + 1) > _applicationContext.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy && b.KingdomId == kingdomId)!.Level)
+            if ((troopsToUpgrade[0].Level + 1) >
+                _applicationContext.Buildings.FirstOrDefault(b =>
+                    b.Type == BuildingType.Academy && b.KingdomId == kingdomId)!.Level)
             {
                 throw new TroopCreationException("Upgrade not allowed, academy level too low.");
             }

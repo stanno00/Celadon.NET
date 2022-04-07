@@ -1,7 +1,7 @@
 ﻿
 namespace DotNetTribes.Enums
 {
-    public enum BlacksmithUpgrades
+    public enum AllBuildingUpgrades
     {
         Scout,
         Ranger

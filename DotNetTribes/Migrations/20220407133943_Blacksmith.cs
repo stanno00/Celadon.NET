@@ -34,63 +34,56 @@ namespace DotNetTribes.Migrations
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
-                name: "CostSpecialTroopRanger",
+                name: "CostTroopRanger",
                 table: "GameRules",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
-                name: "CostSpecialTroopScout",
+                name: "CostTroopScout",
                 table: "GameRules",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
-                name: "SpecialTroopRangerHp",
+                name: "TimeUpgradeTroopRanger",
                 table: "GameRules",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
-                name: "SpecialTroopScoutHp",
+                name: "TimeUpgradeTroopScout",
                 table: "GameRules",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
-                name: "TimeUpgradeForSpecialTroopRanger",
+                name: "TrainingTimeTroopRanger",
                 table: "GameRules",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
-                name: "TimeUpgradeForSpecialTroopScout",
+                name: "TrainingTimeTroopScout",
                 table: "GameRules",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
-                name: "TrainingTimeSpecialTroopRanger",
+                name: "TroopRangerHp",
                 table: "GameRules",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
-                name: "TrainingTimeSpecialTroopScout",
-                table: "GameRules",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<int>(
-                name: "UpgradeForSpecialTroopRanger",
+                name: "TroopScoutHp",
                 table: "GameRules",
                 type: "int",
                 nullable: false,
@@ -103,22 +96,29 @@ namespace DotNetTribes.Migrations
                 nullable: false,
                 defaultValue: 0);
 
+            migrationBuilder.AddColumn<int>(
+                name: "UpgradeForTroopRanger",
+                table: "GameRules",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.CreateTable(
-                name: "BuildingUpgrades",
+                name: "BuildingUpgrade",
                 columns: table => new
                 {
-                    BuildingUpgradesId = table.Column<int>(type: "int", nullable: false)
+                    BuildingUpgradeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<int>(type: "int", nullable: false),
                     StartedAt = table.Column<long>(type: "bigint", nullable: false),
                     FinishedAt = table.Column<long>(type: "bigint", nullable: false),
                     KingdomId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BuildingUpgrades", x => x.BuildingUpgradesId);
+                    table.PrimaryKey("PK_BuildingUpgrade", x => x.BuildingUpgradeId);
                     table.ForeignKey(
-                        name: "FK_BuildingUpgrades_Kingdoms_KingdomId",
+                        name: "FK_BuildingUpgrade_Kingdoms_KingdomId",
                         column: x => x.KingdomId,
                         principalTable: "Kingdoms",
                         principalColumn: "KingdomId",
@@ -129,19 +129,19 @@ namespace DotNetTribes.Migrations
                 table: "GameRules",
                 keyColumn: "GameRulesId",
                 keyValue: 1,
-                columns: new[] { "BlacksmithHp", "BlacksmithLevelOneCost", "BlacksmithLevelOneDuration", "CostSpecialTroopRanger", "CostSpecialTroopScout", "SpecialTroopRangerHp", "SpecialTroopScoutHp", "TimeUpgradeForSpecialTroopRanger", "TimeUpgradeForSpecialTroopScout", "TrainingTimeSpecialTroopRanger", "TrainingTimeSpecialTroopScout", "UpgradeForSpecialTroopRanger", "UpgradeForSpecialTroopScout" },
-                values: new object[] { 150, 500, 600, 50, 100, 10, 1, 43200, 72000, 200, 300, 2000, 1000 });
+                columns: new[] { "BlacksmithHp", "BlacksmithLevelOneCost", "BlacksmithLevelOneDuration", "CostTroopRanger", "CostTroopScout", "TimeUpgradeTroopRanger", "TimeUpgradeTroopScout", "TrainingTimeTroopRanger", "TrainingTimeTroopScout", "TroopRangerHp", "TroopScoutHp", "UpgradeForSpecialTroopScout", "UpgradeForTroopRanger" },
+                values: new object[] { 150, 500, 600, 50, 100, 43200, 72000, 200, 300, 10, 1, 1000, 2000 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BuildingUpgrades_KingdomId",
-                table: "BuildingUpgrades",
+                name: "IX_BuildingUpgrade_KingdomId",
+                table: "BuildingUpgrade",
                 column: "KingdomId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BuildingUpgrades");
+                name: "BuildingUpgrade");
 
             migrationBuilder.DropColumn(
                 name: "Name",
@@ -160,43 +160,43 @@ namespace DotNetTribes.Migrations
                 table: "GameRules");
 
             migrationBuilder.DropColumn(
-                name: "CostSpecialTroopRanger",
+                name: "CostTroopRanger",
                 table: "GameRules");
 
             migrationBuilder.DropColumn(
-                name: "CostSpecialTroopScout",
+                name: "CostTroopScout",
                 table: "GameRules");
 
             migrationBuilder.DropColumn(
-                name: "SpecialTroopRangerHp",
+                name: "TimeUpgradeTroopRanger",
                 table: "GameRules");
 
             migrationBuilder.DropColumn(
-                name: "SpecialTroopScoutHp",
+                name: "TimeUpgradeTroopScout",
                 table: "GameRules");
 
             migrationBuilder.DropColumn(
-                name: "TimeUpgradeForSpecialTroopRanger",
+                name: "TrainingTimeTroopRanger",
                 table: "GameRules");
 
             migrationBuilder.DropColumn(
-                name: "TimeUpgradeForSpecialTroopScout",
+                name: "TrainingTimeTroopScout",
                 table: "GameRules");
 
             migrationBuilder.DropColumn(
-                name: "TrainingTimeSpecialTroopRanger",
+                name: "TroopRangerHp",
                 table: "GameRules");
 
             migrationBuilder.DropColumn(
-                name: "TrainingTimeSpecialTroopScout",
-                table: "GameRules");
-
-            migrationBuilder.DropColumn(
-                name: "UpgradeForSpecialTroopRanger",
+                name: "TroopScoutHp",
                 table: "GameRules");
 
             migrationBuilder.DropColumn(
                 name: "UpgradeForSpecialTroopScout",
+                table: "GameRules");
+
+            migrationBuilder.DropColumn(
+                name: "UpgradeForTroopRanger",
                 table: "GameRules");
         }
     }

@@ -196,27 +196,27 @@ namespace DotNetTribes.Services
 
         public int TrainingTimeSpecialTroopRanger()
         {
-            return _r.TrainingTimeSpecialTroopRanger;
+            return _r.TrainingTimeTroopRanger;
         }
 
         public int TrainingTimeSpecialTroopScout()
         {
-            return _r.TrainingTimeSpecialTroopScout;
+            return _r.TrainingTimeTroopScout;
         }
 
         public int CostSpecialTroopScout(int level)
         {
-            return level * _r.CostSpecialTroopScout;
+            return level * _r.CostTroopScout;
         }
 
         public int CostSpecialTroopRanger(int level)
         {
-            return level * _r.CostSpecialTroopRanger;
+            return level * _r.CostTroopRanger;
         }
 
         public int UpgradeForSpecialTroopRanger()
         {
-            return _r.UpgradeForSpecialTroopRanger;
+            return _r.UpgradeForTroopRanger;
         }
 
         public int UpgradeForSpecialTroopScout()
@@ -226,22 +226,22 @@ namespace DotNetTribes.Services
 
         public int SpecialTroopRangerHp()
         {
-            return _r.SpecialTroopRangerHp;
+            return _r.TroopRangerHp;
         }
 
         public int SpecialTroopScoutHp()
         {
-            return _r.SpecialTroopScoutHp;
+            return _r.TroopScoutHp;
         }
 
         public int TimeUpgradeForSpecialTroopScout()
         {
-            return _r.TimeUpgradeForSpecialTroopScout;
+            return _r.TimeUpgradeTroopScout;
         }
 
         public int TimeUpgradeForSpecialTroopRanger()
         {
-            return _r.TimeUpgradeForSpecialTroopRanger;
+            return _r.TimeUpgradeTroopRanger;
         }
 
         public int IronMineBuildingTime(int level)

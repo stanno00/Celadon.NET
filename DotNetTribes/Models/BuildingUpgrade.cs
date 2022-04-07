@@ -1,10 +1,12 @@
 ﻿
+using DotNetTribes.Enums;
+
 namespace DotNetTribes.Models
 {
-    public class BuildingUpgrades
+    public class BuildingUpgrade
     {
-        public int BuildingUpgradesId { get; set; }
-        public string Name { get; set; }
+        public int BuildingUpgradeId { get; set; }
+        public AllBuildingUpgrades Name { get; set; }
         public long StartedAt { get; set; }
         public long FinishedAt { get; set; }
         public int KingdomId { get; set; }

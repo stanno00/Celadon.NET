@@ -236,11 +236,11 @@ namespace DotNetTribes.Services
                 .Include(k => k.Buildings)
                 .Include(k => k.Resources)
                 .Include(k => k.Troops)
-                .Include(k => k.BuildingUpgrades)
+                .Include(k => k.BuildingUpgrade)
                 .FirstOrDefault(k => k.KingdomId == kingdomId);
 
 
-            if (troopsName == BlackSmithTroops.Ranger.ToString() || troopsName == BlackSmithTroops.Scout.ToString())
+            if (troopsName == BlackSmithTroops.Ranger || troopsName == BlackSmithTroops.Scout)
             {
                 var result = CreatingTroopsFromBlacksmith(kingdom, request);
                 return result;
@@ -251,21 +251,20 @@ namespace DotNetTribes.Services
 
         private TroopResponseDTO CreatingTroopsFromBlacksmith(Kingdom kingdom, TroopRequestDTO request)
         {
-            var specialTroop = request.Name!;
+            var specialTroop = request.Name.ToString();
 
             if (kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Blacksmith) == null)
             {
                 throw new TroopCreationException("You need an Blacksmith to be able to train troops.");
             }
 
-
-            if (kingdom.BuildingUpgrades.FirstOrDefault(u => u.Name == specialTroop) == null)
+            if (kingdom.BuildingUpgrade.FirstOrDefault(u => u.Name.ToString() == specialTroop) == null)
             {
                 throw new TroopCreationException(
                     "You need to buy an upgrade inside Blacksmith to be able to train the troops.");
             }
 
-            var kingdomUpgrade = kingdom.BuildingUpgrades.First(u => u.Name == specialTroop);
+            var kingdomUpgrade = kingdom.BuildingUpgrade.First(u => u.Name.ToString() == specialTroop);
 
             if (kingdomUpgrade.FinishedAt > _timeService.GetCurrentSeconds())
             {
@@ -291,9 +290,8 @@ namespace DotNetTribes.Services
 
             PerformTrainingChecks(kingdom, request.NumberOfTroops, kingdomGold.Amount, orderPrice);
 
-            var newTroops = CreateNewTroops(kingdom.KingdomId, request.NumberOfTroops, troopsInProgress, request.Name);
+            var newTroops = CreateNewTroops(kingdom.KingdomId, request.NumberOfTroops, troopsInProgress, request.Name.ToString());
 
-            // create method for this code because it is redundant code  
             foreach (var troop in newTroops)
             {
                 kingdom.Troops.Add(troop);

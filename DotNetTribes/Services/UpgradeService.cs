@@ -26,46 +26,47 @@ namespace DotNetTribes.Services
             var kingdom = _applicationContext.Kingdoms
                 .Include(k => k.Resources)
                 .Include(k => k.Buildings)
-                .Include(k => k.BuildingUpgrades)
+                .Include(k => k.BuildingUpgrade)
                 .Single(k => k.KingdomId == kingdomId);
 
             var upgradeName = upgrade.UpgradeName;
 
-            if (upgradeName == BlacksmithUpgrades.Ranger.ToString() ||
-                upgradeName == BlacksmithUpgrades.Scout.ToString())
+            if (upgradeName == AllBuildingUpgrades.Ranger ||
+                upgradeName == AllBuildingUpgrades.Scout)
             {
-                var result = UpgradingBlacksmith(kingdom, upgradeName);
+                var result = UpgradingBlacksmith(kingdom, upgrade);
                 return result;
             }
 
             throw new BuildingCreationException("Upgrade does not exist");
         }
 
-        private BuildingsUpgradesResponseDto UpgradingBlacksmith(Kingdom kingdom, string upgradeName)
+        private BuildingsUpgradesResponseDto UpgradingBlacksmith(Kingdom kingdom, BuildingsUpgradesRequestDto upgrade)
         {
-            var upgradeToBeAdded = new BuildingUpgrades();
+            var upgradeToBeAdded = new BuildingUpgrade();
+            var upgradeName = upgrade.UpgradeName;
 
-            if (upgradeName == BlacksmithUpgrades.Ranger.ToString())
+            switch (upgradeName)
             {
-                upgradeToBeAdded = new BuildingUpgrades()
-                {
-                    Name = upgradeName,
-                    StartedAt = _timeService.GetCurrentSeconds(),
-                    FinishedAt = _timeService.GetCurrentSeconds() + _rules.TimeUpgradeForSpecialTroopRanger()
-                };
+                case AllBuildingUpgrades.Ranger:
+                    upgradeToBeAdded = new BuildingUpgrade()
+                    {
+                        Name = upgradeName,
+                        StartedAt = _timeService.GetCurrentSeconds(),
+                        FinishedAt = _timeService.GetCurrentSeconds() + _rules.TimeUpgradeForSpecialTroopRanger()
+                    };
+                    break;
+                case AllBuildingUpgrades.Scout:
+                    upgradeToBeAdded = new BuildingUpgrade()
+                    {
+                        Name = upgradeName,
+                        StartedAt = _timeService.GetCurrentSeconds(),
+                        FinishedAt = _timeService.GetCurrentSeconds() + _rules.TimeUpgradeForSpecialTroopScout()
+                    };
+                    break;
             }
 
-            if (upgradeName == BlacksmithUpgrades.Scout.ToString())
-            {
-                upgradeToBeAdded = new BuildingUpgrades()
-                {
-                    Name = upgradeName,
-                    StartedAt = _timeService.GetCurrentSeconds(),
-                    FinishedAt = _timeService.GetCurrentSeconds() + _rules.TimeUpgradeForSpecialTroopScout()
-                };
-            }
-
-            if (kingdom.BuildingUpgrades.FirstOrDefault(u => u.Name == upgradeName) != null)
+            if (kingdom.BuildingUpgrade.FirstOrDefault(u => u.Name == upgradeName) != null)
             {
                 throw new BuildingCreationException("Building already have this upgrade");
             }
@@ -73,43 +74,35 @@ namespace DotNetTribes.Services
             var gold = kingdom.Resources.Single(r => r.Type == ResourceType.Gold);
             var food = kingdom.Resources.Single(r => r.Type == ResourceType.Food);
 
-            if (upgradeName == BlacksmithUpgrades.Ranger.ToString() && gold.Amount < 2000 ||
-                upgradeName == BlacksmithUpgrades.Scout.ToString() && gold.Amount < 1000)
+            if (upgradeName == AllBuildingUpgrades.Ranger && gold.Amount < 2000 ||
+                upgradeName == AllBuildingUpgrades.Scout && gold.Amount < 1000)
             {
                 throw new BuildingCreationException("You don't have enough gold!");
             }
 
-            if (upgradeName == BlacksmithUpgrades.Ranger.ToString() && food.Amount < 2000 ||
-                upgradeName == BlacksmithUpgrades.Scout.ToString() && food.Amount < 1000)
+            if (upgradeName == AllBuildingUpgrades.Ranger && food.Amount < 2000 ||
+                upgradeName == AllBuildingUpgrades.Scout && food.Amount < 1000)
             {
                 throw new BuildingCreationException("You don't have enough food!");
             }
 
-            if (upgradeName == BlacksmithUpgrades.Ranger.ToString())
+            if (upgradeName == AllBuildingUpgrades.Ranger)
             {
                 gold.Amount -= _rules.UpgradeForSpecialTroopRanger();
-            }
-
-            if (upgradeName == BlacksmithUpgrades.Ranger.ToString())
-            {
                 food.Amount -= _rules.UpgradeForSpecialTroopRanger();
             }
 
-            if (upgradeName == BlacksmithUpgrades.Scout.ToString())
+            if (upgradeName == AllBuildingUpgrades.Scout)
             {
                 gold.Amount -= _rules.UpgradeForSpecialTroopScout();
-            }
-
-            if (upgradeName == BlacksmithUpgrades.Scout.ToString())
-            {
                 food.Amount -= _rules.UpgradeForSpecialTroopScout();
             }
 
-            kingdom.BuildingUpgrades.Add(upgradeToBeAdded);
+            kingdom.BuildingUpgrade.Add(upgradeToBeAdded);
             _applicationContext.SaveChanges();
             return new BuildingsUpgradesResponseDto()
             {
-                Name = upgradeName,
+                Name = upgradeName.ToString(),
                 StartedAt = upgradeToBeAdded.StartedAt,
                 FinishedAt = upgradeToBeAdded.FinishedAt,
                 KingdomId = kingdom.KingdomId,

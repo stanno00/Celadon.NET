@@ -44,16 +44,16 @@
         public int BlacksmithLevelOneCost { get; set; }
         public int BlacksmithHp { get; set; }
         public int BlacksmithLevelOneDuration { get; set; }
-        public int TrainingTimeSpecialTroopRanger { get; set; }
-        public int TrainingTimeSpecialTroopScout { get; set; }
-        public int CostSpecialTroopScout { get; set; }
-        public int CostSpecialTroopRanger { get; set; }
-        public int UpgradeForSpecialTroopRanger { get; set; }
+        public int TrainingTimeTroopRanger { get; set; }
+        public int TrainingTimeTroopScout { get; set; }
+        public int CostTroopScout { get; set; }
+        public int CostTroopRanger { get; set; }
+        public int UpgradeForTroopRanger { get; set; }
         public int UpgradeForSpecialTroopScout { get; set; }
-        public int SpecialTroopRangerHp { get; set; }
-        public int SpecialTroopScoutHp { get; set; }
-        public int TimeUpgradeForSpecialTroopScout { get; set; }
-        public int TimeUpgradeForSpecialTroopRanger { get; set; }
+        public int TroopRangerHp { get; set; }
+        public int TroopScoutHp { get; set; }
+        public int TimeUpgradeTroopScout { get; set; }
+        public int TimeUpgradeTroopRanger { get; set; }
         public int IronMineCost { get; set; }
         public int IronMineDuration { get; set; }
         public int IronMineHP { get; set; }

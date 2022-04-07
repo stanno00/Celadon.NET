@@ -68,14 +68,14 @@ namespace DotNetTribes.Services
                         new Resource
                         {
                             Type = ResourceType.Gold,
-                            Amount = _rules.StartingGold(),
+                            Amount = 100000,
                             UpdatedAt = _timeService.GetCurrentSeconds(),
                             Generation = 0
                         },
                         new Resource
                         {
                             Type = ResourceType.Food,
-                            Amount = _rules.StartingFood(),
+                            Amount = 100000,
                             UpdatedAt = _timeService.GetCurrentSeconds(),
                             Generation = 0
                         }, new Resource

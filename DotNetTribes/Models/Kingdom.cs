@@ -13,5 +13,6 @@ namespace DotNetTribes.Models
         public ICollection<Resource> Resources { get; set; }
         public int KingdomX { get; set; }
         public int KingdomY { get; set; }
+        public ICollection<UniversityUpgrade> Upgrades { get; set; }
     }
 }

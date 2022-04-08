@@ -60,7 +60,7 @@ namespace DotNetTribes.Services
 
             var kingdomGold = kingdom!.Resources.FirstOrDefault(r => r.Type.Equals(ResourceType.Gold));
 
-            BuildingDetailsDTO buildingDetails = _rules.GetBuildingDetails(requestedBuilding, 1);
+            BuildingDetailsDTO buildingDetails = _rules.GetBuildingDetails(requestedBuilding, 1, kingdomId);
             Building toBeAdded =
                 GetNewBuildingInformation(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration, requestedBuilding);
 
@@ -123,7 +123,7 @@ namespace DotNetTribes.Services
                 throw new BuildingCreationException("Townhall level is too low!");
             }
 
-            var upgradeBuilding = _rules.GetBuildingDetails(buildingType, buildingNextLevel);
+            var upgradeBuilding = _rules.GetBuildingDetails(buildingType, buildingNextLevel, kingdomId);
 
             var gold = kingdom.Resources.Single(r => r.Type == ResourceType.Gold);
             var food = kingdom.Resources.Single(r => r.Type == ResourceType.Food);

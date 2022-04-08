@@ -15,6 +15,12 @@
         public int MarketplaceAllLevelsCost { get; set; }
         public int MarketplaceLevelOneCost { get; set; }
         public int UniversityAllLevelCost { get; set; }
+        public int TroopsTrainSpeedCost { get; set; }
+        public int BuildingBuildSpeedCost { get; set; }
+        public int MineProduceBonusCost { get; set; }
+        public int FarmProduceBonusCost { get; set; }
+        public int AllTroopsDefBonusCost { get; set; }
+        public int AllTroopsAtkBonusCost { get; set; }
         public int TownhallLevelOneDuration { get; set; }
         public int TownhallLevelNDuration { get; set; }
         public int FarmAllLevelsDuration { get; set; }
@@ -28,6 +34,12 @@
         public int AcademyLevelNDuration { get; set; }
         public int TroopAllLevelsDuration { get; set; }
         public int UniversityAllLevelDuration { get; set; }
+        public int TroopsTrainSpeedDuration { get; set; }
+        public int BuildingBuildSpeedDuration { get; set; }
+        public int MineProduceBonusDuration { get; set; }
+        public int FarmProduceBonusDuration { get; set; }
+        public int AllTroopsDefBonusDuration { get; set; }
+        public int AllTroopsAtkBonusDuration { get; set; }
         public int TownhallHP { get; set; }
         public int StorageLimit { get; set; }
         public int FarmHP { get; set; }

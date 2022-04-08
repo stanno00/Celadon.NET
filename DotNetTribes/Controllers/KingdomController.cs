@@ -2,6 +2,7 @@ using DotNetTribes.ActionFilters;
 using DotNetTribes.DTOs;
 using DotNetTribes.DTOs.Trade;
 using DotNetTribes.DTOs.Troops;
+using DotNetTribes.DTOs.University;
 using DotNetTribes.Models;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -151,6 +152,14 @@ namespace DotNetTribes.Controllers
             var result = _troopService.UpgradeTroops(kingdomId, request);
 
             return new OkObjectResult(result);
+        }
+
+        [Authorize]
+        [HttpPost("university")]
+        public ActionResult<UniversityUpgradeRequestDto> BuyUniversityUpgrade([FromHeader] string authorization,
+            [FromBody] UniversityUpgradeRequestDto requestDto)
+        {
+            
         }
     }
 }

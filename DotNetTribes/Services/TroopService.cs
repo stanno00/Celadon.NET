@@ -127,6 +127,7 @@ namespace DotNetTribes.Services
                         Level = 1,
                         Attack = 20,
                         Defense = 0,
+                        TroopHP = _rules.TroopHp(1),
                         Capacity = _rules.TroopCapacity(1),
                         ConsumingFood = false,
                         KingdomId = kingdomId
@@ -150,6 +151,7 @@ namespace DotNetTribes.Services
                         Level = 1,
                         Attack = 0,
                         Defense = 1,
+                        TroopHP = _rules.TroopHp(1),
                         Capacity = _rules.TroopCapacity(1),
                         ConsumingFood = false,
                         KingdomId = kingdomId
@@ -170,6 +172,7 @@ namespace DotNetTribes.Services
                     Level = 1,
                     Attack = _rules.TroopAttack(1),
                     Defense = _rules.TroopDefense(1),
+                    TroopHP = _rules.TroopHp(1),
                     Capacity = _rules.TroopCapacity(1),
                     ConsumingFood = false,
                     KingdomId = kingdomId
@@ -210,6 +213,7 @@ namespace DotNetTribes.Services
                 troop.FinishedAt = GetTroopFinishTime(troopsInProgress, level);
                 troop.Attack = _rules.TroopAttack(level);
                 troop.Defense = _rules.TroopDefense(level);
+                troop.TroopHP = _rules.TroopHp(level);
                 troop.Capacity = _rules.TroopCapacity(level);
                 troopsInProgress.Add(troop);
             }

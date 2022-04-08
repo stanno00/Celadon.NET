@@ -10,13 +10,13 @@ namespace DotNetTribes.Services
     {
         private readonly ApplicationContext _applicationContext;
         private readonly ITroopService _troopService;
-        private readonly IKingdomService _kingdomService;
+        private readonly IRulesService _rulesService;
 
-        public BattleService(ApplicationContext applicationContext, ITroopService troopService, IKingdomService kingdomService)
+        public BattleService(ApplicationContext applicationContext, ITroopService troopService, IRulesService rulesService)
         {
             _applicationContext = applicationContext;
             _troopService = troopService;
-            _kingdomService = kingdomService;
+            _rulesService = rulesService;
         }
 
         public Battle Attack(int myKingdomId, int enemyKingdomId, TroopUpgradeRequestDTO troopUpgradeRequestDto)
@@ -31,6 +31,8 @@ namespace DotNetTribes.Services
             {
                 throw new TroopCreationException("Wrong troops ids!");
             }
+            
+            myTroops.ForEach(t => t.IsHome = false);
 
             while (!myTroops.Any() && !enemyTroops.Any())
             {

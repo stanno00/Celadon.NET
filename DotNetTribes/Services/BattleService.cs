@@ -38,7 +38,7 @@ namespace DotNetTribes.Services
 
             myTroops.ForEach(t => t.IsHome = false);
 
-            while (!myTroops.Any() && !enemyTroops.Any())
+            while (myTroops.Any() && enemyTroops.Any())
             {
                 var loser = Fight(myTroops[0], enemyTroops[0]);
                 if (loser == myTroops[0])
@@ -67,6 +67,11 @@ namespace DotNetTribes.Services
                 ReturnAt = _timeService.GetCurrentSeconds(),
                 WinnerId = winner
             };
+
+            myKingdom.Troops = myTroops;
+            enemyKingdom.Troops = enemyTroops;
+
+            _applicationContext.SaveChanges();
 
             return battleResult;
         }

@@ -182,7 +182,7 @@ namespace DotNetTribes.Controllers
         [HttpPost("battle/{enemyKingdomId}")]
         // using TroopUpgradeRequestDTO (list of troops ids) so i dont have to create another DTO.
         public ActionResult<Battle> Attack([FromBody] TroopUpgradeRequestDTO troopUpgradeRequestDto,
-            [FromRoute] int enemyKingdomId, [FromBody] string authorization)
+            [FromRoute] int enemyKingdomId, [FromHeader] string authorization)
         {
             var myKingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var response = _battleService.Attack(myKingdomId, enemyKingdomId, troopUpgradeRequestDto);

@@ -1,7 +1,9 @@
+using DotNetTribes.Enums;
+
 namespace DotNetTribes.DTOs
 {
     public class BuildingsUpgradesRequestDto
     {
-        public string UpgradeName { get; set; }
+        public AllBuildingUpgrades UpgradeName { get; set; }
     }
 }

@@ -12,6 +12,6 @@
         public int Attack { get; set; }
         public int Defense { get; set; }
         public int Capacity { get; set; }
-
+        public string? Name { get; set; }
     }
 }

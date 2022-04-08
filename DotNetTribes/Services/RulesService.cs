@@ -293,6 +293,85 @@ namespace DotNetTribes.Services
             return _r.MapBoundariesY;
         }
         
+        public int BlacksmithPrice()
+        {
+            return _r.BlacksmithLevelOneCost;
+        }
+
+        public int BlacksmithHp()
+        {
+            return _r.BlacksmithHp;
+        }
+
+        public int BlacksmithBuildingTime()
+        {
+            return _r.BlacksmithLevelOneDuration;
+        }
+
+        public int TrainingTimeSpecialTroopRanger()
+        {
+            return _r.TrainingTimeTroopRanger;
+        }
+
+        public int TrainingTimeSpecialTroopScout()
+        {
+            return _r.TrainingTimeTroopScout;
+        }
+
+        public int CostSpecialTroopScout(int level)
+        {
+            return level * _r.CostTroopScout;
+        }
+
+        public int CostSpecialTroopRanger(int level)
+        {
+            return level * _r.CostTroopRanger;
+        }
+
+        public int UpgradeForSpecialTroopRanger()
+        {
+            return _r.UpgradeForTroopRanger;
+        }
+
+        public int UpgradeForSpecialTroopScout()
+        {
+            return _r.UpgradeForSpecialTroopScout;
+        }
+
+        public int SpecialTroopRangerHp()
+        {
+            return _r.TroopRangerHp;
+        }
+
+        public int SpecialTroopScoutHp()
+        {
+            return _r.TroopScoutHp;
+        }
+
+        public int TimeUpgradeForSpecialTroopScout()
+        {
+            return _r.TimeUpgradeTroopScout;
+        }
+
+        public int TimeUpgradeForSpecialTroopRanger()
+        {
+            return _r.TimeUpgradeTroopRanger;
+        }
+
+        public int IronMineBuildingTime(int level)
+        {
+            return 300 + _r.IronMineDuration * level;
+        }
+
+        public int IronMinePrice(int level)
+        {
+            return 500 + _r.IronMineCost * level;
+        }
+
+        public int IronMineHP(int level)
+        {
+            return 300 + 100 * level;
+        }
 
         public int BuildingResourceGeneration(Building building, int kingdomId)
         {
@@ -318,6 +397,9 @@ namespace DotNetTribes.Services
                     {
                         productionBoost = 1 + farmProduceBonus.AffectStrength * farmProduceBonus.Level;
                     }
+                    break;
+                case BuildingType.IronMine:
+                    resourceGeneration = _r.IronMineGeneration;
                     break;
             }
 
@@ -369,6 +451,20 @@ namespace DotNetTribes.Services
                         BuildingPrice = UniversityPrice(level),
                         BuildingHP = UniversityHP(level),
                         BuildingDuration = UniversityBuildingTime(level, kingdomId)
+                    };
+                case BuildingType.Blacksmith:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = BlacksmithPrice(),
+                        BuildingHP = BlacksmithHp(),
+                        BuildingDuration = BlacksmithBuildingTime()
+                    };
+                case BuildingType.IronMine:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = IronMinePrice(level),
+                        BuildingHP = IronMineHP(level),
+                        BuildingDuration = IronMineBuildingTime(level)
                     };
                 default:
                     throw new BuildingCreationException(

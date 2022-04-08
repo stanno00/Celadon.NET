@@ -49,13 +49,30 @@
         public int MarketplaceHP { get; set; }
         public int UniversityHP { get; set; }
         public int TroopFoodConsumption { get; set; }
-        
+
         public int TroopAttack { get; set; }
         public int TroopDefense { get; set; }
         public int TroopCapacity { get; set; }
 
         public int MapBoundariesX { get; set; }
         public int MapBoundariesY { get; set; }
-
+        public int BlacksmithLevelOneCost { get; set; }
+        public int BlacksmithHp { get; set; }
+        public int BlacksmithLevelOneDuration { get; set; }
+        public int TrainingTimeTroopRanger { get; set; }
+        public int TrainingTimeTroopScout { get; set; }
+        public int CostTroopScout { get; set; }
+        public int CostTroopRanger { get; set; }
+        public int UpgradeForTroopRanger { get; set; }
+        public int UpgradeForSpecialTroopScout { get; set; }
+        public int TroopRangerHp { get; set; }
+        public int TroopScoutHp { get; set; }
+        public int TimeUpgradeTroopScout { get; set; }
+        public int TimeUpgradeTroopRanger { get; set; }
+        public int IronMineCost { get; set; }
+        public int IronMineDuration { get; set; }
+        public int IronMineHP { get; set; }
+        public int IronMineGeneration { get; set; }
+        
     }
 }

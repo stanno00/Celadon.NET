@@ -4,14 +4,16 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220405090637_IronMine")]
+    partial class IronMine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,32 +96,6 @@ namespace DotNetTribes.Migrations
                     b.ToTable("Buildings");
                 });
 
-            modelBuilder.Entity("DotNetTribes.Models.BuildingUpgrade", b =>
-                {
-                    b.Property<int>("BuildingUpgradeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("FinishedAt")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("KingdomId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Name")
-                        .HasColumnType("int");
-
-                    b.Property<long>("StartedAt")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("BuildingUpgradeId");
-
-                    b.HasIndex("KingdomId");
-
-                    b.ToTable("BuildingUpgrade");
-                });
-
             modelBuilder.Entity("DotNetTribes.Models.GameRules", b =>
                 {
                     b.Property<int>("GameRulesId")
@@ -140,21 +116,6 @@ namespace DotNetTribes.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("AcademyLevelOneDuration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BlacksmithHp")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BlacksmithLevelOneCost")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BlacksmithLevelOneDuration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CostTroopRanger")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CostTroopScout")
                         .HasColumnType("int");
 
                     b.Property<int>("FarmAllLevelsCost")
@@ -229,12 +190,6 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("StorageLimit")
                         .HasColumnType("int");
 
-                    b.Property<int>("TimeUpgradeTroopRanger")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimeUpgradeTroopScout")
-                        .HasColumnType("int");
-
                     b.Property<int>("TownhallAllLevelsCost")
                         .HasColumnType("int");
 
@@ -245,12 +200,6 @@ namespace DotNetTribes.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TownhallLevelOneDuration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TrainingTimeTroopRanger")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TrainingTimeTroopScout")
                         .HasColumnType("int");
 
                     b.Property<int>("TroopAllLevelsCost")
@@ -274,18 +223,6 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("TroopHP")
                         .HasColumnType("int");
 
-                    b.Property<int>("TroopRangerHp")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TroopScoutHp")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UpgradeForSpecialTroopScout")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UpgradeForTroopRanger")
-                        .HasColumnType("int");
-
                     b.HasKey("GameRulesId");
 
                     b.ToTable("GameRules");
@@ -299,11 +236,6 @@ namespace DotNetTribes.Migrations
                             AcademyLevelNDuration = 60,
                             AcademyLevelOneCost = 150,
                             AcademyLevelOneDuration = 90,
-                            BlacksmithHp = 150,
-                            BlacksmithLevelOneCost = 500,
-                            BlacksmithLevelOneDuration = 600,
-                            CostTroopRanger = 50,
-                            CostTroopScout = 100,
                             FarmAllLevelsCost = 100,
                             FarmAllLevelsDuration = 60,
                             FarmAllLevelsFoodGeneration = 5,
@@ -328,25 +260,17 @@ namespace DotNetTribes.Migrations
                             StartingFood = 500,
                             StartingGold = 500,
                             StorageLimit = 100,
-                            TimeUpgradeTroopRanger = 43200,
-                            TimeUpgradeTroopScout = 72000,
                             TownhallAllLevelsCost = 200,
                             TownhallHP = 200,
                             TownhallLevelNDuration = 60,
                             TownhallLevelOneDuration = 120,
-                            TrainingTimeTroopRanger = 200,
-                            TrainingTimeTroopScout = 300,
                             TroopAllLevelsCost = 25,
                             TroopAllLevelsDuration = 30,
                             TroopAttack = 10,
                             TroopCapacity = 2,
                             TroopDefense = 5,
                             TroopFoodConsumption = 2,
-                            TroopHP = 20,
-                            TroopRangerHp = 10,
-                            TroopScoutHp = 1,
-                            UpgradeForSpecialTroopScout = 1000,
-                            UpgradeForTroopRanger = 2000
+                            TroopHP = 20
                         });
                 });
 
@@ -470,9 +394,6 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("Level")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<long>("StartedAt")
                         .HasColumnType("bigint");
 
@@ -522,15 +443,6 @@ namespace DotNetTribes.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DotNetTribes.Models.BuildingUpgrade", b =>
-                {
-                    b.HasOne("DotNetTribes.Models.Kingdom", null)
-                        .WithMany("BuildingUpgrade")
-                        .HasForeignKey("KingdomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DotNetTribes.Models.Resource", b =>
                 {
                     b.HasOne("DotNetTribes.Models.Kingdom", "Kingdom")
@@ -565,8 +477,6 @@ namespace DotNetTribes.Migrations
             modelBuilder.Entity("DotNetTribes.Models.Kingdom", b =>
                 {
                     b.Navigation("Buildings");
-
-                    b.Navigation("BuildingUpgrade");
 
                     b.Navigation("Resources");
 

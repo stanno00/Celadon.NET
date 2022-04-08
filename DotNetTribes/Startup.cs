@@ -61,6 +61,7 @@ namespace DotNetTribes
             services.AddTransient<IRulesService, RulesService>();
             services.AddTransient<IBuildingsService, BuildingsService>();
             services.AddTransient<ITroopService, TroopService>();
+            services.AddTransient<IBattleService, BattleService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

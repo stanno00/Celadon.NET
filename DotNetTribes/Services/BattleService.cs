@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DotNetTribes.DTOs.Troops;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
@@ -30,11 +31,22 @@ namespace DotNetTribes.Services
             {
                 throw new TroopCreationException("Wrong troops ids!");
             }
-            
-            var raidTime = _kingdomService.ShortestPath(myKingdom.KingdomX, myKingdom.KingdomY,
-                enemyKingdom.KingdomX, enemyKingdom.KingdomY);
-            
-            
+
+            while (!myTroops.Any() && !enemyTroops.Any())
+            {
+                
+            }
+
+            return null;
+        }
+
+        private Troop Fight(Troop myTroop, Troop enemyTroop)
+        {
+            var hitChance = new Random().Next(100);
+            while (myTroop.TroopHP != 0 && enemyTroop.TroopHP != 0)
+            {
+                
+            }
 
             return null;
         }

@@ -5,6 +5,7 @@
         public long TroopId { get; set; }
         public int KingdomId { get; set; }
         public long StartedAt { get; set; }
+        public int TroopHP { get; set; }
         public long FinishedAt { get; set; }
         public long UpdatedAt { get; set; }
         public bool ConsumingFood { get; set; }

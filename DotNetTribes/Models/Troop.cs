@@ -14,6 +14,6 @@
         public int Defense { get; set; }
         public int Capacity { get; set; }
         public bool IsHome { get; set; } = true;
-
+        public string? Name { get; set; }
     }
 }

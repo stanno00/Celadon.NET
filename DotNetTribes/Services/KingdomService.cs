@@ -86,8 +86,6 @@ namespace DotNetTribes.Services
 
         public int ShortestPath(int myKingdomX, int myKingdomY, int kingdomUnderAttackX, int kingdomUnderAttackY)
         {
-            int minutes = 0;
-
             var resultX = Math.Abs(myKingdomX - kingdomUnderAttackX);
             var resultY = Math.Abs(myKingdomY - kingdomUnderAttackY);
             

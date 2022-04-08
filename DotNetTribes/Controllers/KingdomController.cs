@@ -18,10 +18,12 @@ namespace DotNetTribes.Controllers
         private readonly IBuildingsService _buildingsService;
         private readonly IResourceService _resourceService;
         private readonly ITroopService _troopService;
+        private readonly IUpgradeService _upgradeService;
 
-        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService, ITroopService troopService, IResourceService resourceService)
+        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService, ITroopService troopService, IResourceService resourceService, IUpgradeService upgradeService)
         {
             _resourceService = resourceService;
+            _upgradeService = upgradeService;
             _kingdomService = kingdomService;
             _jwtService = jwtService;
             _buildingsService = buildingsService;
@@ -71,6 +73,16 @@ namespace DotNetTribes.Controllers
             var responseBuilding = _buildingsService.UpgradeBuilding(kingdomId, buildingId);
             return new OkObjectResult(responseBuilding);
         }
+        
+        [Authorize]
+        [HttpPost("buildings/upgrades")]
+        public ActionResult<BuildingResponseDTO> BuildingAddUpgrade([FromHeader] string authorization,
+            [FromBody] BuildingsUpgradesRequestDto upgrade)
+        {
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var responseBuilding = _upgradeService.AddUpgrade(kingdomId,upgrade);
+            return new OkObjectResult(responseBuilding);
+        }
 
         [Authorize]
         [HttpPost("troops")]
@@ -79,6 +91,17 @@ namespace DotNetTribes.Controllers
         {
             int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var result = _troopService.TrainTroops(kingdomId, request);
+            return new OkObjectResult(result);
+
+        }
+
+        [Authorize]
+        [HttpPost("troops/blacksmith")]
+        public ActionResult<TroopResponseDTO> CreateSpecialTroop([FromHeader] string authorization,
+            [FromBody] TroopRequestDTO request)
+        {
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var result = _troopService.TrainSpecialTroops(kingdomId, request);
             return new OkObjectResult(result);
 
         }

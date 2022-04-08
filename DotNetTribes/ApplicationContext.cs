@@ -15,10 +15,10 @@ namespace DotNetTribes
         
         public DbSet<Offer> Offers { get; set; }
         public DbSet<Battle> Battles { get; set; }
+        public DbSet<BuildingUpgrade> BuildingUpgrade { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<GameRules>().HasData(
                 new GameRules
                 {
@@ -59,11 +59,25 @@ namespace DotNetTribes
                     StorageLimit = 100,
                     MapBoundariesX = 101,
                     MapBoundariesY = 101,
+                    BlacksmithLevelOneCost = 500,
+                    BlacksmithHp = 150,
+                    BlacksmithLevelOneDuration = 600,
+                    UpgradeForSpecialTroopScout = 1000,
+                    TimeUpgradeTroopScout = 72000,
+                    TimeUpgradeTroopRanger = 43200,
+                    TrainingTimeTroopRanger = 200,
+                    UpgradeForTroopRanger = 2000,
+                    CostTroopRanger = 50,
+                    TroopRangerHp = 10,
+                    TrainingTimeTroopScout = 300,
+                    TroopScoutHp = 1,
+                    CostTroopScout = 100,
                     IronMineCost = 100,
                     IronMineDuration = 60,
                     IronMineHP = 100,
                     IronMineGeneration = 5
                 });
+            base.OnModelCreating(modelBuilder);
         }
 
         public ApplicationContext(DbContextOptions options) : base(options)

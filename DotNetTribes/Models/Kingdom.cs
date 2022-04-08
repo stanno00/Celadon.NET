@@ -11,6 +11,7 @@ namespace DotNetTribes.Models
         public ICollection<Building> Buildings { get; set; }
         public ICollection<Troop> Troops { get; set; }
         public ICollection<Resource> Resources { get; set; }
+        public ICollection<BuildingUpgrade> BuildingUpgrade { get; set; }
         public int KingdomX { get; set; }
         public int KingdomY { get; set; }
     }

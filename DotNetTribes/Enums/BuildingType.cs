@@ -7,7 +7,9 @@
         Farm,
         Mine,
         Academy,
+        Blacksmith,
         Marketplace,
         IronMine
+
     }
 }

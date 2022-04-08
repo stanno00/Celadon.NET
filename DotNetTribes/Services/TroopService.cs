@@ -78,6 +78,15 @@ namespace DotNetTribes.Services
                 _resourceService.UpdateKingdomResources(kingdomId);
                 _applicationContext.SaveChanges();
             }
+
+            var troopsAwayFromKingdom = _applicationContext.Troops
+                .Where(t => t.KingdomId == kingdomId && !t.IsHome)
+                .ToList();
+
+            foreach (var troop in troopsAwayFromKingdom.Where(troop => troop.UpdatedAt < _timeService.GetCurrentSeconds()))
+            {
+                troop.IsHome = true;
+            }
         }
 
         private int CalculateStorageLimit(Kingdom kingdom)

@@ -26,20 +26,8 @@ namespace DotNetTribes.Services
 
         public Battle Attack(int myKingdomId, int enemyKingdomId, TroopUpgradeRequestDTO troopUpgradeRequestDto)
         {
-            // Getting available troops from kingdom
-            var attackerReadyTroops = _troopService.GetReadyTroops(myKingdomId);
-
-            // Checking if requested troops exist and if so add them to a new list
-            var attackerBattleTroops = new List<Troop>();
-            foreach (var troop in troopUpgradeRequestDto.TroopIds.Select(troopId => attackerReadyTroops.FirstOrDefault(t => t.TroopId == troopId)))
-            {
-                if (troop == null)
-                {
-                    throw new TroopCreationException("Wrong troop ids");
-                }
-                attackerBattleTroops.Add(troop);
-            }
-
+            var attackerTroops = ValidatedTroopsForBattle(myKingdomId, troopUpgradeRequestDto);
+            
             // Getting all available defending troops and their count
             var defenderTroops = _troopService.GetReadyTroops(enemyKingdomId);
             var defenderArmyCountBeforeBattle = defenderTroops.Count;
@@ -47,30 +35,27 @@ namespace DotNetTribes.Services
             var myKingdom = _applicationContext.Kingdoms.Single(k => k.KingdomId == myKingdomId);
             var enemyKingdom = _applicationContext.Kingdoms.Single(k => k.KingdomId == enemyKingdomId);
 
-            // Sending attacker troops for the attack so they can't be used in another battle
-            attackerBattleTroops.ForEach(t => t.IsHome = false);
-            
             // Calculating attack duration in seconds
             var attackDuration = _kingdomService.ShortestPath(myKingdom.KingdomX, myKingdom.KingdomY,
                 enemyKingdom.KingdomX, enemyKingdom.KingdomY) * 60;
 
             // Determine the battle winner and remove dead troops from either list and database
-            while (attackerBattleTroops.Any() && defenderTroops.Any())
+            while (attackerTroops.Any() && defenderTroops.Any())
             {
-                var loser = Fight(attackerBattleTroops[0], defenderTroops[0]);
-                if (loser == attackerBattleTroops[0])
+                var loser = Fight(attackerTroops[0], defenderTroops[0]);
+                if (loser == attackerTroops[0])
                 {
-                    attackerBattleTroops.Remove(loser);
+                    attackerTroops.Remove(loser);
                 }
 
                 defenderTroops.Remove(loser);
                 _applicationContext.Troops.Remove(loser);
             }
             
-            var winner = attackerBattleTroops.Count == 0 ? enemyKingdomId : myKingdomId;
+            var winner = attackerTroops.Count == 0 ? enemyKingdomId : myKingdomId;
 
             // Calculating losses
-            var attackerLostTroops = troopUpgradeRequestDto.TroopIds.Count - attackerBattleTroops.Count;
+            var attackerLostTroops = troopUpgradeRequestDto.TroopIds.Count - attackerTroops.Count;
             var defenderLostTroops = defenderArmyCountBeforeBattle - defenderTroops.Count;
 
             var battleResult = new Battle
@@ -88,7 +73,7 @@ namespace DotNetTribes.Services
             };
             
             // Using updatedAt to return troops to kingdom
-            foreach (var attackerBattleTroop in attackerBattleTroops)
+            foreach (var attackerBattleTroop in attackerTroops)
             {
                 attackerBattleTroop.UpdatedAt = battleResult.ReturnAt;
             }
@@ -130,6 +115,27 @@ namespace DotNetTribes.Services
 
             var damage = _rulesService.TroopAttack(troopAttacking.Level) - _rulesService.TroopDefense(troopDefending.Level);
             return damage;
+        }
+
+        // Getting available troops from kingdom
+        // Checking if requested troops exist and if so add them to a new list
+        private List<Troop> ValidatedTroopsForBattle(int kingdomId, TroopUpgradeRequestDTO troopUpgradeRequestDto)
+        {
+            var attackerReadyTroops = _troopService.GetReadyTroops(kingdomId);
+            
+            var attackerBattleTroops = new List<Troop>();
+            foreach (var troop in troopUpgradeRequestDto.TroopIds.Select(troopId => attackerReadyTroops.FirstOrDefault(t => t.TroopId == troopId)))
+            {
+                if (troop == null)
+                {
+                    throw new TroopCreationException("Wrong troop ids");
+                }
+                attackerBattleTroops.Add(troop);
+                // Sending attacker troop for the attack so they can't be used in another battle
+                troop.IsHome = false;
+            }
+
+            return attackerBattleTroops;
         }
     }
 }

@@ -90,7 +90,10 @@ namespace DotNetTribes.Services
             while (myTroop.TroopHP > 0 && enemyTroop.TroopHP > 0)
             {
                 enemyTroop.TroopHP -= DamageDone(myTroop, enemyTroop);
-                myTroop.TroopHP -= DamageDone(enemyTroop, myTroop);
+                if(enemyTroop.TroopHP > 0)
+                {
+                    myTroop.TroopHP -= DamageDone(enemyTroop, myTroop);
+                }                
             }
 
             var loser = myTroop.TroopHP <= 0 ? myTroop : enemyTroop;

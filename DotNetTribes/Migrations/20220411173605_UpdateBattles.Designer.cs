@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220408073523_UpdateTroops")]
-    partial class UpdateTroops
+    [Migration("20220411173605_UpdateBattles")]
+    partial class UpdateBattles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -454,6 +454,9 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("Attack")
                         .HasColumnType("int");
 
+                    b.Property<int>("BattleId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
@@ -466,9 +469,6 @@ namespace DotNetTribes.Migrations
                     b.Property<long>("FinishedAt")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("IsHome")
-                        .HasColumnType("bit");
-
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
 
@@ -477,6 +477,9 @@ namespace DotNetTribes.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ReturnedFromBattleAt")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("StartedAt")
                         .HasColumnType("bigint");

@@ -16,5 +16,7 @@ namespace DotNetTribes.Services
         List<Troop> GetReadyTroops(int kingdomId);
         TroopResponseDTO TrainSpecialTroops(int kingdomId,TroopRequestDTO request);
 
+        void ReturnTroopsFromBattle();
+
     }
 }

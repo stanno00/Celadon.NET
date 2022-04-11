@@ -78,15 +78,6 @@ namespace DotNetTribes.Services
                 _resourceService.UpdateKingdomResources(kingdomId);
                 _applicationContext.SaveChanges();
             }
-
-            var troopsAwayFromKingdom = _applicationContext.Troops
-                .Where(t => t.KingdomId == kingdomId && !t.IsHome)
-                .ToList();
-
-            foreach (var troop in troopsAwayFromKingdom.Where(troop => troop.UpdatedAt < _timeService.GetCurrentSeconds()))
-            {
-                troop.IsHome = true;
-            }
         }
 
         private int CalculateStorageLimit(Kingdom kingdom)
@@ -378,8 +369,20 @@ namespace DotNetTribes.Services
         public List<Troop> GetReadyTroops(int kingdomId)
         {
             return _applicationContext.Troops
-                .Where(t => t.KingdomId == kingdomId && t.FinishedAt < _timeService.GetCurrentSeconds() && t.IsHome)
+                .Where(t => t.KingdomId == kingdomId && t.FinishedAt < _timeService.GetCurrentSeconds() && t.BattleId == 0)
                 .ToList();
+        }
+        
+        public void ReturnTroopsFromBattle()
+        {
+            var troopsAwayFromKingdoms = _applicationContext.Troops
+                .Where(t => t.BattleId != 0)
+                .ToList();
+
+            foreach (var troop in troopsAwayFromKingdoms.Where(troop => troop.ReturnedFromBattleAt < _timeService.GetCurrentSeconds()))
+            {
+                troop.BattleId = 0;
+            }
         }
     }
 }

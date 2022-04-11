@@ -9,12 +9,14 @@ namespace DotNetTribes.ActionFilters
         private readonly IJwtService _jwtService;
         private readonly IResourceService _resourceService;
         private readonly ITroopService _troopService;
+        private readonly IBattleService _battleService;
 
-        public UpdateResourceAttribute(IJwtService jwtService, IResourceService resourceService, ITroopService troopService)
+        public UpdateResourceAttribute(IJwtService jwtService, IResourceService resourceService, ITroopService troopService, IBattleService battleService)
         {
             _jwtService = jwtService;
             _resourceService = resourceService;
             _troopService = troopService;
+            _battleService = battleService;
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
@@ -27,6 +29,8 @@ namespace DotNetTribes.ActionFilters
             _resourceService.UpdateKingdomResources(kingdomId);
             _troopService.UpdateTroops(kingdomId);
             _resourceService.UpdateOffers();
+            _battleService.UpdateBattles();
+            _troopService.ReturnTroopsFromBattle();
         }
 
         public void OnActionExecuted(ActionExecutedContext context)

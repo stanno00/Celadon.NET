@@ -2,16 +2,23 @@
 
 namespace DotNetTribes.Migrations
 {
-    public partial class UpdateTroops : Migration
+    public partial class UpdateBattles : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "IsHome",
+            migrationBuilder.AddColumn<int>(
+                name: "BattleId",
                 table: "Troops",
-                type: "bit",
+                type: "int",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<long>(
+                name: "ReturnedFromBattleAt",
+                table: "Troops",
+                type: "bigint",
+                nullable: false,
+                defaultValue: 0L);
 
             migrationBuilder.AddColumn<int>(
                 name: "TroopHP",
@@ -24,7 +31,11 @@ namespace DotNetTribes.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "IsHome",
+                name: "BattleId",
+                table: "Troops");
+
+            migrationBuilder.DropColumn(
+                name: "ReturnedFromBattleAt",
                 table: "Troops");
 
             migrationBuilder.DropColumn(

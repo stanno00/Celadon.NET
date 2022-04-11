@@ -452,6 +452,9 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("Attack")
                         .HasColumnType("int");
 
+                    b.Property<int>("BattleId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
@@ -464,9 +467,6 @@ namespace DotNetTribes.Migrations
                     b.Property<long>("FinishedAt")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("IsHome")
-                        .HasColumnType("bit");
-
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
 
@@ -475,6 +475,9 @@ namespace DotNetTribes.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ReturnedFromBattleAt")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("StartedAt")
                         .HasColumnType("bigint");

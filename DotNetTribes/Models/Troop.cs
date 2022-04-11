@@ -13,7 +13,8 @@
         public int Attack { get; set; }
         public int Defense { get; set; }
         public int Capacity { get; set; }
-        public bool IsHome { get; set; } = true;
+        public int BattleId { get; set; }
+        public long ReturnedFromBattleAt { get; set; }
         public string? Name { get; set; }
     }
 }

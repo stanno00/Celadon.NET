@@ -185,8 +185,8 @@ namespace DotNetTribes.Controllers
             [FromRoute] int enemyKingdomId, [FromHeader] string authorization)
         {
             var myKingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
-            var response = _battleService.Attack(myKingdomId, enemyKingdomId, troopUpgradeRequestDto);
-            return response;
+            var battle = _battleService.InitializeBattle(myKingdomId, enemyKingdomId, troopUpgradeRequestDto);
+            return new OkObjectResult(battle);
         }
     }
 }

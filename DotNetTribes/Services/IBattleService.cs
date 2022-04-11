@@ -6,6 +6,7 @@ namespace DotNetTribes.Services
 {
     public interface IBattleService
     {
-        Battle Attack(int myKingdomId, int enemyKingdomId, TroopUpgradeRequestDTO troopUpgradeRequestDto);
+        Battle UpdateBattles();
+        Battle InitializeBattle(int attackerKingdomId, int defenderKingdomId, TroopUpgradeRequestDTO troopsRequestedForBattleDto);
     }
 }

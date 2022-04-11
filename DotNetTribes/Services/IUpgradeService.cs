@@ -8,5 +8,6 @@ namespace DotNetTribes.Services
     {
         BuildingsUpgradesResponseDto AddUpgrade(int kingdomId, BuildingsUpgradesRequestDto upgrade);
         public UniversityUpgrade BuyUniversityUpgrade(int kingdomId, UpgradeType upgradeType);
+        public void ApplyUpgradesWhenFinished();
     }
 }

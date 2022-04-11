@@ -188,8 +188,8 @@ namespace DotNetTribes.Controllers
             return new OkObjectResult(new UniversityUpgradeResponseDto()
             {
                 Status = "ok",
-                UpgradeType = universityUpgrade.UpgradeType,
-                Level = universityUpgrade.Level
+                UpgradeType = universityUpgrade.UpgradeType.ToString(),
+                CurrentLevel = universityUpgrade.Level
             });
         }
     }

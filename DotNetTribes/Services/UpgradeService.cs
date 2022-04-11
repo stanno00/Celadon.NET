@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Enums;
@@ -36,6 +37,12 @@ namespace DotNetTribes.Services
                 throw new UpgradeException("You don't have a University");
             }
 
+            var upgradeInProgress = kingdom.Upgrades.FirstOrDefault(u => u.FinishedAt > _timeService.GetCurrentSeconds());
+            if (upgradeInProgress != null)
+            {
+                throw new UpgradeException("There is an upgrade in progress");
+            }
+
             UniversityUpgrade theUpgrade = null;
             
             if (upgradeType == UpgradeType.BuildingBuildSpeed)
@@ -48,7 +55,7 @@ namespace DotNetTribes.Services
                 }
                 int resourcesNeeded = _rules.BuildingBuildSpeedPrice(currentLvl);
                 long researchTime = _rules.BuildingBuildSpeedTime(currentLvl) - GetUniversityLevelTimeReduction(hasUniversity);
-                theUpgrade = StartUpgrdingCheckResources(kingdom, hasUniversity, upgradeType, 0.05, resourcesNeeded, currentLvl, researchTime);
+                theUpgrade = StartUpgradingCheckResources(kingdom, hasUniversity, upgradeType, 0.05, resourcesNeeded, currentLvl, researchTime);
                 
 
             }
@@ -62,7 +69,7 @@ namespace DotNetTribes.Services
                 }
                 int resourcesNeeded = _rules.FarmProduceBonusPrice(currentLvl);
                 long researchTime = _rules.FarmProduceBonusTime(currentLvl) - GetUniversityLevelTimeReduction(hasUniversity);
-                theUpgrade = StartUpgrdingCheckResources(kingdom, hasUniversity, upgradeType, 0.05, resourcesNeeded, currentLvl, researchTime);
+                theUpgrade = StartUpgradingCheckResources(kingdom, hasUniversity, upgradeType, 0.05, resourcesNeeded, currentLvl, researchTime);
             }
             if (upgradeType == UpgradeType.MineProduceBonus)
             {
@@ -74,7 +81,7 @@ namespace DotNetTribes.Services
                 }
                 int resourcesNeeded = _rules.MineProduceBonusPrice(currentLvl);
                 long researchTime = _rules.MineProduceBonusTime(currentLvl) - GetUniversityLevelTimeReduction(hasUniversity);
-                theUpgrade = StartUpgrdingCheckResources(kingdom, hasUniversity, upgradeType, 0.05, resourcesNeeded, currentLvl, researchTime);
+                theUpgrade = StartUpgradingCheckResources(kingdom, hasUniversity, upgradeType, 0.05, resourcesNeeded, currentLvl, researchTime);
             }
             if (upgradeType == UpgradeType.TroopsTrainSpeed)
             {
@@ -86,7 +93,7 @@ namespace DotNetTribes.Services
                 }
                 int resourcesNeeded = _rules.TroopsTrainSpeedPrice(currentLvl);
                 long researchTime = _rules.TroopsTrainSpeedTime(currentLvl) - GetUniversityLevelTimeReduction(hasUniversity);
-                theUpgrade = StartUpgrdingCheckResources(kingdom, hasUniversity, upgradeType, 0.05, resourcesNeeded, currentLvl, researchTime);
+                theUpgrade = StartUpgradingCheckResources(kingdom, hasUniversity, upgradeType, 0.05, resourcesNeeded, currentLvl, researchTime);
             }
             if (upgradeType == UpgradeType.AllTroopsAtkBonus)
             {
@@ -98,7 +105,7 @@ namespace DotNetTribes.Services
                 }
                 int resourcesNeeded = _rules.AllTroopsAtkBonusPrice(currentLvl);
                 long researchTime = _rules.AllTroopsAtkBonusTime(currentLvl) - GetUniversityLevelTimeReduction(hasUniversity);
-                theUpgrade = StartUpgrdingCheckResources(kingdom, hasUniversity, upgradeType, 0.05, resourcesNeeded, currentLvl, researchTime);
+                theUpgrade = StartUpgradingCheckResources(kingdom, hasUniversity, upgradeType, 3, resourcesNeeded, currentLvl, researchTime);
             }
             if (upgradeType == UpgradeType.AllTroopsDefBonus)
             {
@@ -110,19 +117,19 @@ namespace DotNetTribes.Services
                 }
                 int resourcesNeeded = _rules.AllTroopsDefBonusPrice(currentLvl);
                 long researchTime = _rules.AllTroopsDefBonusTime(currentLvl) - GetUniversityLevelTimeReduction(hasUniversity);
-                theUpgrade = StartUpgrdingCheckResources(kingdom, hasUniversity, upgradeType, 0.05, resourcesNeeded, currentLvl, researchTime);
+                theUpgrade = StartUpgradingCheckResources(kingdom, hasUniversity, upgradeType, 2, resourcesNeeded, currentLvl, researchTime);
             }
-
+            
             _applicationContext.SaveChanges();
             return theUpgrade;
         }
 
-        private UniversityUpgrade StartUpgrdingCheckResources(Kingdom kingdom, Building hasUniversity, UpgradeType upgradeType, double affectStrength, int resourcesNeeded, int upgradeTotLvl, long researchTime)
+        private UniversityUpgrade StartUpgradingCheckResources(Kingdom kingdom, Building hasUniversity, UpgradeType upgradeType, double affectStrength, int resourcesNeeded, int upgradeTotLvl, long researchTime)
         {
             if (upgradeTotLvl == 0)
             {
                 bool enoughResources = CheckResourcesForUpgrade(upgradeTotLvl, kingdom, resourcesNeeded);
-                return new UniversityUpgrade()
+                UniversityUpgrade theUpgrade = new UniversityUpgrade()
                 {
                     UpgradeType = upgradeType,
                     AffectStrength = affectStrength,
@@ -132,8 +139,10 @@ namespace DotNetTribes.Services
                     FinishedAt = _timeService.GetCurrentSeconds() + researchTime,
                     AddedToKingdom = false
                 };
+                _applicationContext.Add(theUpgrade);
+                return theUpgrade;
             }
-            if (upgradeTotLvl is < 6 and > 0)
+            if (upgradeTotLvl < 6)
             {
                 bool enoughResources = CheckResourcesForUpgrade(upgradeTotLvl, kingdom, resourcesNeeded);
                 var existingUpgrade = kingdom.Upgrades.FirstOrDefault(u => u.UpgradeType == upgradeType);
@@ -170,9 +179,10 @@ namespace DotNetTribes.Services
         {
             if (hasUniversity.Level == 1)
             {
+                Console.WriteLine(hasUniversity.Type);
                 return 0;
             }
-
+            Console.WriteLine(hasUniversity.Type);
             return hasUniversity.Level * 1; //have to change after testing
         }
 
@@ -262,6 +272,36 @@ namespace DotNetTribes.Services
                 FinishedAt = upgradeToBeAdded.FinishedAt,
                 KingdomId = kingdom.KingdomId,
             };
+        }
+
+        public void ApplyUpgradesWhenFinished()
+        {
+            var finishedUpgrades = _applicationContext.UniversityUpgrades.Where(u =>
+                u.FinishedAt < _timeService.GetCurrentSeconds() && u.AddedToKingdom == false).ToList();
+
+            foreach (var i in finishedUpgrades)
+            {
+                if (i.UpgradeType == UpgradeType.AllTroopsAtkBonus)
+                {
+                    var troopToBeUpgraded = _applicationContext.Troops.Where(k => k.KingdomId == i.KingdomId).ToList();
+                    foreach (var y in troopToBeUpgraded)
+                    {
+                        y.Attack += 3;
+                    }
+                }
+                if (i.UpgradeType == UpgradeType.AllTroopsDefBonus)
+                {
+                    var troopToBeUpgraded = _applicationContext.Troops.Where(k => k.KingdomId == i.KingdomId).ToList();
+                    foreach (var y in troopToBeUpgraded)
+                    {
+                        y.Defense += 2;
+                    }
+                }
+                i.Level += 1;
+                i.AddedToKingdom = true;
+            }
+
+            _applicationContext.SaveChanges();
         }
     }
 }

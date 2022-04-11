@@ -70,31 +70,55 @@ namespace DotNetTribes.Services
 
         public int TroopsTrainSpeedPrice(int level)
         {
+            if (level == 0)
+            {
+                return _r.TroopsTrainSpeedCost;
+            }
             return level * _r.TroopsTrainSpeedCost;
         }
 
         public int BuildingBuildSpeedPrice(int level)
         {
+            if (level == 0)
+            {
+                return _r.BuildingBuildSpeedCost;
+            }
             return level * _r.BuildingBuildSpeedCost;
         }
 
         public int MineProduceBonusPrice(int level)
         {
+            if (level == 0)
+            {
+                return _r.MineProduceBonusCost;
+            }
             return level * _r.MineProduceBonusCost;
         }
 
         public int FarmProduceBonusPrice(int level)
         {
+            if (level == 0)
+            {
+                return _r.FarmProduceBonusCost;
+            }
             return level * _r.FarmProduceBonusCost;
         }
 
         public int AllTroopsDefBonusPrice(int level)
         {
+            if (level == 0)
+            {
+                return _r.AllTroopsDefBonusCost;
+            }
             return level * _r.AllTroopsDefBonusCost;
         }
 
         public int AllTroopsAtkBonusPrice(int level)
         {
+            if (level == 0)
+            {
+                return _r.AllTroopsAtkBonusCost;
+            }
             return level * _r.AllTroopsAtkBonusCost;
         }
 
@@ -207,31 +231,55 @@ namespace DotNetTribes.Services
 
         public int TroopsTrainSpeedTime(int level)
         {
+            if (level == 0)
+            {
+                return _r.TroopsTrainSpeedDuration;
+            }
             return level * _r.TroopsTrainSpeedDuration;
         }
 
         public int BuildingBuildSpeedTime(int level)
         {
+            if (level == 0)
+            {
+                return _r.BuildingBuildSpeedDuration;
+            }
             return level * _r.BuildingBuildSpeedDuration;
         }
 
         public int MineProduceBonusTime(int level)
         {
+            if (level == 0)
+            {
+                return _r.MineProduceBonusDuration;
+            }
             return level * _r.MineProduceBonusDuration;
         }
 
         public int FarmProduceBonusTime(int level)
         {
+            if (level == 0)
+            {
+                return _r.FarmProduceBonusDuration;
+            }
             return level * _r.FarmProduceBonusDuration;
         }
 
         public int AllTroopsDefBonusTime(int level)
         {
+            if (level == 0)
+            {
+                return _r.AllTroopsDefBonusDuration;
+            }
             return level * _r.AllTroopsDefBonusDuration;
         }
 
         public int AllTroopsAtkBonusTime(int level)
         {
+            if (level == 0)
+            {
+                return _r.AllTroopsAtkBonusDuration;
+            }
             return level * _r.AllTroopsAtkBonusDuration;
         }
 
@@ -280,7 +328,7 @@ namespace DotNetTribes.Services
                 defenseBonus = Convert.ToInt32(troopDefBonus.AffectStrength * troopDefBonus.Level);
             }
             
-            return troopLevel * _r.TroopDefense;
+            return troopLevel * _r.TroopDefense + defenseBonus;
         }
 
         public int MapBoundariesX()
@@ -303,19 +351,34 @@ namespace DotNetTribes.Services
             return _r.BlacksmithHp;
         }
 
-        public int BlacksmithBuildingTime()
+        public int BlacksmithBuildingTime(int kingdomId)
         {
-            return _r.BlacksmithLevelOneDuration;
+            double timeReduction = GetBuildTimeReduction(kingdomId);
+            return Convert.ToInt32(_r.BlacksmithLevelOneDuration * timeReduction);
         }
 
-        public int TrainingTimeSpecialTroopRanger()
+        public int TrainingTimeSpecialTroopRanger(int kingdomId)
         {
-            return _r.TrainingTimeTroopRanger;
+            double timeReduction = 1;
+            var trainingSpeedUpgrade = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.TroopsTrainSpeed);
+            if (trainingSpeedUpgrade != null)
+            {
+                timeReduction = 1 - trainingSpeedUpgrade.AffectStrength * trainingSpeedUpgrade.Level;
+            }
+            return Convert.ToInt32(_r.TrainingTimeTroopRanger * timeReduction);
         }
 
-        public int TrainingTimeSpecialTroopScout()
+        public int TrainingTimeSpecialTroopScout(int kingdomId)
         {
-            return _r.TrainingTimeTroopScout;
+            double timeReduction = 1;
+            var trainingSpeedUpgrade = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.TroopsTrainSpeed);
+            if (trainingSpeedUpgrade != null)
+            {
+                timeReduction = 1 - trainingSpeedUpgrade.AffectStrength * trainingSpeedUpgrade.Level;
+            }
+            return Convert.ToInt32(_r.TrainingTimeTroopScout * timeReduction);
         }
 
         public int CostSpecialTroopScout(int level)
@@ -457,7 +520,7 @@ namespace DotNetTribes.Services
                     {
                         BuildingPrice = BlacksmithPrice(),
                         BuildingHP = BlacksmithHp(),
-                        BuildingDuration = BlacksmithBuildingTime()
+                        BuildingDuration = BlacksmithBuildingTime(kingdomId)
                     };
                 case BuildingType.IronMine:
                     return new BuildingDetailsDTO
@@ -479,7 +542,7 @@ namespace DotNetTribes.Services
             double timeReduction = 1;
             var buildSpeedUpgrade = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
                 u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.BuildingBuildSpeed);
-            if (buildSpeedUpgrade != null)
+            if (buildSpeedUpgrade != null || buildSpeedUpgrade.Level != 0)
             {
                 timeReduction = 1 - buildSpeedUpgrade.AffectStrength * buildSpeedUpgrade.Level;
             }

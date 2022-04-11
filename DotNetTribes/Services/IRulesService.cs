@@ -52,9 +52,9 @@ namespace DotNetTribes.Services
         public int MapBoundariesY();
         public int BlacksmithPrice();
         public int BlacksmithHp();
-        public int BlacksmithBuildingTime();
-        public int TrainingTimeSpecialTroopRanger();
-        public int TrainingTimeSpecialTroopScout();
+        public int BlacksmithBuildingTime(int kingdomId);
+        public int TrainingTimeSpecialTroopRanger(int kingdomId);
+        public int TrainingTimeSpecialTroopScout(int kingdomId);
         public int CostSpecialTroopScout(int level);
         public int CostSpecialTroopRanger(int level);
         public int UpgradeForSpecialTroopRanger();

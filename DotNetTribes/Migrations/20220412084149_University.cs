@@ -118,7 +118,7 @@ namespace DotNetTribes.Migrations
                     UniversityUpgradeId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UpgradeType = table.Column<string>(type: "nvarchar(20)", nullable: false),
-                    AffectStrength = table.Column<double>(type: "float", nullable: false),
+                    EffectStrength = table.Column<double>(type: "float", nullable: false),
                     Level = table.Column<int>(type: "int", nullable: false),
                     KingdomId = table.Column<int>(type: "int", nullable: false),
                     StartedAt = table.Column<long>(type: "bigint", nullable: false),

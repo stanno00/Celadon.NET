@@ -212,7 +212,7 @@ namespace DotNetTribes.Services
                 u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.TroopsTrainSpeed);
             if (trainingSpeedUpgrade != null)
             {
-                timeReduction = 1 - trainingSpeedUpgrade.AffectStrength * trainingSpeedUpgrade.Level;
+                timeReduction = 1 - trainingSpeedUpgrade.EffectStrength * trainingSpeedUpgrade.Level;
             }
             return Convert.ToInt32(level * _r.TroopAllLevelsDuration * timeReduction);
         }
@@ -312,7 +312,7 @@ namespace DotNetTribes.Services
                 u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.AllTroopsAtkBonus);
             if (troopAtkBonus != null)
             {
-                attackBonus = Convert.ToInt32(troopAtkBonus.AffectStrength * troopAtkBonus.Level);
+                attackBonus = Convert.ToInt32(troopAtkBonus.EffectStrength * troopAtkBonus.Level);
             }
             
             return troopLevel * _r.TroopAttack + attackBonus;
@@ -325,7 +325,7 @@ namespace DotNetTribes.Services
                 u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.AllTroopsDefBonus);
             if (troopDefBonus != null)
             {
-                defenseBonus = Convert.ToInt32(troopDefBonus.AffectStrength * troopDefBonus.Level);
+                defenseBonus = Convert.ToInt32(troopDefBonus.EffectStrength * troopDefBonus.Level);
             }
             
             return troopLevel * _r.TroopDefense + defenseBonus;
@@ -364,7 +364,7 @@ namespace DotNetTribes.Services
                 u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.TroopsTrainSpeed);
             if (trainingSpeedUpgrade != null)
             {
-                timeReduction = 1 - trainingSpeedUpgrade.AffectStrength * trainingSpeedUpgrade.Level;
+                timeReduction = 1 - trainingSpeedUpgrade.EffectStrength * trainingSpeedUpgrade.Level;
             }
             return Convert.ToInt32(_r.TrainingTimeTroopRanger * timeReduction);
         }
@@ -376,7 +376,7 @@ namespace DotNetTribes.Services
                 u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.TroopsTrainSpeed);
             if (trainingSpeedUpgrade != null)
             {
-                timeReduction = 1 - trainingSpeedUpgrade.AffectStrength * trainingSpeedUpgrade.Level;
+                timeReduction = 1 - trainingSpeedUpgrade.EffectStrength * trainingSpeedUpgrade.Level;
             }
             return Convert.ToInt32(_r.TrainingTimeTroopScout * timeReduction);
         }
@@ -449,7 +449,7 @@ namespace DotNetTribes.Services
                         u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.MineProduceBonus);
                     if (mineProduceBonus != null)
                     {
-                        productionBoost = 1 + mineProduceBonus.AffectStrength * mineProduceBonus.Level;
+                        productionBoost = 1 + mineProduceBonus.EffectStrength * mineProduceBonus.Level;
                     }
                     break;
                 case BuildingType.Farm:
@@ -458,7 +458,7 @@ namespace DotNetTribes.Services
                         u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.FarmProduceBonus);
                     if (farmProduceBonus != null)
                     {
-                        productionBoost = 1 + farmProduceBonus.AffectStrength * farmProduceBonus.Level;
+                        productionBoost = 1 + farmProduceBonus.EffectStrength * farmProduceBonus.Level;
                     }
                     break;
                 case BuildingType.IronMine:
@@ -542,9 +542,9 @@ namespace DotNetTribes.Services
             double timeReduction = 1;
             var buildSpeedUpgrade = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
                 u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.BuildingBuildSpeed);
-            if (buildSpeedUpgrade != null || buildSpeedUpgrade.Level != 0)
+            if (buildSpeedUpgrade != null)
             {
-                timeReduction = 1 - buildSpeedUpgrade.AffectStrength * buildSpeedUpgrade.Level;
+                timeReduction = 1 - buildSpeedUpgrade.EffectStrength * buildSpeedUpgrade.Level;
             }
 
             return timeReduction;

@@ -189,7 +189,9 @@ namespace DotNetTribes.Controllers
             {
                 Status = "ok",
                 UpgradeType = universityUpgrade.UpgradeType.ToString(),
-                CurrentLevel = universityUpgrade.Level
+                CurrentLevel = universityUpgrade.Level,
+                StartedAt = universityUpgrade.StartedAt,
+                FinishedAt = universityUpgrade.FinishedAt
             });
         }
     }

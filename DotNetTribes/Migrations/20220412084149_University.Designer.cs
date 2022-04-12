@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220408104331_University")]
+    [Migration("20220412084149_University")]
     partial class University
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -558,7 +558,7 @@ namespace DotNetTribes.Migrations
                     b.Property<bool>("AddedToKingdom")
                         .HasColumnType("bit");
 
-                    b.Property<double>("AffectStrength")
+                    b.Property<double>("EffectStrength")
                         .HasColumnType("float");
 
                     b.Property<long>("FinishedAt")

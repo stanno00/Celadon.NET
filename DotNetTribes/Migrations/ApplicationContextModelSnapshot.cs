@@ -556,7 +556,7 @@ namespace DotNetTribes.Migrations
                     b.Property<bool>("AddedToKingdom")
                         .HasColumnType("bit");
 
-                    b.Property<double>("AffectStrength")
+                    b.Property<double>("EffectStrength")
                         .HasColumnType("float");
 
                     b.Property<long>("FinishedAt")

@@ -47,6 +47,16 @@ namespace DotNetTribes.Services
             var kingdomResources = _applicationContext.Resources
                 .Where(r => r.KingdomId == kingdomId)
                 .ToList();
+            
+            var wonBattles = _applicationContext.Battles.Where(b => b.ResourcesDeliveredToWinner == false && b.ReturnAt < _timeService.GetCurrentSeconds());
+            foreach (var battle in wonBattles)
+            {
+                var food = kingdomResources.Single(r => r.KingdomId == battle.WinnerId && r.Type == ResourceType.Food);
+                food.Amount += battle.FoodStolen;
+                var gold = kingdomResources.Single(r => r.KingdomId == battle.WinnerId && r.Type == ResourceType.Gold);
+                gold.Amount += battle.GoldStolen;
+                battle.ResourcesDeliveredToWinner = true;
+            }
 
             // Updating each resource
             foreach (var resource in kingdomResources)
@@ -68,9 +78,6 @@ namespace DotNetTribes.Services
 
         public ResourcesDto GetKingdomResources(int kingdomId)
         {
-            // Updating all resources before returning values to controller
-            UpdateKingdomResources(kingdomId);
-
             var kingdomResourceDtoList = _applicationContext.Resources
                 .Where(r => r.KingdomId == kingdomId)
                 .Select(r => new ResourceDto
@@ -270,6 +277,12 @@ namespace DotNetTribes.Services
             }
 
             _applicationContext.SaveChanges();
+        }
+
+        public int GetResourceAmount(int kingdomId, ResourceType resourceType)
+        {
+            var resourceAmount = _applicationContext.Resources.Single(r => r.KingdomId == kingdomId && r.Type == resourceType).Amount;
+            return resourceAmount;
         }
     }
 }

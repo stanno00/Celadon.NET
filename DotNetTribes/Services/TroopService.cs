@@ -383,6 +383,8 @@ namespace DotNetTribes.Services
             {
                 troop.BattleId = 0;
             }
+
+            _applicationContext.SaveChanges();
         }
     }
 }

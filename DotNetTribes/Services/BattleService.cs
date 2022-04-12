@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs.Troops;
+using DotNetTribes.Enums;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 
@@ -14,14 +15,16 @@ namespace DotNetTribes.Services
         private readonly IRulesService _rulesService;
         private readonly ITimeService _timeService;
         private readonly IKingdomService _kingdomService;
+        private readonly IResourceService _resourceService;
 
-        public BattleService(ApplicationContext applicationContext, ITroopService troopService, IRulesService rulesService, ITimeService timeService, IKingdomService kingdomService)
+        public BattleService(ApplicationContext applicationContext, ITroopService troopService, IRulesService rulesService, ITimeService timeService, IKingdomService kingdomService, IResourceService resourceService)
         {
             _applicationContext = applicationContext;
             _troopService = troopService;
             _rulesService = rulesService;
             _timeService = timeService;
             _kingdomService = kingdomService;
+            _resourceService = resourceService;
         }
         
         // Getting available troops from kingdom
@@ -90,6 +93,8 @@ namespace DotNetTribes.Services
                 var defenderArmyCountBeforeBattle = defenderTroops.Count;
                 var attackerTroops = _applicationContext.Troops.Where(t => t.BattleId == battle.BattleId).ToList();
                 var attackerTroopsCountBeforeBattle = attackerTroops.Count;
+                var defenderFoodAmountBeforeBattle = _resourceService.GetResourceAmount(battle.DefenderId, ResourceType.Food);
+                var defenderGoldAmountBeforeBattle = _resourceService.GetResourceAmount(battle.DefenderId, ResourceType.Gold);
 
                 // Determine the battle winner and remove dead troops from either list and database
                 while (attackerTroops.Any() && defenderTroops.Any())
@@ -109,14 +114,19 @@ namespace DotNetTribes.Services
                 // Calculating troop losses
                 var attackerLostTroops = attackerTroopsCountBeforeBattle - attackerTroops.Count;
                 var defenderLostTroops = defenderArmyCountBeforeBattle - defenderTroops.Count;
+                
+                StealResources(attackerTroops, battle.DefenderId);
+
+                var defenderFoodAmountAfterBattle = _resourceService.GetResourceAmount(battle.DefenderId, ResourceType.Food);
+                var defenderGoldAmountAfterBattle = _resourceService.GetResourceAmount(battle.DefenderId, ResourceType.Gold);
 
                 // Updating battle entity
-                battle.FoodStolen = 0;
-                battle.GoldStolen = 0;
+                battle.FoodStolen = defenderFoodAmountBeforeBattle - defenderFoodAmountAfterBattle;
+                battle.GoldStolen = defenderGoldAmountBeforeBattle - defenderGoldAmountAfterBattle;
                 battle.WinnerId = winner;
                 battle.LostTroopsAttacker = attackerLostTroops;
                 battle.LostTroopsDefender = defenderLostTroops;
-
+                
                 _applicationContext.SaveChanges();
                 return battle;
             }
@@ -159,6 +169,33 @@ namespace DotNetTribes.Services
 
             var damage = _rulesService.TroopAttack(troopAttacking.Level) - _rulesService.TroopDefense(troopDefending.Level);
             return damage;
+        }
+
+        private void StealResources(IEnumerable<Troop> attackerTroops, int kingdomId)
+        {
+            var numberOfResources = Enum.GetValues(typeof(ResourceType)).Length - 1;
+            var troopsResourceCapacity = attackerTroops.Select(t => t.Capacity).Sum();
+            var resources = _applicationContext.Resources.Where(r => r.KingdomId == kingdomId && r.Type != ResourceType.Iron).ToList();
+
+            foreach (var resource in resources)
+            {
+                var maxStolenAmount = resource.Amount / 2;
+                if (troopsResourceCapacity / numberOfResources > maxStolenAmount)
+                {
+                    resource.Amount -= maxStolenAmount;
+                }
+                else
+                {
+                    resource.Amount -= troopsResourceCapacity;
+                }
+
+                if (resource.Amount < 0)
+                {
+                    resource.Amount = 0;
+                }
+            }
+
+            _applicationContext.SaveChanges();
         }
     }
 }

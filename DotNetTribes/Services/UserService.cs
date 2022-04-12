@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Password;
 using DotNetTribes.Enums;
 using DotNetTribes.Models;
 using DotNetTribes.RegistrationExceptions;
@@ -198,6 +199,11 @@ namespace DotNetTribes.Services
             return (FieldIsNullOrEmpty(kingdomName))
                 ? $"{userName}'s kingdom"
                 : kingdomName;
+        }
+
+        public string ChangePassword(string username, PasswordRequestDto passwordRequestDto)
+        {
+            
         }
     }
 }

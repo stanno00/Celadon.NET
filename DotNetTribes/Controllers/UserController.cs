@@ -1,5 +1,8 @@
 ﻿using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Password;
+using DotNetTribes.DTOs.Trade;
 using DotNetTribes.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetTribes.Controllers
@@ -20,6 +23,15 @@ namespace DotNetTribes.Controllers
         {
             var newUser = _userService.RegisterUser(registerUserRequestDTO);
             return new CreatedResult("", newUser);
+        }
+
+        [HttpPut]
+        [Authorize]
+        public ActionResult<ResponseDTO> UpdatePassword([FromHeader] string authorization,
+            [FromBody] PasswordRequestDto passwordRequestDto)
+        {
+             
+            
         }
     }
 }

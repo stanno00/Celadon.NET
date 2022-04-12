@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetTribes.Controllers
 {
-    [Route("/register")]
     [ApiController]
     public class UserController
     {
@@ -20,14 +19,14 @@ namespace DotNetTribes.Controllers
             _jwtService = jwtService;
         }
         
-        [HttpPost]
+        [HttpPost("register")]
         public ActionResult RegisterNewUser([FromBody] RegisterUserRequestDTO registerUserRequestDTO)
         {
             var newUser = _userService.RegisterUser(registerUserRequestDTO);
             return new CreatedResult("", newUser);
         }
 
-        [HttpPut]
+        [HttpPut("user")]
         [Authorize]
         public ActionResult<ResponseDTO> UpdatePassword([FromHeader] string authorization,
             [FromBody] PasswordRequestDto passwordRequestDto)

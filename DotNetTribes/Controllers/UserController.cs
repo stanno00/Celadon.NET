@@ -12,10 +12,12 @@ namespace DotNetTribes.Controllers
     public class UserController
     {
         private readonly IUserService _userService;
+        private readonly IJwtService _jwtService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IJwtService jwtService)
         {
             _userService = userService;
+            _jwtService = jwtService;
         }
         
         [HttpPost]
@@ -30,8 +32,12 @@ namespace DotNetTribes.Controllers
         public ActionResult<ResponseDTO> UpdatePassword([FromHeader] string authorization,
             [FromBody] PasswordRequestDto passwordRequestDto)
         {
-             
-            
+            var username = _jwtService.GetNameFromJwt(authorization);
+             _userService.ChangePassword(username, passwordRequestDto);
+             return new OkObjectResult(new ResponseDTO()
+             {
+                 Status = "Password changed"
+             });
         }
     }
 }

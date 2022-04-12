@@ -29,7 +29,7 @@ namespace DotNetTribes.ActionFilters
             _resourceService.UpdateKingdomResources(kingdomId);
             _troopService.UpdateTroops(kingdomId);
             _resourceService.UpdateOffers();
-            _upgradeService.ApplyUpgradesWhenFinished();
+            _upgradeService.ApplyUpgradesWhenFinished(kingdomId);
         }
 
         public void OnActionExecuted(ActionExecutedContext context)

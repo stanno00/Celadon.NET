@@ -272,32 +272,38 @@ namespace DotNetTribes.Services
             };
         }
 
-        public void ApplyUpgradesWhenFinished()
+        public void ApplyUpgradesWhenFinished(int kingdomId)
         {
-            var finishedUpgrades = _applicationContext.UniversityUpgrades.Where(u =>
-                u.FinishedAt < _timeService.GetCurrentSeconds() && u.AddedToKingdom == false).ToList();
-
-            foreach (var i in finishedUpgrades)
+            var finishedUpgrade = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                u.FinishedAt < _timeService.GetCurrentSeconds() && u.AddedToKingdom == false &&
+                u.KingdomId == kingdomId);
+            if (finishedUpgrade == null)
             {
-                if (i.UpgradeType == UpgradeType.AllTroopsAtkBonus)
-                {
-                    var troopToBeUpgraded = _applicationContext.Troops.Where(k => k.KingdomId == i.KingdomId).ToList();
-                    foreach (var y in troopToBeUpgraded)
-                    {
-                        y.Attack += 3;
-                    }
-                }
-                if (i.UpgradeType == UpgradeType.AllTroopsDefBonus)
-                {
-                    var troopToBeUpgraded = _applicationContext.Troops.Where(k => k.KingdomId == i.KingdomId).ToList();
-                    foreach (var y in troopToBeUpgraded)
-                    {
-                        y.Defense += 2;
-                    }
-                }
-                i.Level += 1;
-                i.AddedToKingdom = true;
+                return;
             }
+
+            if (finishedUpgrade.UpgradeType == UpgradeType.AllTroopsAtkBonus)
+            {
+                var troopToBeUpgraded = _applicationContext.Troops.Where(k => k.KingdomId == finishedUpgrade.KingdomId)
+                    .ToList();
+                foreach (var y in troopToBeUpgraded)
+                {
+                    y.Attack += 3;
+                }
+            }
+
+            if (finishedUpgrade.UpgradeType == UpgradeType.AllTroopsDefBonus)
+            {
+                var troopToBeUpgraded = _applicationContext.Troops.Where(k => k.KingdomId == finishedUpgrade.KingdomId)
+                    .ToList();
+                foreach (var y in troopToBeUpgraded)
+                {
+                    y.Defense += 2;
+                }
+            }
+
+            finishedUpgrade.Level += 1;
+            finishedUpgrade.AddedToKingdom = true;
 
             _applicationContext.SaveChanges();
         }

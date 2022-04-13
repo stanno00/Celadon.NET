@@ -123,7 +123,7 @@ namespace DotNetTribes.Services
                     {
                         Name = name,
                         StartedAt = GetTroopStartTime(troopsInProgress),
-                        FinishedAt = GetTroopFinishTime(troopsInProgress, 1),
+                        FinishedAt = GetTroopFinishTime(troopsInProgress, 1, kingdomId),
                         Level = 1,
                         Attack = 20,
                         Defense = 0,
@@ -147,7 +147,7 @@ namespace DotNetTribes.Services
                     {
                         Name = name,
                         StartedAt = GetTroopStartTime(troopsInProgress),
-                        FinishedAt = GetTroopFinishTime(troopsInProgress, 1),
+                        FinishedAt = GetTroopFinishTime(troopsInProgress, 1, kingdomId),
                         Level = 1,
                         Attack = 0,
                         Defense = 1,
@@ -168,11 +168,12 @@ namespace DotNetTribes.Services
                 var troop = new Troop
                 {
                     StartedAt = GetTroopStartTime(troopsInProgress),
-                    FinishedAt = GetTroopFinishTime(troopsInProgress, 1),
+                    /*troopsInProgress.Count == 0 ? _timeService.GetCurrentSeconds() + i * _rules.TroopBuildingTime(1) : troopsInProgress.Last().FinishedAt + i * _rules.TroopBuildingTime(1)*/
+                    FinishedAt = GetTroopFinishTime(troopsInProgress, 1, kingdomId),
                     Level = 1,
-                    Attack = _rules.TroopAttack(1),
-                    Defense = _rules.TroopDefense(1),
                     TroopHP = _rules.TroopHp(1),
+                    Attack = _rules.TroopAttack(1, kingdomId),
+                    Defense = _rules.TroopDefense(1, kingdomId),
                     Capacity = _rules.TroopCapacity(1),
                     ConsumingFood = false,
                     KingdomId = kingdomId
@@ -210,10 +211,10 @@ namespace DotNetTribes.Services
                 troop.Level = level;
                 //create a function for this
                 troop.StartedAt = GetTroopStartTime(troopsInProgress);
-                troop.FinishedAt = GetTroopFinishTime(troopsInProgress, level);
-                troop.Attack = _rules.TroopAttack(level);
-                troop.Defense = _rules.TroopDefense(level);
                 troop.TroopHP = _rules.TroopHp(level);
+                troop.FinishedAt = GetTroopFinishTime(troopsInProgress, level, kingdomId);
+                troop.Attack = _rules.TroopAttack(level, kingdomId);
+                troop.Defense = _rules.TroopDefense(level, kingdomId);
                 troop.Capacity = _rules.TroopCapacity(level);
                 troopsInProgress.Add(troop);
             }
@@ -356,14 +357,14 @@ namespace DotNetTribes.Services
             return _timeService.GetCurrentSeconds();
         }
 
-        private long GetTroopFinishTime(List<Troop> troopsInProgress, int level)
+        private long GetTroopFinishTime(List<Troop> troopsInProgress, int level, int kingdomId)
         {
             if (troopsInProgress.Count != 0)
             {
-                return troopsInProgress.Last().FinishedAt + _rules.TroopBuildingTime(level);
+                return troopsInProgress.Last().FinishedAt + _rules.TroopBuildingTime(level, kingdomId);
             }
 
-            return _timeService.GetCurrentSeconds() + _rules.TroopBuildingTime(level);
+            return _timeService.GetCurrentSeconds() + _rules.TroopBuildingTime(level, kingdomId);
         }
 
         public List<Troop> GetReadyTroops(int kingdomId)

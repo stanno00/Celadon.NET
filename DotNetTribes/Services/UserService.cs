@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Password;
 using DotNetTribes.Enums;
+using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 using DotNetTribes.RegistrationExceptions;
 
@@ -58,6 +60,11 @@ namespace DotNetTribes.Services
                 Username = userCredentials.Username,
                 HashedPassword = HashPassword(userCredentials.Password),
                 Email = userCredentials.Email,
+                SecurityQuestion = new SecurityQuestion()
+                {
+                    TheQuestion = userCredentials.SecurityQuestionType,
+                    Answer = HashPassword(userCredentials.AnswerToQuestion),
+                },
                 Kingdom = new Kingdom()
                 {
                     Name = userCredentials.KingdomName,
@@ -96,7 +103,8 @@ namespace DotNetTribes.Services
             {
                 Id = user.UserId,
                 Username = user.Username,
-                KingdomId = user.KingdomId
+                KingdomId = user.KingdomId,
+                QuestionId = user.SecurityQuestionId
             };
         }
 
@@ -118,6 +126,16 @@ namespace DotNetTribes.Services
             if (FieldIsNullOrEmpty(userCredentials.Email))
             {
                 errorMessages.Add("Email is required.");
+            }
+            
+            if (userCredentials.SecurityQuestionType.ToString().Length == 0 )
+            {
+                errorMessages.Add("Security Question is required.");
+            }
+
+            if (FieldIsNullOrEmpty(userCredentials.AnswerToQuestion))
+            {
+                errorMessages.Add("An answer to security question is required.");
             }
 
             if (errorMessages.Count > 0)
@@ -198,6 +216,38 @@ namespace DotNetTribes.Services
             return (FieldIsNullOrEmpty(kingdomName))
                 ? $"{userName}'s kingdom"
                 : kingdomName;
+        }
+
+        public void ChangePassword(string username, PasswordRequestDto passwordRequestDto)
+        {
+            if (string.IsNullOrEmpty(passwordRequestDto.OldPassword) ||
+                string.IsNullOrEmpty(passwordRequestDto.NewPassword) ||
+                string.IsNullOrEmpty(passwordRequestDto.ConfirmingNewPassword))
+            {
+                throw new PasswordChangeException("All fields are required");
+            }
+
+            var user = _applicationContext.Users.FirstOrDefault(u => u.Username == username);
+            bool verified = BCrypt.Net.BCrypt.Verify(passwordRequestDto.OldPassword, user.HashedPassword);
+            if (!verified)
+            {
+                throw new PasswordChangeException("Old password is incorrect");
+            }
+
+
+            if (BCrypt.Net.BCrypt.Verify(passwordRequestDto.NewPassword, user.HashedPassword))
+            {
+                throw new PasswordChangeException("New password can't be the same as old password");
+            }
+
+            CheckIfPasswordIsLongEnough(passwordRequestDto.NewPassword, 8);
+            if (passwordRequestDto.NewPassword != passwordRequestDto.ConfirmingNewPassword)
+            {
+                throw new PasswordChangeException("New and confirmation password don't match");
+            }
+
+            user.HashedPassword = HashPassword(passwordRequestDto.NewPassword);
+            _applicationContext.SaveChanges();
         }
     }
 }

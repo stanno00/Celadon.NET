@@ -4,14 +4,16 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220413073743_SecurityQuestion")]
+    partial class SecurityQuestion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,9 +51,6 @@ namespace DotNetTribes.Migrations
 
                     b.Property<int>("LostTroopsDefender")
                         .HasColumnType("int");
-
-                    b.Property<bool>("ResourcesDeliveredToWinner")
-                        .HasColumnType("bit");
 
                     b.Property<long>("ReturnAt")
                         .HasColumnType("bigint");
@@ -534,9 +533,6 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("Attack")
                         .HasColumnType("int");
 
-                    b.Property<int>("BattleId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
@@ -558,14 +554,8 @@ namespace DotNetTribes.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("ReturnedFromBattleAt")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("StartedAt")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("TroopHP")
-                        .HasColumnType("int");
 
                     b.Property<long>("UpdatedAt")
                         .HasColumnType("bigint");

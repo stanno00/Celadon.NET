@@ -163,11 +163,13 @@ namespace DotNetTribes.Services
             var criticalChance = new Random().Next(100);
             if (criticalChance > 85)
             {
-                var doubleDamage = _rulesService.TroopAttack(troopAttacking.Level) * 2 - _rulesService.TroopDefense(troopDefending.Level);
+                var doubleDamage = _rulesService.TroopAttack(troopAttacking.Level, troopAttacking.KingdomId) * 2 
+                                    - _rulesService.TroopDefense(troopDefending.Level, troopAttacking.KingdomId);
                 return doubleDamage;
             }
 
-            var damage = _rulesService.TroopAttack(troopAttacking.Level) - _rulesService.TroopDefense(troopDefending.Level);
+            var damage = _rulesService.TroopAttack(troopAttacking.Level, troopAttacking.KingdomId) 
+                          - _rulesService.TroopDefense(troopDefending.Level, troopAttacking.KingdomId);
             return damage;
         }
 

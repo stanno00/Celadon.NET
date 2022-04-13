@@ -2,6 +2,7 @@ using DotNetTribes.ActionFilters;
 using DotNetTribes.DTOs;
 using DotNetTribes.DTOs.Trade;
 using DotNetTribes.DTOs.Troops;
+using DotNetTribes.DTOs.University;
 using DotNetTribes.Models;
 using DotNetTribes.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -187,6 +188,24 @@ namespace DotNetTribes.Controllers
             var myKingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             var battle = _battleService.InitializeBattle(myKingdomId, enemyKingdomId, troopUpgradeRequestDto);
             return new OkObjectResult(battle);
+        }
+
+        [Authorize]
+        [HttpPost("university")]
+        public ActionResult<UniversityUpgradeRequestDto> BuyUniversityUpgrade([FromHeader] string authorization,
+            [FromBody] UniversityUpgradeRequestDto requestDto)
+        {
+            int kingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var universityUpgrade = _upgradeService.BuyUniversityUpgrade(kingdomId, requestDto.UpgradeType);
+
+            return new OkObjectResult(new UniversityUpgradeResponseDto()
+            {
+                Status = "ok",
+                UpgradeType = universityUpgrade.UpgradeType.ToString(),
+                CurrentLevel = universityUpgrade.Level,
+                StartedAt = universityUpgrade.StartedAt,
+                FinishedAt = universityUpgrade.FinishedAt
+            });
         }
     }
 }

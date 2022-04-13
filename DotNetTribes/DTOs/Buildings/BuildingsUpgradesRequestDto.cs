@@ -1,4 +1,4 @@
-﻿using DotNetTribes.Enums;
+using DotNetTribes.Enums;
 
 namespace DotNetTribes.DTOs
 {

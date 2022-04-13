@@ -132,11 +132,6 @@ namespace DotNetTribes.Services
             {
                 errorMessages.Add("Security Question is required.");
             }
-            
-            if (!Enum.TryParse(userCredentials.SecurityQuestionType.ToString(), true, out SecurityQuestionType chosenSecurityQuestion))
-            {
-                errorMessages.Add("Security Question doesn't exist.");
-            }
 
             if (FieldIsNullOrEmpty(userCredentials.AnswerToQuestion))
             {

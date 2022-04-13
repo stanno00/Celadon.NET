@@ -8,34 +8,37 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DotNetTribesTests
+namespace DotNetTribesTests;
+
+public class CustomWebApplicationFactory<TStartup>
+    : WebApplicationFactory<TStartup> where TStartup : class
 {
-    public class CustomWebApplicationFactory<TStartup>
-        : WebApplicationFactory<TStartup> where TStartup : class
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        builder.ConfigureServices(services =>
         {
-            builder.ConfigureServices(services =>
+            var descriptor = services.SingleOrDefault(
+                d => d.ServiceType ==
+                     typeof(DbContextOptions<ApplicationContext>));
+
+            services.Remove(descriptor);
+            string dbname = Guid.NewGuid().ToString();
+
+            services.AddDbContext<ApplicationContext>(options =>
             {
-                var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType ==
-                         typeof(DbContextOptions<ApplicationContext>));
+                options.UseInMemoryDatabase(dbname);
+            });
 
-                services.Remove(descriptor);
-                string dbname = Guid.NewGuid().ToString();
+            var sp = services.BuildServiceProvider();
 
-                services.AddDbContext<ApplicationContext>(options => { options.UseInMemoryDatabase(dbname); });
+            using (var scope = sp.CreateScope())
+            {
+                var scopedServices = scope.ServiceProvider;
+                var db = scopedServices.GetRequiredService<ApplicationContext>();
 
-                var sp = services.BuildServiceProvider();
-
-                using (var scope = sp.CreateScope())
+                db.GameRules.Add(new GameRules
                 {
-                    var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices.GetRequiredService<ApplicationContext>();
-
-                    db.GameRules.Add(new GameRules
-                    {
-                        GameRulesId = 1,
+                    GameRulesId = 1,
                         Name = "Production",
                         StartingGold = 500,
                         StartingFood = 500,
@@ -87,50 +90,49 @@ namespace DotNetTribesTests
                         StorageLimit = 100,
                         MapBoundariesX = 101,
                         MapBoundariesY = 101
-                    });
-
-                    db.Users.Add(new User()
+                });
+                
+                db.Users.Add(new User()
+                {
+                    Email = "realEmail@Test.dummy",
+                    Username = "Hrnik",
+                    UserId = 1,
+                    HashedPassword = "$2a$11$EtdJ7HIRZihSF/WLmYf8HOnGD1VThPLGV3lg4PGnVan4IvOXD0.Ru",
+                    Kingdom = new Kingdom()
                     {
-                        Email = "realEmail@Test.dummy",
-                        Username = "Hrnik",
-                        UserId = 1,
-                        HashedPassword = "$2a$11$EtdJ7HIRZihSF/WLmYf8HOnGD1VThPLGV3lg4PGnVan4IvOXD0.Ru",
-                        Kingdom = new Kingdom()
-                        {
-                            Name = "Cool Kingdom Name",
-                            KingdomId = 1,
-                            Buildings = new List<Building>(),
-                            Resources = new List<Resource>(),
-                            Troops = new List<Troop>(),
-                            KingdomX = 50,
-                            KingdomY = 50
-                        },
-                        KingdomId = 1
-                    });
-
-                    db.Users.Add(new User()
+                        Name = "Cool Kingdom Name",
+                        KingdomId = 1,
+                        Buildings = new List<Building>(),
+                        Resources = new List<Resource>(),
+                        Troops = new List<Troop>(),
+                        KingdomX = 50,
+                        KingdomY = 50
+                    },
+                    KingdomId = 1
+                });
+                
+                db.Users.Add(new User()
+                {
+                    Email = "SecondrealEmail@Test.dummy",
+                    Username = "Hrnik SecondTest",
+                    UserId = 2,
+                    HashedPassword = "$2a$11$EtdJ7HIRZihSF/WLmYf8HOnGD1VThPLGV3lg4PGnVan4IvOXD0.Ru",
+                    Kingdom = new Kingdom()
                     {
-                        Email = "SecondrealEmail@Test.dummy",
-                        Username = "Hrnik SecondTest",
-                        UserId = 2,
-                        HashedPassword = "$2a$11$EtdJ7HIRZihSF/WLmYf8HOnGD1VThPLGV3lg4PGnVan4IvOXD0.Ru",
-                        Kingdom = new Kingdom()
-                        {
-                            Name = "Second Cool Kingdom Name",
-                            KingdomId = 2,
-                            Buildings = new List<Building>(),
-                            Resources = new List<Resource>(),
-                            Troops = new List<Troop>(),
-                            KingdomX = 60,
-                            KingdomY = 60
-                        },
-                        KingdomId = 2
-                    });
-                    db.SaveChanges();
+                        Name = "Second Cool Kingdom Name",
+                        KingdomId = 2,
+                        Buildings = new List<Building>(),
+                        Resources = new List<Resource>(),
+                        Troops = new List<Troop>(),
+                        KingdomX = 60,
+                        KingdomY = 60
+                    },
+                    KingdomId = 2
+                });
+                db.SaveChanges();
 
-                    db.Database.EnsureCreated();
-                }
-            });
-        }
+                db.Database.EnsureCreated();
+            }
+        });
     }
 }

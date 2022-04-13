@@ -136,8 +136,8 @@ namespace DotNetTribes.Services
             {
                 errorMessages.Add("Email is required.");
             }
-            
-            if (userCredentials.SecurityQuestionType.ToString().Length == 0 )
+
+            if (userCredentials.SecurityQuestionType.ToString().Length == 0)
             {
                 errorMessages.Add("Security Question is required.");
             }
@@ -226,10 +226,10 @@ namespace DotNetTribes.Services
                 ? $"{userName}'s kingdom"
                 : kingdomName;
         }
-        
+
         public ForgotPasswordResponseDto ForgottenPassword(string username, ForgotPasswordRequestDto userInformation)
         {
-            var user = _applicationContext.Users
+            var user = _applicationContext.Users.Include(u=>u.SecurityQuestion)
                 .FirstOrDefault(u => u.Username == username);
 
             if (user == null)
@@ -241,22 +241,20 @@ namespace DotNetTribes.Services
             {
                 throw new LoginException("Incorrect email");
             }
-
-            // this will show you secret question you get when user log into app need to be implemented tho
+            
+            var question = user.SecurityQuestion;
             if (userInformation.AnswerSecretQuestion == null)
             {
                 return new ForgotPasswordResponseDto()
                 {
-                    SecretQuestion =
-                        "this will be added later when secret question is implemented something like \"user.secreatquestion\""
+                    SecretQuestion = question.TheQuestion.ToString()
                 };
             }
 
-            // this will be added after secret question is done 
-            // if (userInformation.AnswerSecretQuestion != user.secretQuestionAnswer)
-            // {
-            //     throw new LoginException("Answer to your secret question is not correct");
-            // }
+            if (!BCrypt.Net.BCrypt.Verify(userInformation.AnswerSecretQuestion,question.Answer))
+            {
+                throw new LoginException("Answer to your secret question is not correct");
+            }
 
             string newPassword = GenerateRandomPassword();
 
@@ -264,9 +262,6 @@ namespace DotNetTribes.Services
 
             user.HashedPassword = HashPassword(newPassword);
             _applicationContext.SaveChanges();
-            
-            // todo research how to send an email with new password
-            // todo change the password for the user 
 
             return new ForgotPasswordResponseDto()
             {
@@ -283,7 +278,6 @@ namespace DotNetTribes.Services
 
         private async Task SendEmail(string userEmail, string username, string newPassword)
         {
-
             var sender = new SmtpSender(() => new SmtpClient("smtp.gmail.com")
             {
                 UseDefaultCredentials = false,

@@ -1,10 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
+using System.Threading.Tasks;
 using DotNetTribes.DTOs;
 using DotNetTribes.Enums;
+using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 using DotNetTribes.RegistrationExceptions;
+using FluentEmail.Core;
+using FluentEmail.Core.Defaults;
+using FluentEmail.Smtp;
+using Microsoft.EntityFrameworkCore;
 
 namespace DotNetTribes.Services
 {
@@ -38,7 +47,7 @@ namespace DotNetTribes.Services
                 coordinatesX = random.Next(_rules.MapBoundariesX());
                 coordinatesY = random.Next(_rules.MapBoundariesY());
             } while (_applicationContext.Kingdoms.Any(k => k.KingdomX == coordinatesX && k.KingdomY == coordinatesY));
-            
+
             int[] coordinates = new int[2];
             coordinates[0] = coordinatesX;
             coordinates[1] = coordinatesY;
@@ -78,10 +87,11 @@ namespace DotNetTribes.Services
                             Amount = _rules.StartingFood(),
                             UpdatedAt = _timeService.GetCurrentSeconds(),
                             Generation = 0
-                        }, new Resource
+                        },
+                        new Resource
                         {
                             Type = ResourceType.Iron,
-                            Amount = 0, 
+                            Amount = 0,
                             UpdatedAt = _timeService.GetCurrentSeconds(),
                             Generation = 0
                         }
@@ -198,6 +208,89 @@ namespace DotNetTribes.Services
             return (FieldIsNullOrEmpty(kingdomName))
                 ? $"{userName}'s kingdom"
                 : kingdomName;
+        }
+
+        public ForgotPasswordResponseDto ForgottenPassword(string username, ForgotPasswordRequestDto userInformation)
+        {
+            var user = _applicationContext.Users
+                .FirstOrDefault(u => u.Username == username);
+
+            if (user == null)
+            {
+                throw new LoginException("User with this name does not exist");
+            }
+
+            if (user.Email != userInformation.UserEmail)
+            {
+                throw new LoginException("Incorrect email");
+            }
+
+            // this will show you secret question you get when user log into app need to be implemented tho
+            if (userInformation.AnswerSecretQuestion == null)
+            {
+                return new ForgotPasswordResponseDto()
+                {
+                    SecretQuestion =
+                        "this will be added later when secret question is implemented something like \"user.secreatquestion\""
+                };
+            }
+
+            // this will be added after secret question is done 
+            // if (userInformation.AnswerSecretQuestion != user.secretQuestionAnswer)
+            // {
+            //     throw new LoginException("Answer to your secret question is not correct");
+            // }
+
+            string newPassword = GenerateRandomPassword();
+
+            SendEmail(user.Email, user.Username, newPassword);
+
+            user.HashedPassword = HashPassword(newPassword);
+            _applicationContext.SaveChanges();
+            
+            // todo research how to send an email with new password
+            // todo change the password for the user 
+
+            return new ForgotPasswordResponseDto()
+            {
+                GeneratedPassword = newPassword
+            };
+        }
+
+        private string GenerateRandomPassword()
+        {
+            return Guid.NewGuid().ToString("N").ToLower()
+                .Replace("1", "").Replace("o", "").Replace("0", "")
+                .Substring(0, 10);
+        }
+
+        private async Task SendEmail(string userEmail, string username, string newPassword)
+        {
+
+            var sender = new SmtpSender(() => new SmtpClient("smtp.gmail.com")
+            {
+                UseDefaultCredentials = false,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                Port = 587, // for gmail
+                Credentials = new NetworkCredential("ViridiVulpesC@gmail.com","5da2effa54"),
+            });
+
+            StringBuilder template = new StringBuilder();
+            template.AppendLine($"Dear {username},");
+            template.AppendLine("<p> You can continue to conquer kingdoms. </p>");
+            template.AppendLine($"<p> Your new password is {newPassword}");
+            template.AppendLine("With love support team");
+
+            Email.DefaultSender = sender;
+            Email.DefaultRenderer = new ReplaceRenderer();
+
+            var email = await Email
+                .From("ViridiVulpesC@gmail.com")
+                .To("kucerakr@gmail.com") // after testing change this to userEmail
+                .Subject("Hello")
+                .UsingTemplate(template.ToString(),new{})
+                .SendAsync();
         }
     }
 }

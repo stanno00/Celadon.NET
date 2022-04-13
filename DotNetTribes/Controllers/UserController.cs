@@ -1,10 +1,10 @@
 ﻿using DotNetTribes.DTOs;
 using DotNetTribes.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetTribes.Controllers
 {
-    [Route("/register")]
     [ApiController]
     public class UserController
     {
@@ -15,11 +15,19 @@ namespace DotNetTribes.Controllers
             _userService = userService;
         }
         
-        [HttpPost]
+        [HttpPost("/register")]
         public ActionResult RegisterNewUser([FromBody] RegisterUserRequestDTO registerUserRequestDTO)
         {
             var newUser = _userService.RegisterUser(registerUserRequestDTO);
             return new CreatedResult("", newUser);
+        }
+
+        [HttpPut("/user/password/{username}")]
+        public AcceptedResult ForgotPassword( [FromRoute] string username,[FromBody] ForgotPasswordRequestDto userInformation)
+        {
+            var newPassword = _userService.ForgottenPassword(username, userInformation);
+            
+            return new AcceptedResult("",newPassword);
         }
     }
 }

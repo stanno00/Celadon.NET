@@ -473,4 +473,48 @@ public class BuildingServiceTest
         Assert.Equal(expectedResult.Id, result.Id);
         Assert.Equal(expectedResult.Type, result.Type);
     }
+
+    [Fact]
+    public void BuildingMarketplace_WithoutAcademy_ThrowsException()
+    {
+        var kingdomGold = new Resource
+        {
+            Type = ResourceType.Gold,
+            Amount = 50,
+            KingdomId = 1
+        };
+
+        var kingdomFood = new Resource
+        {
+            Type = ResourceType.Food,
+            Amount = 200,
+            KingdomId = 1
+        };
+
+        var kingdom = new Kingdom
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>
+            {
+                new Building
+                {
+                    Type = BuildingType.TownHall,
+                    BuildingId = 1,
+                    KingdomId = 1,
+                    Level = 2
+                },
+                new Building
+                {
+                    Type = BuildingType.Farm,
+                    BuildingId = 2,
+                    KingdomId = 1,
+                    Level = 1
+                }
+            },
+            Resources = new List<Resource>()
+        };
+        
+        Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+        Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
+    }
 }

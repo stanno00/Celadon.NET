@@ -17,6 +17,7 @@ namespace DotNetTribes
         public DbSet<Battle> Battles { get; set; }
         public DbSet<UniversityUpgrade> UniversityUpgrades { get; set; }
         public DbSet<BuildingUpgrade> BuildingUpgrade { get; set; }
+        public DbSet<SecurityQuestion> SecurityQuestions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

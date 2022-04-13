@@ -266,10 +266,10 @@ public class TroopServiceTest
 
         ruleServiceMock.Setup(x => x.TroopPrice(1)).Returns(25);
         ruleServiceMock.Setup(x => x.StorageLimit(1)).Returns(100);
-        ruleServiceMock.Setup(x => x.TroopAttack(1)).Returns(10);
-        ruleServiceMock.Setup(x => x.TroopDefense(1)).Returns(5);
+        ruleServiceMock.Setup(x => x.TroopAttack(1,1)).Returns(10);
+        ruleServiceMock.Setup(x => x.TroopDefense(1,1)).Returns(5);
         ruleServiceMock.Setup(x => x.TroopCapacity(1)).Returns(2);
-        ruleServiceMock.Setup(x => x.TroopBuildingTime(1)).Returns(30);
+        ruleServiceMock.Setup(x => x.TroopBuildingTime(1,1)).Returns(30);
         timeServiceMock.Setup(x => x.GetCurrentSeconds()).Returns(0);
 
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
@@ -649,10 +649,10 @@ public class TroopServiceTest
         Mock<IResourceService> resourceServiceMock = new Mock<IResourceService>();
 
         ruleServiceMock.Setup(x => x.TroopPrice(2)).Returns(50);
-        ruleServiceMock.Setup(x => x.TroopAttack(2)).Returns(20);
-        ruleServiceMock.Setup(x => x.TroopDefense(2)).Returns(10);
+        ruleServiceMock.Setup(x => x.TroopAttack(2,1)).Returns(20);
+        ruleServiceMock.Setup(x => x.TroopDefense(2,1)).Returns(10);
         ruleServiceMock.Setup(x => x.TroopCapacity(2)).Returns(4);
-        ruleServiceMock.Setup(x => x.TroopBuildingTime(2)).Returns(60);
+        ruleServiceMock.Setup(x => x.TroopBuildingTime(2,1)).Returns(60);
         timeServiceMock.Setup(x => x.GetCurrentSeconds()).Returns(0);
 
         var result = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object).UpgradeTroops(1, new TroopUpgradeRequestDTO

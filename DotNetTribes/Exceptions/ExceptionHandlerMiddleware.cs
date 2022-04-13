@@ -75,6 +75,9 @@ namespace DotNetTribes.Exceptions
                     case TroopCreationException e:
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
+                    case PasswordChangeException e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
                     
                     default:
                         // unhandled error

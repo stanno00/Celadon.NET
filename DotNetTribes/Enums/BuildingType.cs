@@ -7,6 +7,7 @@
         Farm,
         Mine,
         Academy,
+        University,
         Blacksmith,
         Marketplace,
         IronMine

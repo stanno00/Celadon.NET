@@ -4,14 +4,16 @@ using DotNetTribes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220412084149_University")]
+    partial class University
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -502,25 +504,6 @@ namespace DotNetTribes.Migrations
                     b.ToTable("Resources");
                 });
 
-            modelBuilder.Entity("DotNetTribes.Models.SecurityQuestion", b =>
-                {
-                    b.Property<int>("SecurityQuestionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Answer")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TheQuestion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("SecurityQuestionId");
-
-                    b.ToTable("SecurityQuestions");
-                });
-
             modelBuilder.Entity("DotNetTribes.Models.Troop", b =>
                 {
                     b.Property<long>("TroopId")
@@ -617,9 +600,6 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SecurityQuestionId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
@@ -627,10 +607,6 @@ namespace DotNetTribes.Migrations
 
                     b.HasIndex("KingdomId")
                         .IsUnique();
-
-                    b.HasIndex("SecurityQuestionId")
-                        .IsUnique()
-                        .HasFilter("[SecurityQuestionId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -690,13 +666,7 @@ namespace DotNetTribes.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DotNetTribes.Models.SecurityQuestion", "SecurityQuestion")
-                        .WithOne("User")
-                        .HasForeignKey("DotNetTribes.Models.User", "SecurityQuestionId");
-
                     b.Navigation("Kingdom");
-
-                    b.Navigation("SecurityQuestion");
                 });
 
             modelBuilder.Entity("DotNetTribes.Models.Kingdom", b =>
@@ -711,11 +681,6 @@ namespace DotNetTribes.Migrations
 
                     b.Navigation("Upgrades");
 
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DotNetTribes.Models.SecurityQuestion", b =>
-                {
                     b.Navigation("User");
                 });
 #pragma warning restore 612, 618

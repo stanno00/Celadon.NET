@@ -1,4 +1,5 @@
 ﻿using DotNetTribes.DTOs;
+using DotNetTribes.DTOs.Password;
 
 namespace DotNetTribes.Services
 {
@@ -14,5 +15,6 @@ namespace DotNetTribes.Services
         bool EmailIsTaken(string email);
         string SetKingdomNameIfMissing(string kingdomName, string userName);
         ForgotPasswordResponseDto ForgottenPassword(string username, ForgotPasswordRequestDto userInformation);
+        public void ChangePassword(string username, PasswordRequestDto passwordRequestDto);
     }
 }

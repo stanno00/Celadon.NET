@@ -58,8 +58,8 @@ namespace DotNetTribes.Services
 
                 //resource.Generation = _rulesService.BuildingResourceGeneration(building);
                 resource.Generation = resource.Type == ResourceType.Food
-                    ? (_rulesService.BuildingResourceGeneration(building) - CalculateTroopConsumption(kingdomId))
-                    : _rulesService.BuildingResourceGeneration(building);
+                    ? (_rulesService.BuildingResourceGeneration(building, kingdomId) - CalculateTroopConsumption(kingdomId))
+                    : _rulesService.BuildingResourceGeneration(building, kingdomId);
                 UpdateSingleResource(resource, kingdomId);
             }
 

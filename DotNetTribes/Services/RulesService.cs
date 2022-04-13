@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DotNetTribes.DTOs;
+using DotNetTribes.Enums;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 
@@ -8,10 +10,12 @@ namespace DotNetTribes.Services
     public class RulesService : IRulesService
     {
         private readonly GameRules _r;
+        private readonly ApplicationContext _applicationContext;
 
         public RulesService(ApplicationContext applicationContext)
         {
             _r = applicationContext.GameRules.FirstOrDefault(r => r.Name == "Production");
+            _applicationContext = applicationContext;
         }
 
         public int StartingGold()
@@ -64,6 +68,65 @@ namespace DotNetTribes.Services
             return level * _r.MarketplaceAllLevelsCost;
         }
 
+        public int TroopsTrainSpeedPrice(int level)
+        {
+            if (level == 0)
+            {
+                return _r.TroopsTrainSpeedCost;
+            }
+            return level * _r.TroopsTrainSpeedCost;
+        }
+
+        public int BuildingBuildSpeedPrice(int level)
+        {
+            if (level == 0)
+            {
+                return _r.BuildingBuildSpeedCost;
+            }
+            return level * _r.BuildingBuildSpeedCost;
+        }
+
+        public int MineProduceBonusPrice(int level)
+        {
+            if (level == 0)
+            {
+                return _r.MineProduceBonusCost;
+            }
+            return level * _r.MineProduceBonusCost;
+        }
+
+        public int FarmProduceBonusPrice(int level)
+        {
+            if (level == 0)
+            {
+                return _r.FarmProduceBonusCost;
+            }
+            return level * _r.FarmProduceBonusCost;
+        }
+
+        public int AllTroopsDefBonusPrice(int level)
+        {
+            if (level == 0)
+            {
+                return _r.AllTroopsDefBonusCost;
+            }
+            return level * _r.AllTroopsDefBonusCost;
+        }
+
+        public int AllTroopsAtkBonusPrice(int level)
+        {
+            if (level == 0)
+            {
+                return _r.AllTroopsAtkBonusCost;
+            }
+            return level * _r.AllTroopsAtkBonusCost;
+        }
+
+        public int UniversityPrice(int level)
+        {
+            return level * _r.UniversityAllLevelCost;
+        }
+
         public int MarketplaceTradeAmount(int level)
         {
             return level * _r.MarketplaceMaxResources;
@@ -99,49 +162,132 @@ namespace DotNetTribes.Services
             return level * _r.MarketplaceHP;
         }
 
-        public int TownhallBuildingTime(int level)
+        public int UniversityHP(int level)
         {
+            return level * _r.UniversityHP;
+        }
+
+        public int TownhallBuildingTime(int level, int kingdomId)
+        {
+            double timeReduction = GetBuildTimeReduction(kingdomId);
+            
             if (level == 1)
             {
                 return _r.TownhallLevelOneDuration;
             }
 
-            return level * _r.TownhallLevelNDuration;
+            return Convert.ToInt32(level * _r.TownhallLevelNDuration * timeReduction);
         }
 
-        public int FarmBuildingTime(int level)
+        public int FarmBuildingTime(int level, int kingdomId)
         {
-            return level * _r.FarmAllLevelsDuration;
+            double timeReduction = GetBuildTimeReduction(kingdomId);
+            
+            return Convert.ToInt32(level * _r.FarmAllLevelsDuration * timeReduction);
         }
 
-        public int MineBuildingTime(int level)
+        public int MineBuildingTime(int level, int kingdomId)
         {
-            return level * _r.MineAllLevesDuration;
+            double timeReduction = GetBuildTimeReduction(kingdomId);
+            
+            return Convert.ToInt32(level * _r.MineAllLevesDuration * timeReduction);
         }
 
-        public int AcademyBuildingTime(int level)
+        public int AcademyBuildingTime(int level, int kingdomId)
         {
+            double timeReduction = GetBuildTimeReduction(kingdomId);
+            
             if (level == 1)
             {
                 return _r.AcademyLevelOneDuration;
             }
 
-            return level * _r.AcademyLevelNDuration;
+            return Convert.ToInt32(level * _r.AcademyLevelNDuration * timeReduction);
         }
 
-        public int TroopBuildingTime(int level)
+        public int TroopBuildingTime(int level, int kingdomId)
         {
-            return level * _r.TroopAllLevelsDuration;
+            double timeReduction = 1;
+            var trainingSpeedUpgrade = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.TroopsTrainSpeed);
+            if (trainingSpeedUpgrade != null)
+            {
+                timeReduction = 1 - trainingSpeedUpgrade.EffectStrength * trainingSpeedUpgrade.Level;
+            }
+            return Convert.ToInt32(level * _r.TroopAllLevelsDuration * timeReduction);
         }
 
-        public int MarketplaceBuildingTime(int level)
+        public int MarketplaceBuildingTime(int level, int kingdomId)
         {
+            double timeReduction = GetBuildTimeReduction(kingdomId);
+            
             if (level == 1)
             {
-                return _r.MarketplaceLevelOneDuration;
+                return Convert.ToInt32(_r.MarketplaceLevelOneDuration * timeReduction);
             }
 
-            return level * _r.MarketplaceAllLevelsDuration;
+            return Convert.ToInt32(level * _r.MarketplaceAllLevelsDuration * timeReduction);
+        }
+
+        public int TroopsTrainSpeedTime(int level)
+        {
+            if (level == 0)
+            {
+                return _r.TroopsTrainSpeedDuration;
+            }
+            return level * _r.TroopsTrainSpeedDuration;
+        }
+
+        public int BuildingBuildSpeedTime(int level)
+        {
+            if (level == 0)
+            {
+                return _r.BuildingBuildSpeedDuration;
+            }
+            return level * _r.BuildingBuildSpeedDuration;
+        }
+
+        public int MineProduceBonusTime(int level)
+        {
+            if (level == 0)
+            {
+                return _r.MineProduceBonusDuration;
+            }
+            return level * _r.MineProduceBonusDuration;
+        }
+
+        public int FarmProduceBonusTime(int level)
+        {
+            if (level == 0)
+            {
+                return _r.FarmProduceBonusDuration;
+            }
+            return level * _r.FarmProduceBonusDuration;
+        }
+
+        public int AllTroopsDefBonusTime(int level)
+        {
+            if (level == 0)
+            {
+                return _r.AllTroopsDefBonusDuration;
+            }
+            return level * _r.AllTroopsDefBonusDuration;
+        }
+
+        public int AllTroopsAtkBonusTime(int level)
+        {
+            if (level == 0)
+            {
+                return _r.AllTroopsAtkBonusDuration;
+            }
+            return level * _r.AllTroopsAtkBonusDuration;
+        }
+
+        public int UniversityBuildingTime(int level, int kingdomId)
+        {
+            double timeReduction = GetBuildTimeReduction(kingdomId);
+            
+            return Convert.ToInt32(level * _r.UniversityAllLevelDuration * timeReduction);
         }
 
         public int StorageLimit(int townhallLevel)
@@ -159,14 +305,30 @@ namespace DotNetTribes.Services
             return troopLevel * _r.TroopFoodConsumption;
         }
 
-        public int TroopAttack(int troopLevel)
+        public int TroopAttack(int troopLevel, int kingdomId)
         {
-            return troopLevel * _r.TroopAttack;
+            int attackBonus = 0;
+            var troopAtkBonus = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.AllTroopsAtkBonus);
+            if (troopAtkBonus != null)
+            {
+                attackBonus = Convert.ToInt32(troopAtkBonus.EffectStrength * troopAtkBonus.Level);
+            }
+            
+            return troopLevel * _r.TroopAttack + attackBonus;
         }
 
-        public int TroopDefense(int troopLevel)
+        public int TroopDefense(int troopLevel, int kingdomId)
         {
-            return troopLevel * _r.TroopDefense;
+            int defenseBonus = 0;
+            var troopDefBonus = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.AllTroopsDefBonus);
+            if (troopDefBonus != null)
+            {
+                defenseBonus = Convert.ToInt32(troopDefBonus.EffectStrength * troopDefBonus.Level);
+            }
+            
+            return troopLevel * _r.TroopDefense + defenseBonus;
         }
 
         public int MapBoundariesX()
@@ -178,7 +340,7 @@ namespace DotNetTribes.Services
         {
             return _r.MapBoundariesY;
         }
-
+        
         public int BlacksmithPrice()
         {
             return _r.BlacksmithLevelOneCost;
@@ -189,19 +351,34 @@ namespace DotNetTribes.Services
             return _r.BlacksmithHp;
         }
 
-        public int BlacksmithBuildingTime()
+        public int BlacksmithBuildingTime(int kingdomId)
         {
-            return _r.BlacksmithLevelOneDuration;
+            double timeReduction = GetBuildTimeReduction(kingdomId);
+            return Convert.ToInt32(_r.BlacksmithLevelOneDuration * timeReduction);
         }
 
-        public int TrainingTimeSpecialTroopRanger()
+        public int TrainingTimeSpecialTroopRanger(int kingdomId)
         {
-            return _r.TrainingTimeTroopRanger;
+            double timeReduction = 1;
+            var trainingSpeedUpgrade = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.TroopsTrainSpeed);
+            if (trainingSpeedUpgrade != null)
+            {
+                timeReduction = 1 - trainingSpeedUpgrade.EffectStrength * trainingSpeedUpgrade.Level;
+            }
+            return Convert.ToInt32(_r.TrainingTimeTroopRanger * timeReduction);
         }
 
-        public int TrainingTimeSpecialTroopScout()
+        public int TrainingTimeSpecialTroopScout(int kingdomId)
         {
-            return _r.TrainingTimeTroopScout;
+            double timeReduction = 1;
+            var trainingSpeedUpgrade = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.TroopsTrainSpeed);
+            if (trainingSpeedUpgrade != null)
+            {
+                timeReduction = 1 - trainingSpeedUpgrade.EffectStrength * trainingSpeedUpgrade.Level;
+            }
+            return Convert.ToInt32(_r.TrainingTimeTroopScout * timeReduction);
         }
 
         public int CostSpecialTroopScout(int level)
@@ -259,26 +436,40 @@ namespace DotNetTribes.Services
             return 300 + 100 * level;
         }
 
-        public int BuildingResourceGeneration(Building building)
+        public int BuildingResourceGeneration(Building building, int kingdomId)
         {
+            double productionBoost = 1;
+
             var resourceGeneration = 0;
             switch (building.Type)
             {
                 case BuildingType.Mine:
                     resourceGeneration = _r.MineALlLevelsGoldGeneration;
+                    var mineProduceBonus = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                        u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.MineProduceBonus);
+                    if (mineProduceBonus != null)
+                    {
+                        productionBoost = 1 + mineProduceBonus.EffectStrength * mineProduceBonus.Level;
+                    }
                     break;
                 case BuildingType.Farm:
                     resourceGeneration = _r.FarmAllLevelsFoodGeneration;
+                    var farmProduceBonus = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                        u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.FarmProduceBonus);
+                    if (farmProduceBonus != null)
+                    {
+                        productionBoost = 1 + farmProduceBonus.EffectStrength * farmProduceBonus.Level;
+                    }
                     break;
                 case BuildingType.IronMine:
                     resourceGeneration = _r.IronMineGeneration;
                     break;
             }
 
-            return building.Level * resourceGeneration + 5;
+            return Convert.ToInt32((building.Level * resourceGeneration + 5) * productionBoost);
         }
 
-        public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level)
+        public BuildingDetailsDTO GetBuildingDetails(BuildingType type, int level, int kingdomId)
         {
             switch (type)
             {
@@ -287,42 +478,49 @@ namespace DotNetTribes.Services
                     {
                         BuildingPrice = TownhallPrice(level),
                         BuildingHP = TownhallHP(level),
-                        BuildingDuration = TownhallBuildingTime(level)
+                        BuildingDuration = TownhallBuildingTime(level, kingdomId)
                     };
                 case BuildingType.Farm:
                     return new BuildingDetailsDTO
                     {
                         BuildingPrice = FarmPrice(level),
                         BuildingHP = FarmHP(level),
-                        BuildingDuration = FarmBuildingTime(level)
+                        BuildingDuration = FarmBuildingTime(level, kingdomId)
                     };
                 case BuildingType.Mine:
                     return new BuildingDetailsDTO
                     {
                         BuildingPrice = MinePrice(level),
                         BuildingHP = MineHP(level),
-                        BuildingDuration = MineBuildingTime(level)
+                        BuildingDuration = MineBuildingTime(level, kingdomId)
                     };
                 case BuildingType.Academy:
                     return new BuildingDetailsDTO
                     {
                         BuildingPrice = AcademyPrice(level),
                         BuildingHP = AcademyHP(level),
-                        BuildingDuration = AcademyBuildingTime(level)
+                        BuildingDuration = AcademyBuildingTime(level, kingdomId)
                     };
                 case BuildingType.Marketplace:
                     return new BuildingDetailsDTO
                     {
                         BuildingPrice = MarketplacePrice(level),
                         BuildingHP = MarketplaceHP(level),
-                        BuildingDuration = MarketplaceBuildingTime(level)
+                        BuildingDuration = MarketplaceBuildingTime(level, kingdomId)
+                    };
+                case BuildingType.University:
+                    return new BuildingDetailsDTO
+                    {
+                        BuildingPrice = UniversityPrice(level),
+                        BuildingHP = UniversityHP(level),
+                        BuildingDuration = UniversityBuildingTime(level, kingdomId)
                     };
                 case BuildingType.Blacksmith:
                     return new BuildingDetailsDTO
                     {
                         BuildingPrice = BlacksmithPrice(),
                         BuildingHP = BlacksmithHp(),
-                        BuildingDuration = BlacksmithBuildingTime()
+                        BuildingDuration = BlacksmithBuildingTime(kingdomId)
                     };
                 case BuildingType.IronMine:
                     return new BuildingDetailsDTO
@@ -337,6 +535,19 @@ namespace DotNetTribes.Services
                         "Troubleshooting, exorcism of the server, throwing heavy objects at high velocities in the direction of" +
                         "the developer's head.");
             }
+        }
+
+        private double GetBuildTimeReduction(int kingdomId)
+        {
+            double timeReduction = 1;
+            var buildSpeedUpgrade = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                u.KingdomId == kingdomId && u.UpgradeType == UpgradeType.BuildingBuildSpeed);
+            if (buildSpeedUpgrade != null)
+            {
+                timeReduction = 1 - buildSpeedUpgrade.EffectStrength * buildSpeedUpgrade.Level;
+            }
+
+            return timeReduction;
         }
     }
 }

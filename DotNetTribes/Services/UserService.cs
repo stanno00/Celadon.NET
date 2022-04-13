@@ -58,6 +58,11 @@ namespace DotNetTribes.Services
                 Username = userCredentials.Username,
                 HashedPassword = HashPassword(userCredentials.Password),
                 Email = userCredentials.Email,
+                SecurityQuestion = new SecurityQuestion()
+                {
+                    TheQuestion = userCredentials.SecurityQuestionType,
+                    Answer = HashPassword(userCredentials.AnswerToQuestion),
+                },
                 Kingdom = new Kingdom()
                 {
                     Name = userCredentials.KingdomName,
@@ -96,7 +101,8 @@ namespace DotNetTribes.Services
             {
                 Id = user.UserId,
                 Username = user.Username,
-                KingdomId = user.KingdomId
+                KingdomId = user.KingdomId,
+                QuestionId = user.SecurityQuestionId
             };
         }
 
@@ -118,6 +124,21 @@ namespace DotNetTribes.Services
             if (FieldIsNullOrEmpty(userCredentials.Email))
             {
                 errorMessages.Add("Email is required.");
+            }
+            
+            if (userCredentials.SecurityQuestionType.ToString().Length == 0 )
+            {
+                errorMessages.Add("Security Question is required.");
+            }
+            
+            if (!Enum.TryParse(userCredentials.SecurityQuestionType.ToString(), true, out SecurityQuestionType chosenSecurityQuestion))
+            {
+                errorMessages.Add("Security Question doesn't exist.");
+            }
+
+            if (FieldIsNullOrEmpty(userCredentials.AnswerToQuestion))
+            {
+                errorMessages.Add("An answer to security question is required.");
             }
 
             if (errorMessages.Count > 0)

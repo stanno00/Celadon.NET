@@ -8,7 +8,7 @@
         public string Email { get; set; }
         public int KingdomId { get; set; }
         public Kingdom Kingdom { get; set; }
-        public long SecurityQuestionId { get; set; }
+        public int SecurityQuestionId { get; set; }
         public SecurityQuestion SecurityQuestion { get; set; }
     }
 }

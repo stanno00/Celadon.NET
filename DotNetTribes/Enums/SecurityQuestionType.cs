@@ -1,6 +1,6 @@
 namespace DotNetTribes.Enums
 {
-    public enum SecurityQuestions
+    public enum SecurityQuestionType
     {
         LastNameOfYourMotherBeforeMarriage,
         CityYouWhereBornIn,

@@ -82,6 +82,8 @@ namespace DotNetTribes.Services
 
         public ResourcesDto GetKingdomResources(int kingdomId)
         {
+            UpdateKingdomResources(kingdomId);
+            
             var kingdomResourceDtoList = _applicationContext.Resources
                 .Where(r => r.KingdomId == kingdomId)
                 .Select(r => new ResourceDto

@@ -76,14 +76,14 @@ namespace DotNetTribes.Services
 
             var hasAcademy = kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy);
 
-            if (request.Type == "Marketplace" && hasAcademy == null)
+            if (requestedBuilding is BuildingType.Marketplace or BuildingType.University && hasAcademy == null)
             {
                 throw new BuildingCreationException("Academy required");
             }
 
             var kingdomGold = kingdom!.Resources.FirstOrDefault(r => r.Type.Equals(ResourceType.Gold));
 
-            BuildingDetailsDTO buildingDetails = _rules.GetBuildingDetails(requestedBuilding, 1);
+            BuildingDetailsDTO buildingDetails = _rules.GetBuildingDetails(requestedBuilding, 1, kingdomId);
             Building toBeAdded =
                 GetNewBuildingInformation(kingdomId, buildingDetails.BuildingHP, buildingDetails.BuildingDuration,
                     requestedBuilding);
@@ -147,7 +147,7 @@ namespace DotNetTribes.Services
                 throw new BuildingCreationException("Townhall level is too low!");
             }
 
-            var upgradeBuilding = _rules.GetBuildingDetails(buildingType, buildingNextLevel);
+            var upgradeBuilding = _rules.GetBuildingDetails(buildingType, buildingNextLevel, kingdomId);
 
             var gold = kingdom.Resources.Single(r => r.Type == ResourceType.Gold);
             var food = kingdom.Resources.Single(r => r.Type == ResourceType.Food);

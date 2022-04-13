@@ -1,8 +1,10 @@
-﻿using System.Linq;
+using System;
+using System.Linq;
 using DotNetTribes.DTOs;
 using DotNetTribes.Enums;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotNetTribes.Services
@@ -19,6 +21,167 @@ namespace DotNetTribes.Services
             _applicationContext = applicationContext;
             _rules = rules;
             _timeService = timeService;
+        }
+
+        public UniversityUpgrade BuyUniversityUpgrade(int kingdomId, UpgradeType upgradeType)
+        {
+            Kingdom kingdom = _applicationContext.Kingdoms
+                .Include(k => k.Resources)
+                .Include(k => k.Buildings)
+                .Include(k => k.Upgrades)
+                .Single(k => k.KingdomId == kingdomId);
+            
+            var kingdomUniversity = kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.University);
+            if (kingdomUniversity == null)
+            {
+                throw new UpgradeException("You don't have a University");
+            }
+
+            var upgradeInProgress = kingdom.Upgrades.FirstOrDefault(u => u.FinishedAt > _timeService.GetCurrentSeconds());
+            if (upgradeInProgress != null)
+            {
+                throw new UpgradeException("There is an upgrade in progress");
+            }
+
+            UniversityUpgrade theUpgrade = null;
+            
+            if (upgradeType == UpgradeType.BuildingBuildSpeed)
+            {
+                int upgradeToLvl = 0;
+                var currentLvlUpgrade = kingdom.Upgrades.FirstOrDefault(u => u.UpgradeType == upgradeType);
+                if (currentLvlUpgrade != null)
+                {
+                    upgradeToLvl = currentLvlUpgrade.Level + 1;
+                }
+                int resourcesNeeded = _rules.BuildingBuildSpeedPrice(upgradeToLvl);
+                long researchTime = _rules.BuildingBuildSpeedTime(upgradeToLvl) - GetUniversityLevelTimeReduction(kingdomUniversity);
+                theUpgrade = StartUpgradingCheckResources(kingdom, upgradeType, 0.05, resourcesNeeded, upgradeToLvl, researchTime);
+                
+
+            }
+            if (upgradeType == UpgradeType.FarmProduceBonus)
+            {
+                int upgradeToLvl = 0;
+                var currentLvlUpgrade = kingdom.Upgrades.FirstOrDefault(u => u.UpgradeType == upgradeType);
+                if (currentLvlUpgrade != null)
+                {
+                    upgradeToLvl = currentLvlUpgrade.Level + 1;
+                }
+                int resourcesNeeded = _rules.FarmProduceBonusPrice(upgradeToLvl);
+                long researchTime = _rules.FarmProduceBonusTime(upgradeToLvl) - GetUniversityLevelTimeReduction(kingdomUniversity);
+                theUpgrade = StartUpgradingCheckResources(kingdom, upgradeType, 0.05, resourcesNeeded, upgradeToLvl, researchTime);
+            }
+            if (upgradeType == UpgradeType.MineProduceBonus)
+            {
+                int upgradeToLvl = 0;
+                var currentLvlUpgrade = kingdom.Upgrades.FirstOrDefault(u => u.UpgradeType == upgradeType);
+                if (currentLvlUpgrade != null)
+                {
+                    upgradeToLvl = currentLvlUpgrade.Level + 1;
+                }
+                int resourcesNeeded = _rules.MineProduceBonusPrice(upgradeToLvl);
+                long researchTime = _rules.MineProduceBonusTime(upgradeToLvl) - GetUniversityLevelTimeReduction(kingdomUniversity);
+                theUpgrade = StartUpgradingCheckResources(kingdom, upgradeType, 0.05, resourcesNeeded, upgradeToLvl, researchTime);
+            }
+            if (upgradeType == UpgradeType.TroopsTrainSpeed)
+            {
+                int upgradeToLvl = 0;
+                var currentLvlUpgrade = kingdom.Upgrades.FirstOrDefault(u => u.UpgradeType == upgradeType);
+                if (currentLvlUpgrade != null)
+                {
+                    upgradeToLvl = currentLvlUpgrade.Level + 1;
+                }
+                int resourcesNeeded = _rules.TroopsTrainSpeedPrice(upgradeToLvl);
+                long researchTime = _rules.TroopsTrainSpeedTime(upgradeToLvl) - GetUniversityLevelTimeReduction(kingdomUniversity);
+                theUpgrade = StartUpgradingCheckResources(kingdom, upgradeType, 0.05, resourcesNeeded, upgradeToLvl, researchTime);
+            }
+            if (upgradeType == UpgradeType.AllTroopsAtkBonus)
+            {
+                int upgradeToLvl = 0;
+                var currentLvlUpgrade = kingdom.Upgrades.FirstOrDefault(u => u.UpgradeType == upgradeType);
+                if (currentLvlUpgrade != null)
+                {
+                    upgradeToLvl = currentLvlUpgrade.Level + 1;
+                }
+                int resourcesNeeded = _rules.AllTroopsAtkBonusPrice(upgradeToLvl);
+                long researchTime = _rules.AllTroopsAtkBonusTime(upgradeToLvl) - GetUniversityLevelTimeReduction(kingdomUniversity);
+                theUpgrade = StartUpgradingCheckResources(kingdom, upgradeType, 3, resourcesNeeded, upgradeToLvl, researchTime);
+            }
+            if (upgradeType == UpgradeType.AllTroopsDefBonus)
+            {
+                int upgradeToLvl = 0;
+                var currentLvlUpgrade = kingdom.Upgrades.FirstOrDefault(u => u.UpgradeType == upgradeType);
+                if (currentLvlUpgrade != null)
+                {
+                    upgradeToLvl = currentLvlUpgrade.Level + 1;
+                }
+                int resourcesNeeded = _rules.AllTroopsDefBonusPrice(upgradeToLvl);
+                long researchTime = _rules.AllTroopsDefBonusTime(upgradeToLvl) - GetUniversityLevelTimeReduction(kingdomUniversity);
+                theUpgrade = StartUpgradingCheckResources(kingdom, upgradeType, 2, resourcesNeeded, upgradeToLvl, researchTime);
+            }
+            
+            _applicationContext.SaveChanges();
+            return theUpgrade;
+        }
+
+        private UniversityUpgrade StartUpgradingCheckResources(Kingdom kingdom, UpgradeType upgradeType, double effectStrength, int resourcesNeeded, int upgradeTotLvl, long researchTime)
+        {
+            if (upgradeTotLvl == 0)
+            {
+                bool enoughResources = CheckResourcesForUpgrade(kingdom, resourcesNeeded);
+                UniversityUpgrade theUpgrade = new UniversityUpgrade()
+                {
+                    UpgradeType = upgradeType,
+                    EffectStrength = effectStrength,
+                    Level = 0,
+                    KingdomId = kingdom.KingdomId,
+                    StartedAt = _timeService.GetCurrentSeconds(),
+                    FinishedAt = _timeService.GetCurrentSeconds() + researchTime,
+                    AddedToKingdom = false
+                };
+                _applicationContext.Add(theUpgrade);
+                return theUpgrade;
+            }
+            if (upgradeTotLvl < 6)
+            {
+                bool enoughResources = CheckResourcesForUpgrade(kingdom, resourcesNeeded);
+                var existingUpgrade = kingdom.Upgrades.FirstOrDefault(u => u.UpgradeType == upgradeType);
+                existingUpgrade.StartedAt = _timeService.GetCurrentSeconds();
+                existingUpgrade.FinishedAt = _timeService.GetCurrentSeconds() + researchTime;
+                existingUpgrade.AddedToKingdom = false;
+                return existingUpgrade;
+            }
+            else
+            {
+                throw new UpgradeException($"You have max level of {upgradeType}");
+            }
+        }
+
+        private bool CheckResourcesForUpgrade(Kingdom kingdom, int resourcesNeeded)
+        {
+            if (kingdom.Resources.FirstOrDefault(r => r.Type == ResourceType.Food)!.Amount > resourcesNeeded && 
+                kingdom.Resources.FirstOrDefault(r => r.Type == ResourceType.Gold)!.Amount > resourcesNeeded)
+            {
+                Resource food = kingdom.Resources.FirstOrDefault(r => r.Type == ResourceType.Food);
+                food.Amount -= resourcesNeeded;
+                Resource gold = kingdom.Resources.FirstOrDefault(r => r.Type == ResourceType.Gold);
+                gold.Amount -= resourcesNeeded;
+            }
+            else
+            {
+                throw new UpgradeException("Not enough resources");
+            }
+
+            return true;
+        }
+
+        private long GetUniversityLevelTimeReduction(Building hasUniversity)
+        {
+            if (hasUniversity.Level == 1)
+            {
+                return 0;
+            }
+            return hasUniversity.Level * 1; //have to change after testing
         }
 
         public BuildingsUpgradesResponseDto AddUpgrade(int kingdomId, BuildingsUpgradesRequestDto upgrade)
@@ -107,6 +270,42 @@ namespace DotNetTribes.Services
                 FinishedAt = upgradeToBeAdded.FinishedAt,
                 KingdomId = kingdom.KingdomId,
             };
+        }
+
+        public void ApplyUpgradesWhenFinished(int kingdomId)
+        {
+            var finishedUpgrade = _applicationContext.UniversityUpgrades.FirstOrDefault(u =>
+                u.FinishedAt < _timeService.GetCurrentSeconds() && u.AddedToKingdom == false &&
+                u.KingdomId == kingdomId);
+            if (finishedUpgrade == null)
+            {
+                return;
+            }
+
+            if (finishedUpgrade.UpgradeType == UpgradeType.AllTroopsAtkBonus)
+            {
+                var troopToBeUpgraded = _applicationContext.Troops.Where(k => k.KingdomId == finishedUpgrade.KingdomId)
+                    .ToList();
+                foreach (var y in troopToBeUpgraded)
+                {
+                    y.Attack += 3;
+                }
+            }
+
+            if (finishedUpgrade.UpgradeType == UpgradeType.AllTroopsDefBonus)
+            {
+                var troopToBeUpgraded = _applicationContext.Troops.Where(k => k.KingdomId == finishedUpgrade.KingdomId)
+                    .ToList();
+                foreach (var y in troopToBeUpgraded)
+                {
+                    y.Defense += 2;
+                }
+            }
+
+            finishedUpgrade.Level += 1;
+            finishedUpgrade.AddedToKingdom = true;
+
+            _applicationContext.SaveChanges();
         }
     }
 }

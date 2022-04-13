@@ -164,39 +164,44 @@ namespace DotNetTribes.Services
             if (criticalChance > 85)
             {
                 var doubleDamage = _rulesService.TroopAttack(troopAttacking.Level, troopAttacking.KingdomId) * 2 
-                                    - _rulesService.TroopDefense(troopDefending.Level, troopAttacking.KingdomId);
+                                   - _rulesService.TroopDefense(troopDefending.Level, troopAttacking.KingdomId);
                 return doubleDamage;
             }
 
             var damage = _rulesService.TroopAttack(troopAttacking.Level, troopAttacking.KingdomId) 
-                          - _rulesService.TroopDefense(troopDefending.Level, troopAttacking.KingdomId);
+                         - _rulesService.TroopDefense(troopDefending.Level, troopAttacking.KingdomId);
             return damage;
         }
 
         private void StealResources(IEnumerable<Troop> attackerTroops, int kingdomId)
         {
-            var numberOfResources = Enum.GetValues(typeof(ResourceType)).Length - 1;
+            // Semi-working code. I have no idea how to fill capacity and stay bellow 50% of stolen resources
             var troopsResourceCapacity = attackerTroops.Select(t => t.Capacity).Sum();
-            var resources = _applicationContext.Resources.Where(r => r.KingdomId == kingdomId && r.Type != ResourceType.Iron).ToList();
-
+            var resources = _applicationContext.Resources
+                .Where(r => r.KingdomId == kingdomId && r.Type != ResourceType.Iron)
+                .ToList();
+            
             foreach (var resource in resources)
             {
-                var maxStolenAmount = resource.Amount / 2;
-                if (troopsResourceCapacity / numberOfResources > maxStolenAmount)
+                var maxAmountToSteal = resource.Amount / 2;
+                var resourcesToSteal = troopsResourceCapacity / resources.Count;
+                
+                if (resourcesToSteal > maxAmountToSteal)
                 {
-                    resource.Amount -= maxStolenAmount;
+                    resource.Amount -= maxAmountToSteal;
                 }
                 else
                 {
-                    resource.Amount -= troopsResourceCapacity;
+                    resource.Amount -= resourcesToSteal;
                 }
 
                 if (resource.Amount < 0)
                 {
                     resource.Amount = 0;
                 }
+                
+                
             }
-
             _applicationContext.SaveChanges();
         }
     }

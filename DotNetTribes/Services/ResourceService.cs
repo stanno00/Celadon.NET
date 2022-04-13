@@ -48,12 +48,16 @@ namespace DotNetTribes.Services
                 .Where(r => r.KingdomId == kingdomId)
                 .ToList();
             
-            var wonBattles = _applicationContext.Battles.Where(b => b.ResourcesDeliveredToWinner == false && b.ReturnAt < _timeService.GetCurrentSeconds());
+            var wonBattles = _applicationContext.Battles
+                .Where(b => b.ResourcesDeliveredToWinner == false 
+                            && b.ReturnAt < _timeService.GetCurrentSeconds()
+                            && b.WinnerId == kingdomId);
+            
             foreach (var battle in wonBattles)
             {
-                var food = kingdomResources.Single(r => r.KingdomId == battle.WinnerId && r.Type == ResourceType.Food);
+                var food = kingdomResources.Single(r => r.Type == ResourceType.Food);
                 food.Amount += battle.FoodStolen;
-                var gold = kingdomResources.Single(r => r.KingdomId == battle.WinnerId && r.Type == ResourceType.Gold);
+                var gold = kingdomResources.Single(r => r.Type == ResourceType.Gold);
                 gold.Amount += battle.GoldStolen;
                 battle.ResourcesDeliveredToWinner = true;
             }

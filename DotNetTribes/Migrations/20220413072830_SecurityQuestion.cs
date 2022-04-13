@@ -10,8 +10,7 @@ namespace DotNetTribes.Migrations
                 name: "SecurityQuestionId",
                 table: "Users",
                 type: "int",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "SecurityQuestions",
@@ -31,7 +30,8 @@ namespace DotNetTribes.Migrations
                 name: "IX_Users_SecurityQuestionId",
                 table: "Users",
                 column: "SecurityQuestionId",
-                unique: true);
+                unique: true,
+                filter: "[SecurityQuestionId] IS NOT NULL");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Users_SecurityQuestions_SecurityQuestionId",
@@ -39,7 +39,7 @@ namespace DotNetTribes.Migrations
                 column: "SecurityQuestionId",
                 principalTable: "SecurityQuestions",
                 principalColumn: "SecurityQuestionId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

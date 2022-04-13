@@ -521,7 +521,7 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SecurityQuestionId")
+                    b.Property<int?>("SecurityQuestionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -533,7 +533,8 @@ namespace DotNetTribes.Migrations
                         .IsUnique();
 
                     b.HasIndex("SecurityQuestionId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[SecurityQuestionId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -586,9 +587,7 @@ namespace DotNetTribes.Migrations
 
                     b.HasOne("DotNetTribes.Models.SecurityQuestion", "SecurityQuestion")
                         .WithOne("User")
-                        .HasForeignKey("DotNetTribes.Models.User", "SecurityQuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DotNetTribes.Models.User", "SecurityQuestionId");
 
                     b.Navigation("Kingdom");
 

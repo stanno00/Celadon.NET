@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetTribes.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220413064434_SecurityQuestion")]
+    [Migration("20220413072830_SecurityQuestion")]
     partial class SecurityQuestion
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -523,7 +523,7 @@ namespace DotNetTribes.Migrations
                     b.Property<int>("KingdomId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SecurityQuestionId")
+                    b.Property<int?>("SecurityQuestionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -535,7 +535,8 @@ namespace DotNetTribes.Migrations
                         .IsUnique();
 
                     b.HasIndex("SecurityQuestionId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[SecurityQuestionId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -588,9 +589,7 @@ namespace DotNetTribes.Migrations
 
                     b.HasOne("DotNetTribes.Models.SecurityQuestion", "SecurityQuestion")
                         .WithOne("User")
-                        .HasForeignKey("DotNetTribes.Models.User", "SecurityQuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DotNetTribes.Models.User", "SecurityQuestionId");
 
                     b.Navigation("Kingdom");
 

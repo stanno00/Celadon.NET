@@ -278,13 +278,14 @@ namespace DotNetTribes.Services
 
         private async Task SendEmail(string userEmail, string username, string newPassword)
         {
+            var secretPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
             var sender = new SmtpSender(() => new SmtpClient("smtp.gmail.com")
             {
                 UseDefaultCredentials = false,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 Port = 587, // for gmail
-                Credentials = new NetworkCredential("ViridiVulpesC@gmail.com", "5da2effa54"),
+                Credentials = new NetworkCredential("ViridiVulpesC@gmail.com", secretPassword),
             });
 
             StringBuilder template = new StringBuilder();
@@ -298,7 +299,7 @@ namespace DotNetTribes.Services
 
             var email = await Email
                 .From("ViridiVulpesC@gmail.com")
-                .To("kucerakr@gmail.com") // after testing change this to userEmail
+                .To(userEmail) 
                 .Subject("Hello")
                 .UsingTemplate(template.ToString(), new { })
                 .SendAsync();

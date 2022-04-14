@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DotNetTribes;
 using DotNetTribes.DTOs;
+using DotNetTribes.Enums;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -18,7 +19,9 @@ namespace DotNetTribesTests.Integration
             using var client = application.CreateClient();
 
             var json = JsonConvert.SerializeObject(new RegisterUserRequestDTO()
-                {Email = "Test@Test.dummy", Password = "password", Username = "Rado"});
+                {Email = "Test@Test.dummy", Password = "password", Username = "Rado",
+                    SecurityQuestionType = SecurityQuestionType.NameOfYourFirstPet,
+                    AnswerToQuestion = "pet"});
             var httpContext = new StringContent(json, Encoding.UTF8, "application/json");
 
             //Act

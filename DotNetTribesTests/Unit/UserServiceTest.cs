@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using DotNetTribes;
 using DotNetTribes.DTOs;
+using DotNetTribes.Enums;
 using DotNetTribes.Models;
 using DotNetTribes.Services;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,9 @@ namespace DotNetTribesTests.Unit
                 Email = "email@email.dummy",
                 Password = "password",
                 Username = "Hrnik",
-                KingdomName = "the lost kingdom of Benwick"
+                KingdomName = "the lost kingdom of Benwick",
+                SecurityQuestionType = SecurityQuestionType.NameOfYourFirstPet,
+                AnswerToQuestion = "pet"
             };
 
             //Act
@@ -58,7 +61,9 @@ namespace DotNetTribesTests.Unit
             {
                 Email = "email@email.dummy",
                 Username = "Hrnik",
-                KingdomName = "the lost kingdom of Benwick"
+                KingdomName = "the lost kingdom of Benwick",
+                SecurityQuestionType = SecurityQuestionType.NameOfYourFirstPet,
+                AnswerToQuestion = "pet"
             };
 
             //Act
@@ -86,7 +91,9 @@ namespace DotNetTribesTests.Unit
             {
                 Password = "password",
                 Username = "Hrnik",
-                KingdomName = "the lost kingdom of Benwick"
+                KingdomName = "the lost kingdom of Benwick",
+                SecurityQuestionType = SecurityQuestionType.NameOfYourFirstPet,
+                AnswerToQuestion = "pet"
             };
 
             //Act
@@ -114,7 +121,9 @@ namespace DotNetTribesTests.Unit
             {
                 Email = "email@email.dummy",
                 Password = "password",
-                KingdomName = "the lost kingdom of Benwick"
+                KingdomName = "the lost kingdom of Benwick",
+                SecurityQuestionType = SecurityQuestionType.NameOfYourFirstPet,
+                AnswerToQuestion = "pet"
             };
 
             //Act
@@ -143,7 +152,9 @@ namespace DotNetTribesTests.Unit
                 Email = "email@email.dummy",
                 Password = "short",
                 Username = "Hrnik",
-                KingdomName = "the lost kingdom of Benwick"
+                KingdomName = "the lost kingdom of Benwick",
+                SecurityQuestionType = SecurityQuestionType.NameOfYourFirstPet,
+                AnswerToQuestion = "pet"
             };
 
             //Act
@@ -172,7 +183,9 @@ namespace DotNetTribesTests.Unit
                 Email = "email@email.dummy",
                 Password = "short",
                 Username = "Hrnik",
-                KingdomName = "the lost kingdom of Benwick"
+                KingdomName = "the lost kingdom of Benwick",
+                SecurityQuestionType = SecurityQuestionType.NameOfYourFirstPet,
+                AnswerToQuestion = "pet"
             };
             var kingdomTest = new Kingdom()
             {
@@ -208,7 +221,9 @@ namespace DotNetTribesTests.Unit
                 Username = "Hrnik",
                 Email = "email@email.dummy",
                 Password = "short",
-                KingdomName = "the lost kingdom of Benwick"
+                KingdomName = "the lost kingdom of Benwick",
+                SecurityQuestionType = SecurityQuestionType.NameOfYourFirstPet,
+                AnswerToQuestion = "pet"
             };
             var userTest = new User()
             {
@@ -243,7 +258,9 @@ namespace DotNetTribesTests.Unit
                 Username = "Hrnik",
                 Email = "email@email.dummy",
                 Password = "short",
-                KingdomName = "the lost kingdom of Benwick"
+                KingdomName = "the lost kingdom of Benwick",
+                SecurityQuestionType = SecurityQuestionType.NameOfYourFirstPet,
+                AnswerToQuestion = "pet"
             };
             var userTest = new User()
             {

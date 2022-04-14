@@ -35,10 +35,10 @@ public class TroopServiceTest
                 },
                 new Building
                 {
-                BuildingId = 3,
-                KingdomId = 1,
-                Type = BuildingType.TownHall
-            },
+                    BuildingId = 3,
+                    KingdomId = 1,
+                    Type = BuildingType.TownHall
+                },
             },
             Troops = new List<Troop>(),
             Resources = new List<Resource>
@@ -68,7 +68,8 @@ public class TroopServiceTest
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
 
-        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object);
+        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object,
+            resourceServiceMock.Object);
         var exception = Record.Exception(() => controller.TrainTroops(1, new TroopRequestDTO
         {
             NumberOfTroops = 1
@@ -140,7 +141,8 @@ public class TroopServiceTest
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
 
-        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object);
+        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object,
+            resourceServiceMock.Object);
         var exception = Record.Exception(() => controller.TrainTroops(1, new TroopRequestDTO
         {
             NumberOfTroops = 1
@@ -212,7 +214,8 @@ public class TroopServiceTest
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
 
-        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object);
+        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object,
+            resourceServiceMock.Object);
         var exception = Record.Exception(() => controller.TrainTroops(1, new TroopRequestDTO
         {
             NumberOfTroops = 1
@@ -281,7 +284,9 @@ public class TroopServiceTest
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
 
-        var result = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object).TrainTroops(1, request);
+        var result =
+            new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object)
+                .TrainTroops(1, request);
 
         var expectedSoldier1 = new Troop
         {
@@ -347,7 +352,9 @@ public class TroopServiceTest
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IResourceService> resourceServiceMock = new Mock<IResourceService>();
 
-        var result = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object).GetKingdomTroops(1);
+        var result =
+            new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object)
+                .GetKingdomTroops(1);
 
         Assert.Empty(result.Troops);
     }
@@ -389,7 +396,9 @@ public class TroopServiceTest
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IResourceService> resourceServiceMock = new Mock<IResourceService>();
 
-        var result = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object).GetKingdomTroops(1);
+        var result =
+            new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object)
+                .GetKingdomTroops(1);
 
         Assert.Single(result.Troops);
         Assert.Equal(1, result.Troops[0].KingdomId);
@@ -448,7 +457,8 @@ public class TroopServiceTest
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IResourceService> resourceServiceMock = new Mock<IResourceService>();
 
-        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object);
+        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object,
+            resourceServiceMock.Object);
         var exception = Record.Exception(() => controller.UpgradeTroops(1, new TroopUpgradeRequestDTO
         {
             TroopIds = new List<long>
@@ -508,7 +518,8 @@ public class TroopServiceTest
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IResourceService> resourceServiceMock = new Mock<IResourceService>();
 
-        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object);
+        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object,
+            resourceServiceMock.Object);
         var exception = Record.Exception(() => controller.UpgradeTroops(1, new TroopUpgradeRequestDTO
         {
             TroopIds = new List<long>
@@ -579,7 +590,8 @@ public class TroopServiceTest
 
         ruleServiceMock.Setup(x => x.TroopPrice(2)).Returns(50);
 
-        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object);
+        var controller = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object,
+            resourceServiceMock.Object);
         var exception = Record.Exception(() => controller.UpgradeTroops(1, new TroopUpgradeRequestDTO
         {
             TroopIds = new List<long>
@@ -655,13 +667,15 @@ public class TroopServiceTest
         ruleServiceMock.Setup(x => x.TroopBuildingTime(2, 1)).Returns(60);
         timeServiceMock.Setup(x => x.GetCurrentSeconds()).Returns(0);
 
-        var result = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object).UpgradeTroops(1, new TroopUpgradeRequestDTO
-        {
-            TroopIds = new List<long>
-            {
-                1
-            }
-        });
+        var result =
+            new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object)
+                .UpgradeTroops(1, new TroopUpgradeRequestDTO
+                {
+                    TroopIds = new List<long>
+                    {
+                        1
+                    }
+                });
 
         Assert.Equal(1, result.Troops[0].TroopId);
         Assert.Equal(1, result.Troops[0].KingdomId);
@@ -699,10 +713,10 @@ public class TroopServiceTest
             {
                 new Building
                 {
-                   Type = BuildingType.Farm,
-                   BuildingId = 1,
-                   KingdomId = 1,
-                   Level = 1
+                    Type = BuildingType.Farm,
+                    BuildingId = 1,
+                    KingdomId = 1,
+                    Level = 1
                 }
             },
             Resources = new List<Resource>
@@ -736,9 +750,10 @@ public class TroopServiceTest
 
         timeServiceMock.Setup(x => x.GetCurrentSeconds()).Returns(60);
 
-        var ts = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object, resourceServiceMock.Object);
+        var ts = new TroopService(context, ruleServiceMock.Object, timeServiceMock.Object,
+            resourceServiceMock.Object);
         ts.UpdateTroops(1);
-        
+
         Assert.True(context.Troops.Single(t => t.KingdomId == 1).ConsumingFood);
     }
 }

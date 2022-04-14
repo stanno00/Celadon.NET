@@ -28,24 +28,22 @@ public class ResourceServiceTest
             UpdatedAt = 69857,
             ResourceId = 1
         });
-            
+
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
         var resourceService = new ResourceService(context, timeServiceMock.Object, ruleServiceMock.Object);
 
 
         var resources = resourceService.GetKingdomResources(0);
-        
+
         Assert.Empty(resources.Resources);
         Assert.NotNull(resources);
-
     }
-    
+
     [Fact]
     public void ResourceService_GetKingdomResources_correctValues()
     {
         var options = new DbContextOptionsBuilder<ApplicationContext>()
-
             .UseInMemoryDatabase("Resource Database")
             .Options;
 
@@ -59,14 +57,14 @@ public class ResourceServiceTest
             UpdatedAt = 69857,
             ResourceId = 1
         });
-            
+
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IRulesService> rulesServiceMock = new Mock<IRulesService>();
         var resourceService = new ResourceService(context, timeServiceMock.Object, rulesServiceMock.Object);
 
 
         var resources = resourceService.GetKingdomResources(1);
-            
+
         Assert.NotEmpty(resources.Resources);
         Assert.NotNull(resources);
         Assert.Equal(80, resources.Resources.ToArray()[0].Amount);

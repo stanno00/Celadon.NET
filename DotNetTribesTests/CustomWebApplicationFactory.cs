@@ -24,10 +24,7 @@ public class CustomWebApplicationFactory<TStartup>
             services.Remove(descriptor);
             string dbname = Guid.NewGuid().ToString();
 
-            services.AddDbContext<ApplicationContext>(options =>
-            {
-                options.UseInMemoryDatabase(dbname);
-            });
+            services.AddDbContext<ApplicationContext>(options => { options.UseInMemoryDatabase(dbname); });
 
             var sp = services.BuildServiceProvider();
 
@@ -48,6 +45,15 @@ public class CustomWebApplicationFactory<TStartup>
                     AcademyLevelOneCost = 150,
                     AcademyLevelNCost = 100,
                     TroopAllLevelsCost = 25,
+                    MarketplaceLevelOneCost = 1,
+                    MarketplaceAllLevelsCost = 100,
+                    UniversityAllLevelCost = 300,
+                    TroopsTrainSpeedCost = 10,
+                    BuildingBuildSpeedCost = 10,
+                    MineProduceBonusCost = 10,
+                    FarmProduceBonusCost = 10,
+                    AllTroopsDefBonusCost = 10,
+                    AllTroopsAtkBonusCost = 10,
                     TownhallLevelOneDuration = 120,
                     TownhallLevelNDuration = 60,
                     FarmAllLevelsDuration = 60,
@@ -57,15 +63,32 @@ public class CustomWebApplicationFactory<TStartup>
                     AcademyLevelOneDuration = 90,
                     AcademyLevelNDuration = 60,
                     TroopAllLevelsDuration = 30,
+                    MarketplaceLevelOneDuration = 1,
+                    MarketplaceAllLevelsDuration = 10,
+                    UniversityAllLevelDuration = 10,
+                    TroopsTrainSpeedDuration = 10,
+                    BuildingBuildSpeedDuration = 10,
+                    MineProduceBonusDuration = 10,
+                    FarmProduceBonusDuration = 10,
+                    AllTroopsDefBonusDuration = 10,
+                    AllTroopsAtkBonusDuration = 10,
+                    MarketplaceMaxResources = 75,
                     TownhallHP = 200,
                     FarmHP = 100,
                     MineHP = 100,
                     AcademyHP = 150,
                     TroopHP = 20,
+                    MarketplaceHP = 100,
+                    UniversityHP = 200,
+                    TroopFoodConsumption = 2,
+                    TroopAttack = 10,
+                    TroopDefense = 5,
+                    TroopCapacity = 2,
+                    StorageLimit = 100,
                     MapBoundariesX = 101,
                     MapBoundariesY = 101
                 });
-                
+
                 db.Users.Add(new User()
                 {
                     Email = "realEmail@Test.dummy",
@@ -84,7 +107,7 @@ public class CustomWebApplicationFactory<TStartup>
                     },
                     KingdomId = 1
                 });
-                
+
                 db.Users.Add(new User()
                 {
                     Email = "SecondrealEmail@Test.dummy",

@@ -24,16 +24,16 @@ public class BuildingServiceTest
             .Options;
 
         var context = new ApplicationContext(optionsBuilder);
-        
+
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
         var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
         var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
-        
+
         Assert.Equal("Building type required.", exception.Message);
     }
-    
+
     [Fact]
     public void CreateNewBuilding_WithIncorrectInputString_ThrowsException()
     {
@@ -46,16 +46,16 @@ public class BuildingServiceTest
             .Options;
 
         var context = new ApplicationContext(optionsBuilder);
-        
+
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
         var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
         var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
-        
+
         Assert.Equal("Incorrect building type.", exception.Message);
     }
-    
+
     [Fact]
     public void CreateNewBuildingAcademy_WithoutFarm_ThrowsException()
     {
@@ -76,16 +76,16 @@ public class BuildingServiceTest
         };
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
-        
+
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
         var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
         var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
-        
+
         Assert.Equal("You need a farm to be able to construct an Academy.", exception.Message);
     }
-    
+
     [Fact]
     public void CreateNewBuildingAcademy_WithoutMine_ThrowsException()
     {
@@ -114,20 +114,20 @@ public class BuildingServiceTest
         };
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
-        
+
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
         var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
         var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
-        
+
         Assert.Equal("You need a mine to be able to construct an Academy.", exception.Message);
     }
 
     [Fact]
     public void CreateNewBuilding_WithInsufficientGold_ThrowsException()
     {
-         var request = new BuildingRequestDTO
+        var request = new BuildingRequestDTO
         {
             Type = "Townhall"
         };
@@ -153,14 +153,14 @@ public class BuildingServiceTest
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
         var requestedBuilding = BuildingType.TownHall;
-        ruleServiceMock.Setup(x => x.GetBuildingDetails(requestedBuilding, 1)).Returns(new BuildingDetailsDTO
+        ruleServiceMock.Setup(x => x.GetBuildingDetails(requestedBuilding, 1, 1)).Returns(new BuildingDetailsDTO
         {
             BuildingDuration = 60,
             BuildingHP = 50,
             BuildingPrice = 100
         });
         timeServiceMock.Setup(x => x.GetCurrentSeconds()).Returns(0);
-        
+
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
             .UseInMemoryDatabase("BuildingTest5")
             .Options;
@@ -169,10 +169,10 @@ public class BuildingServiceTest
 
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
-        
+
         var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
         var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
-        
+
         Assert.Equal("Gold needed.", exception.Message);
     }
 
@@ -205,14 +205,14 @@ public class BuildingServiceTest
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
         var requestedBuilding = BuildingType.TownHall;
-        ruleServiceMock.Setup(x => x.GetBuildingDetails(requestedBuilding, 1)).Returns(new BuildingDetailsDTO
+        ruleServiceMock.Setup(x => x.GetBuildingDetails(requestedBuilding, 1, 1)).Returns(new BuildingDetailsDTO
         {
             BuildingDuration = 60,
             BuildingHP = 50,
             BuildingPrice = 100
         });
         timeServiceMock.Setup(x => x.GetCurrentSeconds()).Returns(0);
-        
+
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
             .UseInMemoryDatabase("BuildingTest6")
             .Options;
@@ -232,20 +232,19 @@ public class BuildingServiceTest
             BuildingId = 1,
             KingdomId = 1
         };
-        
-        var result = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object).CreateNewBuilding(1, request);
-        
+
+        var result =
+            new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object).CreateNewBuilding(1,
+                request);
+
         Assert.Equal("TownHall", result.Type);
         Assert.Equal(expectedTownhall.Started_at, result.Started_at);
         Assert.Equal(expectedTownhall.Finished_at, result.Finished_at);
         Assert.Equal(expectedTownhall.Hp, result.Hp);
         Assert.Equal(expectedTownhall.Level, result.Level);
         Assert.Equal(100, KingdomGold.Amount);
-        
-
-
     }
-    
+
     [Fact]
     public void UpgradeBuilding_WithIncorrectID_ThrowsException()
     {
@@ -272,16 +271,16 @@ public class BuildingServiceTest
             .Options;
 
         var context = new ApplicationContext(optionsBuilder);
-        
+
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
-        
+
         var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
-        var exception = Record.Exception(() => controller.UpgradeBuilding(1,5));
-        
+        var exception = Record.Exception(() => controller.UpgradeBuilding(1, 5));
+
         Assert.Equal("Building does not exist!", exception.Message);
     }
-    
+
     [Fact]
     public void UpgradeBuilding_WithLowLevelTownhall_ThrowsException()
     {
@@ -316,16 +315,16 @@ public class BuildingServiceTest
             .Options;
 
         var context = new ApplicationContext(optionsBuilder);
-        
+
         context.Kingdoms.Add(kingdom);
         context.SaveChanges();
-        
+
         var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
-        var exception = Record.Exception(() => controller.UpgradeBuilding(1,2));
-        
+        var exception = Record.Exception(() => controller.UpgradeBuilding(1, 2));
+
         Assert.Equal("Townhall level is too low!", exception.Message);
     }
-    
+
     [Fact]
     public void UpgradeBuilding_WithInsufficientGold_ThrowsException()
     {
@@ -342,7 +341,7 @@ public class BuildingServiceTest
             Amount = 200,
             KingdomId = 1
         };
-        
+
         var kingdom = new Kingdom
         {
             KingdomId = 1,
@@ -369,7 +368,7 @@ public class BuildingServiceTest
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
-        ruleServiceMock.Setup(x => x.GetBuildingDetails(BuildingType.Farm, 2)).Returns(new BuildingDetailsDTO
+        ruleServiceMock.Setup(x => x.GetBuildingDetails(BuildingType.Farm, 2, 1)).Returns(new BuildingDetailsDTO
         {
             BuildingPrice = 200,
             BuildingHP = 200,
@@ -381,18 +380,18 @@ public class BuildingServiceTest
             .Options;
 
         var context = new ApplicationContext(optionsBuilder);
-        
+
         context.Kingdoms.Add(kingdom);
         kingdom.Resources.Add(kingdomFood);
         kingdom.Resources.Add(kingdomGold);
         context.SaveChanges();
-        
+
         var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
-        var exception = Record.Exception(() => controller.UpgradeBuilding(1,2));
-        
+        var exception = Record.Exception(() => controller.UpgradeBuilding(1, 2));
+
         Assert.Equal("You don't have enough gold!", exception.Message);
     }
-    
+
     [Fact]
     public void UpgradeBuilding_WithCorrectInput_ReturnsCorrectBuilding()
     {
@@ -409,7 +408,7 @@ public class BuildingServiceTest
             Amount = 200,
             KingdomId = 1
         };
-        
+
         var kingdom = new Kingdom
         {
             KingdomId = 1,
@@ -437,8 +436,8 @@ public class BuildingServiceTest
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
         timeServiceMock.Setup(x => x.GetCurrentSeconds()).Returns(0);
-        
-        ruleServiceMock.Setup(x => x.GetBuildingDetails(BuildingType.Farm, 2)).Returns(new BuildingDetailsDTO
+
+        ruleServiceMock.Setup(x => x.GetBuildingDetails(BuildingType.Farm, 2, 1)).Returns(new BuildingDetailsDTO
         {
             BuildingPrice = 200,
             BuildingHP = 200,
@@ -450,7 +449,7 @@ public class BuildingServiceTest
             .Options;
 
         var context = new ApplicationContext(optionsBuilder);
-        
+
         context.Kingdoms.Add(kingdom);
         kingdom.Resources.Add(kingdomFood);
         kingdom.Resources.Add(kingdomGold);
@@ -465,13 +464,13 @@ public class BuildingServiceTest
             Level = 2,
             Type = "Farm"
         };
-        var result = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object).UpgradeBuilding(1, 2);
-        
+        var result =
+            new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object).UpgradeBuilding(1, 2);
+
         Assert.Equal(expectedResult.Started_at, result.Started_at);
         Assert.Equal(expectedResult.Finished_at, result.Finished_at);
         Assert.Equal(expectedResult.Hp, result.Hp);
         Assert.Equal(expectedResult.Id, result.Id);
         Assert.Equal(expectedResult.Type, result.Type);
     }
-    
 }

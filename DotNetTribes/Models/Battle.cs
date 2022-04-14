@@ -13,5 +13,6 @@ namespace DotNetTribes.Models
         public int GoldStolen { get; set; }
         public int LostTroopsDefender { get; set; }
         public int LostTroopsAttacker { get; set; }
+        public bool ResourcesDeliveredToWinner { get; set; }
     }
 }

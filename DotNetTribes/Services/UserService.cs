@@ -13,6 +13,7 @@ using DotNetTribes.Models;
 using DotNetTribes.RegistrationExceptions;
 using FluentEmail.Core;
 using FluentEmail.Core.Defaults;
+using FluentEmail.Core.Interfaces;
 using FluentEmail.Smtp;
 using Microsoft.EntityFrameworkCore;
 
@@ -229,7 +230,7 @@ namespace DotNetTribes.Services
 
         public ForgotPasswordResponseDto ForgottenPassword(string username, ForgotPasswordRequestDto userInformation)
         {
-            var user = _applicationContext.Users.Include(u=>u.SecurityQuestion)
+            var user = _applicationContext.Users.Include(u => u.SecurityQuestion)
                 .FirstOrDefault(u => u.Username == username);
 
             if (user == null)
@@ -241,7 +242,7 @@ namespace DotNetTribes.Services
             {
                 throw new LoginException("Incorrect email");
             }
-            
+
             var question = user.SecurityQuestion;
             if (userInformation.AnswerSecretQuestion == null)
             {
@@ -251,7 +252,7 @@ namespace DotNetTribes.Services
                 };
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(userInformation.AnswerSecretQuestion,question.Answer))
+            if (!BCrypt.Net.BCrypt.Verify(userInformation.AnswerSecretQuestion, question.Answer))
             {
                 throw new LoginException("Answer to your secret question is not correct");
             }
@@ -276,33 +277,44 @@ namespace DotNetTribes.Services
                 .Substring(0, 10);
         }
 
-        private async Task SendEmail(string userEmail, string username, string newPassword)
+        private static async Task SendEmail(string userEmail, string username, string newPassword)
         {
-            var secretPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
-            var sender = new SmtpSender(() => new SmtpClient("smtp.gmail.com")
-            {
-                UseDefaultCredentials = false,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                Port = 587, // for gmail
-                Credentials = new NetworkCredential("ViridiVulpesC@gmail.com", secretPassword),
-            });
-
-            StringBuilder template = new StringBuilder();
-            template.AppendLine($"Dear {username},");
-            template.AppendLine("<p> You can continue to conquer kingdoms. </p>");
-            template.AppendLine($"<p> Your new password is {newPassword}");
-            template.AppendLine("With love support team");
+            var sender = CreateSender();
+            var template = CreateTemplate(username, newPassword);
 
             Email.DefaultSender = sender;
             Email.DefaultRenderer = new ReplaceRenderer();
 
             var email = await Email
                 .From("ViridiVulpesC@gmail.com")
-                .To(userEmail) 
+                .To(userEmail)
                 .Subject("Hello")
                 .UsingTemplate(template.ToString(), new { })
                 .SendAsync();
+        }
+
+        private static StringBuilder CreateTemplate(string username, string newPassword)
+        {
+            var template = new StringBuilder();
+            template.AppendLine($"Dear {username},");
+            template.AppendLine("<p> You can continue to conquer kingdoms. </p>");
+            template.AppendLine($"<p> Your new password is {newPassword}");
+            template.AppendLine("With love support team");
+            
+            return template;
+        }
+
+        private static ISender CreateSender()
+        {
+            var secretPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
+            return new SmtpSender(() => new SmtpClient("smtp.gmail.com")
+            {
+                UseDefaultCredentials = false,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                Port = 587,
+                Credentials = new NetworkCredential("ViridiVulpesC@gmail.com", secretPassword),
+            });
         }
 
         public void ChangePassword(string username, PasswordRequestDto passwordRequestDto)

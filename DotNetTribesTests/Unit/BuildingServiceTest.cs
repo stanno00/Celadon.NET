@@ -153,8 +153,7 @@ public class BuildingServiceTest
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
         var requestedBuilding = BuildingType.TownHall;
-
-        ruleServiceMock.Setup(x => x.GetBuildingDetails(requestedBuilding, 1, 1)).Returns(new BuildingDetailsDTO
+        ruleServiceMock.Setup(x => x.GetBuildingDetails(requestedBuilding, 1,1)).Returns(new BuildingDetailsDTO
         {
             BuildingDuration = 60,
             BuildingHP = 50,

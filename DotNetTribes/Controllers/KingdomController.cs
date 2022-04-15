@@ -19,12 +19,14 @@ namespace DotNetTribes.Controllers
         private readonly IBuildingsService _buildingsService;
         private readonly IResourceService _resourceService;
         private readonly ITroopService _troopService;
+        private readonly IBattleService _battleService;
         private readonly IUpgradeService _upgradeService;
 
-        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService, ITroopService troopService, IResourceService resourceService, IUpgradeService upgradeService)
+        public KingdomController(IKingdomService kingdomService, IJwtService jwtService, IBuildingsService buildingsService, ITroopService troopService, IResourceService resourceService, IUpgradeService upgradeService, IBattleService battleService)
         {
             _resourceService = resourceService;
             _upgradeService = upgradeService;
+            _battleService = battleService;
             _kingdomService = kingdomService;
             _jwtService = jwtService;
             _buildingsService = buildingsService;
@@ -175,6 +177,17 @@ namespace DotNetTribes.Controllers
             var result = _troopService.UpgradeTroops(kingdomId, request);
 
             return new OkObjectResult(result);
+        }
+
+        [Authorize]
+        [HttpPost("battle/{enemyKingdomId}")]
+        // using TroopUpgradeRequestDTO (list of troops ids) so i dont have to create another DTO.
+        public ActionResult<Battle> Attack([FromBody] TroopUpgradeRequestDTO troopUpgradeRequestDto,
+            [FromRoute] int enemyKingdomId, [FromHeader] string authorization)
+        {
+            var myKingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
+            var battle = _battleService.InitializeBattle(myKingdomId, enemyKingdomId, troopUpgradeRequestDto);
+            return new OkObjectResult(battle);
         }
 
         [Authorize]

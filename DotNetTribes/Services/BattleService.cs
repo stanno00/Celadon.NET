@@ -91,25 +91,15 @@ namespace DotNetTribes.Services
                 // Getting both armies and their count
                 var defenderTroops = _troopService.GetReadyTroops(battle.DefenderId);
                 var defenderArmyCountBeforeBattle = defenderTroops.Count;
+
                 var attackerTroops = _applicationContext.Troops.Where(t => t.BattleId == battle.BattleId).ToList();
                 var attackerTroopsCountBeforeBattle = attackerTroops.Count;
+
                 var defenderFoodAmountBeforeBattle = _resourceService.GetResourceAmount(battle.DefenderId, ResourceType.Food);
                 var defenderGoldAmountBeforeBattle = _resourceService.GetResourceAmount(battle.DefenderId, ResourceType.Gold);
 
                 // Determine the battle winner and remove dead troops from either list and database
-                while (attackerTroops.Any() && defenderTroops.Any())
-                {
-                    var defeatedTroop = Fight(attackerTroops[0], defenderTroops[0]);
-                    if (defeatedTroop == attackerTroops[0])
-                    {
-                        attackerTroops.Remove(defeatedTroop);
-                    }
-
-                    defenderTroops.Remove(defeatedTroop);
-                    _applicationContext.Troops.Remove(defeatedTroop);
-                }
-
-                var winner = attackerTroops.Count == 0 ? battle.DefenderId : battle.AttackerId;
+                var winner = ResolveBattleAndGetWinner(attackerTroops, defenderTroops, battle);                
 
                 // Calculating troop losses
                 var attackerLostTroops = attackerTroopsCountBeforeBattle - attackerTroops.Count;
@@ -132,6 +122,24 @@ namespace DotNetTribes.Services
             }
 
             return null;
+        }
+
+        private int ResolveBattleAndGetWinner(List<Troop> attackerTroops, List<Troop> defenderTroops, Battle battle)
+        {
+            while (attackerTroops.Any() && defenderTroops.Any())
+            {
+                var defeatedTroop = Fight(attackerTroops[0], defenderTroops[0]);
+                if (defeatedTroop == attackerTroops[0])
+                {
+                    attackerTroops.Remove(defeatedTroop);
+                }
+
+                defenderTroops.Remove(defeatedTroop);
+                _applicationContext.Troops.Remove(defeatedTroop);
+            }
+
+            return attackerTroops.Count == 0 ? battle.DefenderId : battle.AttackerId;
+
         }
 
         // Fight between 2 troops
@@ -199,8 +207,6 @@ namespace DotNetTribes.Services
                 {
                     resource.Amount = 0;
                 }
-                
-                
             }
             _applicationContext.SaveChanges();
         }

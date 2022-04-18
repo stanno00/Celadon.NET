@@ -57,8 +57,10 @@ namespace DotNetTribes.Services
             {
                 var food = kingdomResources.Single(r => r.Type == ResourceType.Food);
                 food.Amount += battle.FoodStolen;
+
                 var gold = kingdomResources.Single(r => r.Type == ResourceType.Gold);
                 gold.Amount += battle.GoldStolen;
+
                 battle.ResourcesDeliveredToWinner = true;
             }
 

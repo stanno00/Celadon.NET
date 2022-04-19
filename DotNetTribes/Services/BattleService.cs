@@ -17,7 +17,12 @@ namespace DotNetTribes.Services
         private readonly IKingdomService _kingdomService;
         private readonly IResourceService _resourceService;
 
-        public BattleService(ApplicationContext applicationContext, ITroopService troopService, IRulesService rulesService, ITimeService timeService, IKingdomService kingdomService, IResourceService resourceService)
+        public BattleService(ApplicationContext applicationContext, 
+            ITroopService troopService, 
+            IRulesService rulesService, 
+            ITimeService timeService, 
+            IKingdomService kingdomService, 
+            IResourceService resourceService)
         {
             _applicationContext = applicationContext;
             _troopService = troopService;
@@ -139,7 +144,6 @@ namespace DotNetTribes.Services
             }
 
             return attackerTroops.Count == 0 ? battle.DefenderId : battle.AttackerId;
-
         }
 
         // Fight between 2 troops

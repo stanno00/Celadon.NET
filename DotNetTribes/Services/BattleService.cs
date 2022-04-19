@@ -53,6 +53,11 @@ namespace DotNetTribes.Services
 
         public Battle InitializeBattle(int attackerKingdomId, int defenderKingdomId, TroopUpgradeRequestDTO troopsRequestedForBattleDto)
         {
+            if (_applicationContext.Kingdoms.FirstOrDefault(k => k.KingdomId == defenderKingdomId) == null)
+            {
+                throw new KingdomNotFoundException("Targeted kingdom does not exist!");
+            }
+            
             var attackerTroops = ValidatedTroopsForBattle(attackerKingdomId, troopsRequestedForBattleDto);
             // Getting kingdoms to calculate distance and time for attack
             var attackingKingdom = _applicationContext.Kingdoms.Single(k => k.KingdomId == attackerKingdomId);

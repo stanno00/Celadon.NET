@@ -199,8 +199,7 @@ public class BattleServiceTest
                 Level = 1,
                 TroopId = i + 200,
                 KingdomId = 2,
-                TroopHP = 20,
-                FinishedAt = 1
+                TroopHP = 20
             };
             context.Troops.Add(troop);
 
@@ -238,6 +237,8 @@ public class BattleServiceTest
             .Returns(context.Troops
                 .Where(t => t.KingdomId == defenderKingdom.KingdomId)
                 .ToList);
+        
+        timeServiceMock.Setup(t => t.GetCurrentSeconds()).Returns(20);
 
         ruleServiceMock.Setup(r => r.TroopAttack(1, 1)).Returns(30);
         ruleServiceMock.Setup(r => r.TroopAttack(1, 2)).Returns(0);

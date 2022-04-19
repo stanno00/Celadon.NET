@@ -27,7 +27,7 @@ namespace DotNetTribes.Controllers
         }
 
         [HttpPut("/user/password/{username}")]
-        public AcceptedResult ForgotPassword([FromRoute] string username,
+        public ActionResult ForgotPassword([FromRoute] string username,
             [FromBody] ForgotPasswordRequestDto userInformation)
         {
             var newPassword = _userService.ForgottenPassword(username, userInformation);

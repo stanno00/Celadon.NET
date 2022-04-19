@@ -169,7 +169,7 @@ namespace DotNetTribes.Services
         }
 
         //Calculating damage done with each attack
-        private int DamageDone(Troop troopAttacking, Troop troopDefending)
+        public int DamageDone(Troop troopAttacking, Troop troopDefending)
         {
             var hitChance = new Random().Next(100);
             if (hitChance < 30)
@@ -181,13 +181,14 @@ namespace DotNetTribes.Services
             if (criticalChance > 85)
             {
                 var doubleDamage = _rulesService.TroopAttack(troopAttacking.Level, troopAttacking.KingdomId) * 2 
-                                   - _rulesService.TroopDefense(troopDefending.Level, troopAttacking.KingdomId);
+                                   - _rulesService.TroopDefense(troopDefending.Level, troopDefending.KingdomId);
                 return doubleDamage;
             }
 
             var damage = _rulesService.TroopAttack(troopAttacking.Level, troopAttacking.KingdomId) 
-                         - _rulesService.TroopDefense(troopDefending.Level, troopAttacking.KingdomId);
-            return damage;
+                         - _rulesService.TroopDefense(troopDefending.Level, troopDefending.KingdomId);
+
+            return damage < 0 ? 0 : damage;
         }
 
         private void StealResources(IEnumerable<Troop> attackerTroops, int kingdomId)

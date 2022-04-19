@@ -95,15 +95,17 @@ public class BattleServiceTest
 
         var context = new ApplicationContext(options);
 
-        var troops = context.Troops.Add(new Troop
-        {
-            TroopId = 1,
-            KingdomId = 1
-        });
-
         var attackerKingdom = context.Kingdoms.Add(new Kingdom()
         {
-            KingdomId = 1
+            KingdomId = 1,
+            Troops = new List<Troop>()
+            {
+                new Troop
+                {
+                    TroopId = 1,
+                    KingdomId = 1
+                }
+            }
         });
         
         var defenderKingdom = context.Kingdoms.Add(new Kingdom()
@@ -137,7 +139,7 @@ public class BattleServiceTest
             resourceServiceMock.Object);
 
         troopServiceMock.Setup(t => t.GetReadyTroops(attackerKingdom.Entity.KingdomId))
-            .Returns(new List<Troop> {troops.Entity});
+            .Returns((List<Troop>) attackerKingdom.Entity.Troops);
 
         var incorrectTroops = Record.Exception(() => battleService.InitializeBattle(attackerKingdom.Entity.KingdomId, defenderKingdom.Entity.KingdomId,
             incorrectTroopsToValidate));
@@ -231,13 +233,6 @@ public class BattleServiceTest
             timeServiceMock.Object,
             kingDomServiceMock.Object,
             resourceServiceMock.Object);
-
-        timeServiceMock.Setup(t => t.GetCurrentSeconds()).Returns(20);
-        
-        kingDomServiceMock.Setup(k => k.ShortestPath(attackerKingdom.KingdomX,
-            attackerKingdom.KingdomY,
-            defenderKingdom.KingdomX,
-            defenderKingdom.KingdomY)).Returns(2);
 
         troopServiceMock.Setup(t => t.GetReadyTroops(battle.DefenderId))
             .Returns(context.Troops

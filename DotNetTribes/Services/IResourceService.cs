@@ -1,5 +1,6 @@
 using DotNetTribes.DTOs;
 using DotNetTribes.DTOs.Trade;
+using DotNetTribes.Enums;
 using DotNetTribes.Models;
 
 namespace DotNetTribes.Services
@@ -12,5 +13,6 @@ namespace DotNetTribes.Services
         Offer ValidateCreateTradeOffer(int id, TradeRequestDTO tradeRequestDto);
         AcceptOfferResponseDTO AcceptOffer(int id, int offerId);
         void UpdateOffers();
+        int GetResourceAmount(int kingdomId, ResourceType resourceType);
     }
 }

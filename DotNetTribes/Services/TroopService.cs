@@ -127,6 +127,7 @@ namespace DotNetTribes.Services
                         Level = 1,
                         Attack = 20,
                         Defense = 0,
+                        TroopHP = _rules.TroopHp(1),
                         Capacity = _rules.TroopCapacity(1),
                         ConsumingFood = false,
                         KingdomId = kingdomId
@@ -150,6 +151,7 @@ namespace DotNetTribes.Services
                         Level = 1,
                         Attack = 0,
                         Defense = 1,
+                        TroopHP = _rules.TroopHp(1),
                         Capacity = _rules.TroopCapacity(1),
                         ConsumingFood = false,
                         KingdomId = kingdomId
@@ -169,6 +171,7 @@ namespace DotNetTribes.Services
                     /*troopsInProgress.Count == 0 ? _timeService.GetCurrentSeconds() + i * _rules.TroopBuildingTime(1) : troopsInProgress.Last().FinishedAt + i * _rules.TroopBuildingTime(1)*/
                     FinishedAt = GetTroopFinishTime(troopsInProgress, 1, kingdomId),
                     Level = 1,
+                    TroopHP = _rules.TroopHp(1),
                     Attack = _rules.TroopAttack(1, kingdomId),
                     Defense = _rules.TroopDefense(1, kingdomId),
                     Capacity = _rules.TroopCapacity(1),
@@ -208,6 +211,7 @@ namespace DotNetTribes.Services
                 troop.Level = level;
                 //create a function for this
                 troop.StartedAt = GetTroopStartTime(troopsInProgress);
+                troop.TroopHP = _rules.TroopHp(level);
                 troop.FinishedAt = GetTroopFinishTime(troopsInProgress, level, kingdomId);
                 troop.Attack = _rules.TroopAttack(level, kingdomId);
                 troop.Defense = _rules.TroopDefense(level, kingdomId);
@@ -361,6 +365,27 @@ namespace DotNetTribes.Services
             }
 
             return _timeService.GetCurrentSeconds() + _rules.TroopBuildingTime(level, kingdomId);
+        }
+
+        public List<Troop> GetReadyTroops(int kingdomId)
+        {
+            return _applicationContext.Troops
+                .Where(t => t.KingdomId == kingdomId && t.FinishedAt < _timeService.GetCurrentSeconds() && t.BattleId == 0)
+                .ToList();
+        }
+        
+        public void ReturnTroopsFromBattle()
+        {
+            var troopsAwayFromKingdoms = _applicationContext.Troops
+                .Where(t => t.BattleId != 0)
+                .ToList();
+
+            foreach (var troop in troopsAwayFromKingdoms.Where(troop => troop.ReturnedFromBattleAt < _timeService.GetCurrentSeconds()))
+            {
+                troop.BattleId = 0;
+            }
+
+            _applicationContext.SaveChanges();
         }
     }
 }

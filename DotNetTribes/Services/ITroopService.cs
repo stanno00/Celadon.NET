@@ -1,4 +1,6 @@
-﻿using DotNetTribes.DTOs.Troops;
+﻿using System.Collections.Generic;
+using DotNetTribes.DTOs.Troops;
+using DotNetTribes.Models;
 
 namespace DotNetTribes.Services
 {
@@ -10,6 +12,11 @@ namespace DotNetTribes.Services
         public void UpdateTroops(int kingdomId);
 
         public KingdomTroopsDTO UpgradeTroops(int kingdomId, TroopUpgradeRequestDTO request);
+
+        List<Troop> GetReadyTroops(int kingdomId);
         TroopResponseDTO TrainSpecialTroops(int kingdomId,TroopRequestDTO request);
+
+        void ReturnTroopsFromBattle();
+
     }
 }

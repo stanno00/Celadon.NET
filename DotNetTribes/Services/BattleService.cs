@@ -36,6 +36,11 @@ namespace DotNetTribes.Services
         // Checking if requested troops are available in the attacking kingdom and if so add them to a new list
         private IEnumerable<Troop> ValidatedTroopsForBattle(int kingdomId, TroopUpgradeRequestDTO troopsRequestedForBattleDto)
         {
+            if (!troopsRequestedForBattleDto.TroopIds.Any())
+            {
+                throw new TroopCreationException("Wrong troop ids");
+            }
+            
             var attackerReadyTroops = _troopService.GetReadyTroops(kingdomId);
             
             var attackerBattleTroops = new List<Troop>();

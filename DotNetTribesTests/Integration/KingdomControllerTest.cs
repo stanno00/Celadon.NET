@@ -84,5 +84,20 @@ namespace DotNetTribesTests.Integration
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
         }
+
+        [Fact]
+        public void KingdomController_GetBuildings_ReturnListOfBuildings()
+        {
+            using var client = new CustomWebApplicationFactory<Startup>().CreateClient();
+            var jwtServiceTest = new JwtService();
+            var token = jwtServiceTest.CreateToken("Hrnik", "1");
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = client.GetAsync("/kingdom/buildings").Result;
+            var responseString = response.Content.ReadAsStringAsync().Result;
+            List<Building> emptyList = new List<Building>();
+            
+            Assert.Equal("{\"buildings\":[]}", responseString);
+        }
     }
 }

@@ -74,9 +74,9 @@ namespace DotNetTribes.Services
                 }
             }
 
-            var hasAcademy = kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy);
+            var kingdomAcademy = kingdom.Buildings.FirstOrDefault(b => b.Type == BuildingType.Academy);
 
-            if (requestedBuilding is BuildingType.Marketplace or BuildingType.University && hasAcademy == null)
+            if (requestedBuilding is BuildingType.Marketplace or BuildingType.University && kingdomAcademy == null)
             {
                 throw new BuildingCreationException("Academy required");
             }

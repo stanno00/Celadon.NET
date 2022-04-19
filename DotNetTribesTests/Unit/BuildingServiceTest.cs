@@ -475,46 +475,62 @@ public class BuildingServiceTest
     }
 
     [Fact]
-    public void BuildingMarketplace_WithoutAcademy_ThrowsException()
+    public void CreateNewBuildingMarketplace_WithoutAcademy_ThrowsException()
     {
-        var kingdomGold = new Resource
+        var request = new BuildingRequestDTO
         {
-            Type = ResourceType.Gold,
-            Amount = 50,
-            KingdomId = 1
+            Type = "Marketplace"
         };
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("BuildingTest11")
+            .Options;
 
-        var kingdomFood = new Resource
-        {
-            Type = ResourceType.Food,
-            Amount = 200,
-            KingdomId = 1
-        };
+        var context = new ApplicationContext(optionsBuilder);
 
         var kingdom = new Kingdom
         {
             KingdomId = 1,
-            Buildings = new List<Building>
-            {
-                new Building
-                {
-                    Type = BuildingType.TownHall,
-                    BuildingId = 1,
-                    KingdomId = 1,
-                    Level = 2
-                },
-                new Building
-                {
-                    Type = BuildingType.Farm,
-                    BuildingId = 2,
-                    KingdomId = 1,
-                    Level = 1
-                }
-            },
-            Resources = new List<Resource>()
+            Buildings = new List<Building>()
         };
-        
+        context.Kingdoms.Add(kingdom);
+        context.SaveChanges();
+
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
+
+        var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
+        var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
+
+        Assert.Equal("Academy required", exception.Message);
+    }
+    
+    [Fact]
+    public void CreateNewBuildingUniversity_WithoutAcademy_ThrowsException()
+    {
+        var request = new BuildingRequestDTO
+        {
+            Type = "University"
+        };
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("BuildingTest12")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+
+        var kingdom = new Kingdom
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>()
+        };
+        context.Kingdoms.Add(kingdom);
+        context.SaveChanges();
+
+        Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+        Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
+
+        var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
+        var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
+
+        Assert.Equal("Academy required", exception.Message);
     }
 }

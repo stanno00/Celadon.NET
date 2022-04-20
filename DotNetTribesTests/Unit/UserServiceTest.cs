@@ -276,5 +276,189 @@ namespace DotNetTribesTests.Unit
             Debug.Assert(exception != null, nameof(exception) + " != null");
             Assert.Equal("Email address is already taken.", exception.Message);
         }
+        
+        [Fact]
+        public void UserService_ForgottenPassword_ReturnErrorUserDoesNotExist()
+        {
+            //Arrange
+            Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+                .UseInMemoryDatabase("ReturnErrorUserDoesNotExist")
+                .Options;
+
+            var context = new ApplicationContext(optionsBuilder);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
+
+            var user = "non Existing user";
+            var userInformation = new ForgotPasswordRequestDto()
+            {
+                UserEmail = "fake Email",
+                AnswerSecretQuestion = "answer"
+            };
+            
+            //Act
+            var exception = Record.Exception(() => controller.ForgottenPassword(user,userInformation));
+            
+            //Assert
+            Assert.Equal("User with this name does not exist", exception.Message);
+        }
+        
+        [Fact]
+        public void UserService_ForgottenPassword_ReturnErrorIncorrectEmail()
+        {
+            //Arrange
+            Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+                .UseInMemoryDatabase("IncorrectEmail")
+                .Options;
+
+            var context = new ApplicationContext(optionsBuilder);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
+
+            context.Users.Add(new User()
+            {
+                Username = "Jerzy",
+                Email = "test@email.com"
+            });
+
+            context.SaveChanges();
+            
+            var user = "Jerzy";
+            var userInformation = new ForgotPasswordRequestDto()
+            {
+                UserEmail = "fake Email",
+                AnswerSecretQuestion = "answer"
+            };
+            
+            //Act
+            var exception = Record.Exception(() => controller.ForgottenPassword(user,userInformation));
+            
+            //Assert
+            Assert.Equal("Incorrect email", exception.Message);
+        }
+        
+        [Fact]
+        public void UserService_ForgottenPassword_ReturnQuestion()
+        {
+            //Arrange
+            Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+                .UseInMemoryDatabase("ReturnQuestion")
+                .Options;
+
+            var context = new ApplicationContext(optionsBuilder);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
+
+            context.Users.Add(new User()
+            {
+                Username = "Jerzy",
+                Email = "test@email.com",
+                SecurityQuestion = new SecurityQuestion()
+                {
+                    Answer = "Answer to the question",
+                    TheQuestion = SecurityQuestionType.CityYouWhereBornIn,
+                    SecurityQuestionId = 1
+                }
+            });
+
+            context.SaveChanges();
+            
+            var user = "Jerzy";
+            var userInformation = new ForgotPasswordRequestDto()
+            {
+                UserEmail = "test@email.com",
+            };
+            
+            //Act
+            var result = controller.ForgottenPassword(user,userInformation);
+                
+            //Assert
+            Assert.Equal(SecurityQuestionType.CityYouWhereBornIn.ToString(), result.SecretQuestion.ToString());
+        }
+        
+        [Fact]
+        public void UserService_ForgottenPassword_ReturnErrorIncorrectAnswer()
+        {
+            //Arrange
+            Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+                .UseInMemoryDatabase("IncorrectAnswer")
+                .Options;
+
+            var context = new ApplicationContext(optionsBuilder);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
+
+            context.Users.Add(new User()
+            {
+                Username = "Jerzy",
+                Email = "test@email.com",
+                SecurityQuestion = new SecurityQuestion()
+                {
+                    Answer = "$2a$11$pUwFwVARcS52cQoqvpj6j.u8BBa71a03EkHhbiXEAYJWBgiGzsexi",
+                    TheQuestion = SecurityQuestionType.CityYouWhereBornIn,
+                    SecurityQuestionId = 1
+                }
+            });
+
+            context.SaveChanges();
+            
+            var user = "Jerzy";
+            var userInformation = new ForgotPasswordRequestDto()
+            {
+                UserEmail = "test@email.com",
+                AnswerSecretQuestion = "wrong answer"
+            };
+            
+            //Act
+            var exception = Record.Exception(() => controller.ForgottenPassword(user,userInformation));
+            
+            //Assert
+            Assert.Equal("Answer to your secret question is not correct", exception.Message);
+        }
+        
+        [Fact]
+        public void UserService_ForgottenPassword_ReturnRandomPassword()
+        {
+            //Arrange
+            Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+            Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+                .UseInMemoryDatabase("ReturnRandomPassword")
+                .Options;
+
+            var context = new ApplicationContext(optionsBuilder);
+            var controller = new UserService(context,iRuleServiceMock.Object, iTimeServiceMock.Object);
+
+            context.Users.Add(new User()
+            {
+                Username = "Jerzy",
+                Email = "test@email.com",
+                SecurityQuestion = new SecurityQuestion()
+                {
+                    Answer = "$2a$11$pUwFwVARcS52cQoqvpj6j.u8BBa71a03EkHhbiXEAYJWBgiGzsexi",
+                    TheQuestion = SecurityQuestionType.CityYouWhereBornIn,
+                    SecurityQuestionId = 1
+                }
+            });
+
+            context.SaveChanges();
+            
+            var user = "Jerzy";
+            var userInformation = new ForgotPasswordRequestDto()
+            {
+                UserEmail = "test@email.com",
+                AnswerSecretQuestion = "R"
+            };
+            
+            //Act
+            var result = controller.ForgottenPassword(user,userInformation);
+                
+            //Assert
+            Assert.IsType<ForgotPasswordResponseDto>(result);
+        }
     }
 }

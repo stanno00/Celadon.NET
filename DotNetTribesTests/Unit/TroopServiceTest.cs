@@ -756,4 +756,159 @@ public class TroopServiceTest
 
         Assert.True(context.Troops.Single(t => t.KingdomId == 1).ConsumingFood);
     }
+
+    [Fact]
+    public void TroopService_TrainSpecialTroops_ReturnErrorWrongData()
+    {
+        //Arrange
+        Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+        Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+        Mock<IResourceService> iResourceServiceMock = new Mock<IResourceService>();
+
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ReturnErrorWrongData")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+        var controller = new TroopService(context, iRuleServiceMock.Object, iTimeServiceMock.Object,
+            iResourceServiceMock.Object);
+
+        var troopsRequest = new TroopRequestDTO()
+        {
+            Name = BlackSmithTroops.Scout,
+            NumberOfTroops = 0
+        };
+
+        //Act
+        var exception = Record.Exception(() => controller.TrainSpecialTroops(1, troopsRequest));
+
+        //Assert
+        Assert.Equal("Data not provided correctly", exception.Message);
+    }
+
+    [Fact]
+    public void TroopService_TrainSpecialTroops_ReturnErrorMissingBlacksmith()
+    {
+        //Arrange
+        Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+        Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+        Mock<IResourceService> iResourceServiceMock = new Mock<IResourceService>();
+
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ReturnErrorMissingBlacksmith")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+        var controller = new TroopService(context, iRuleServiceMock.Object, iTimeServiceMock.Object,
+            iResourceServiceMock.Object);
+
+        context.Kingdoms.Add(new Kingdom()
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>(),
+            Resources = new List<Resource>(),
+            Troops = new List<Troop>(),
+            BuildingUpgrade = new List<BuildingUpgrade>(),
+        });
+        context.SaveChanges();
+
+        var troopsRequest = new TroopRequestDTO()
+        {
+            Name = BlackSmithTroops.Scout,
+            NumberOfTroops = 1
+        };
+
+        //Act
+        var exception = Record.Exception(() => controller.TrainSpecialTroops(1, troopsRequest));
+
+        //Assert
+        Assert.Equal("You need an Blacksmith to be able to train troops.", exception.Message);
+    }
+
+    [Fact]
+    public void TroopService_TrainSpecialTroops_ReturnErrorMissingUpgrade()
+    {
+        //Arrange
+        Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+        Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+        Mock<IResourceService> iResourceServiceMock = new Mock<IResourceService>();
+
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ReturnErrorMissingUpgrade")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+        var controller = new TroopService(context, iRuleServiceMock.Object, iTimeServiceMock.Object,
+            iResourceServiceMock.Object);
+
+        context.Kingdoms.Add(new Kingdom()
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>()
+                {new Building() {KingdomId = 1, Type = BuildingType.Blacksmith, BuildingId = 1}},
+            Resources = new List<Resource>(),
+            Troops = new List<Troop>(),
+            BuildingUpgrade = new List<BuildingUpgrade>(),
+        });
+        context.SaveChanges();
+
+        var troopsRequest = new TroopRequestDTO()
+        {
+            Name = BlackSmithTroops.Scout,
+            NumberOfTroops = 1
+        };
+
+        //Act
+        var exception = Record.Exception(() => controller.TrainSpecialTroops(1, troopsRequest));
+
+        //Assert
+        Assert.Equal("You need to buy an upgrade inside Blacksmith to be able to train the troops.", exception.Message);
+    }
+
+    [Fact]
+    public void TroopService_TrainSpecialTroops_ReturnErrorNotFinished()
+    {
+        //Arrange
+        Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+        Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+        Mock<IResourceService> iResourceServiceMock = new Mock<IResourceService>();
+
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ReturnErrorNotFinished")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+        var controller = new TroopService(context, iRuleServiceMock.Object, iTimeServiceMock.Object,
+            iResourceServiceMock.Object);
+
+        context.Kingdoms.Add(new Kingdom()
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>()
+                {new Building() {KingdomId = 1, Type = BuildingType.Blacksmith, BuildingId = 1}},
+            Resources = new List<Resource>(),
+            Troops = new List<Troop>(),
+            BuildingUpgrade = new List<BuildingUpgrade>()
+            {
+                new BuildingUpgrade()
+                {
+                    Name = AllBuildingUpgrades.Scout, KingdomId = 1, BuildingUpgradeId = 1,
+                    FinishedAt = iTimeServiceMock.Object.GetCurrentSeconds() + 10
+                }
+            },
+        });
+        context.SaveChanges();
+
+        var troopsRequest = new TroopRequestDTO()
+        {
+            Name = BlackSmithTroops.Scout,
+            NumberOfTroops = 1
+        };
+
+        //Act
+        var exception = Record.Exception(() => controller.TrainSpecialTroops(1, troopsRequest));
+
+        //Assert
+        Assert.Equal("Your upgrade is not finished yet", exception.Message);
+    }
 }

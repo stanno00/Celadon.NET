@@ -1245,7 +1245,8 @@ public class UpgradeServiceTest
         Assert.True(upgrade3.AddedToKingdom);
         Assert.Equal(4, troop3.Attack);
     }
-
+    
+    [Fact]
     public void UpgradeService_AddUpgrade_ErrorUpgradeExist()
     {
         //Arrange

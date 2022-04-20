@@ -155,6 +155,24 @@ public class CustomWebApplicationFactory<TStartup>
                     KingdomId = 1,
                     Finished_at = 1649338811,
                 });
+                db.Buildings.Add(new Building()
+                {
+                    Hp = 100,
+                    Level = 1,
+                    Type = BuildingType.Marketplace,
+                    BuildingId = 6,
+                    KingdomId = 1,
+                    Finished_at = 1649338811,
+                });
+                db.Buildings.Add(new Building()
+                {
+                    Hp = 100,
+                    Level = 1,
+                    Type = BuildingType.University,
+                    BuildingId = 7,
+                    KingdomId = 1,
+                    Finished_at = 1649338811,
+                });
 
                 db.Resources.Add(new Resource()
                 {
@@ -198,6 +216,34 @@ public class CustomWebApplicationFactory<TStartup>
                         KingdomY = 60
                     },
                     KingdomId = 2
+                });
+                db.Resources.Add(new Resource()
+                {
+                    Amount = 0,
+                    Generation = 0,
+                    KingdomId = 2,
+                    Type = ResourceType.Food,
+                    ResourceId = 3,
+                });
+                db.Resources.Add(new Resource()
+                {
+                    Amount = 0,
+                    Generation = 0,
+                    KingdomId = 2,
+                    Type = ResourceType.Gold,
+                    ResourceId = 4,
+                });
+                db.Offers.Add(new Offer()
+                {
+                    OfferId = 1,
+                    SellingType = ResourceType.Food,
+                    SellingAmount = 60,
+                    PayingType = ResourceType.Gold,
+                    PayingAmount = 50,
+                    SellerKingdomId = 2,
+                    ResourceReturned = false,
+                    ExpireAt = 99999999999,
+                    BuyerKingdomId = null
                 });
                 db.SaveChanges();
 

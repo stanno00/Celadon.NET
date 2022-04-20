@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes;
+using System.Collections.Generic;
+using DotNetTribes;
+using DotNetTribes.DTOs;
 using DotNetTribes.Enums;
 using DotNetTribes.Models;
 using DotNetTribes.Services;
@@ -1041,7 +1044,7 @@ public class UpgradeServiceTest
 
         Assert.Equal("Not enough resources", exception.Message);
     }
-    
+
     [Fact]
     public void UpgradeService_ApplyUpgradesWhenFinished_UpdatesUpgrades()
     {
@@ -1122,7 +1125,7 @@ public class UpgradeServiceTest
                 }
             }
         };
-        
+
         var kingdom2 = new Kingdom
         {
             KingdomId = 2,
@@ -1166,7 +1169,7 @@ public class UpgradeServiceTest
                 }
             }
         };
-        
+
         var kingdom3 = new Kingdom
         {
             KingdomId = 3,
@@ -1216,8 +1219,8 @@ public class UpgradeServiceTest
                 }
             }
         };
-        
-        
+
+
         context.Add(kingdom);
         context.Add(kingdom2);
         context.Add(kingdom3);
@@ -1241,5 +1244,212 @@ public class UpgradeServiceTest
         Assert.Equal(1, upgrade3.Level);
         Assert.True(upgrade3.AddedToKingdom);
         Assert.Equal(4, troop3.Attack);
+    }
+
+    public void UpgradeService_AddUpgrade_ErrorUpgradeExist()
+    {
+        //Arrange
+        Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+        Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ErrorUpgradeExist")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+        var controller = new UpgradeService(context, iRuleServiceMock.Object, iTimeServiceMock.Object);
+
+        context.Kingdoms.Add(new Kingdom()
+        {
+            Buildings = new List<Building>(),
+            Resources = new List<Resource>(),
+            BuildingUpgrade = new List<BuildingUpgrade>()
+                {new BuildingUpgrade() {Name = AllBuildingUpgrades.Scout, KingdomId = 1, BuildingUpgradeId = 1}},
+            KingdomId = 1,
+        });
+        context.SaveChanges();
+        
+        var upgrade = new BuildingsUpgradesRequestDto()
+        {
+            UpgradeName = AllBuildingUpgrades.Scout
+        };
+
+        //Act
+        var exception = Record.Exception(() => controller.AddUpgrade(1, upgrade));
+
+        //Assert
+        Assert.Equal("Building already have this upgrade", exception.Message);
+    }
+
+    [Fact]
+    public void UpgradeService_AddUpgrade_ErrorNoGold()
+    {
+        //Arrange
+        Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+        Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ErrorNoGold")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+        var controller = new UpgradeService(context, iRuleServiceMock.Object, iTimeServiceMock.Object);
+
+        context.Kingdoms.Add(new Kingdom()
+        {
+            Buildings = new List<Building>(),
+            Resources = new List<Resource>()
+            {
+                new Resource() {Amount = 1, KingdomId = 1, ResourceId = 1, Type = ResourceType.Gold},
+                new Resource() {Amount = 1000, KingdomId = 1, ResourceId = 2, Type = ResourceType.Food}
+            },
+            BuildingUpgrade = new List<BuildingUpgrade>(),
+            KingdomId = 1,
+        });
+        context.SaveChanges();
+        
+        var upgrade = new BuildingsUpgradesRequestDto()
+        {
+            UpgradeName = AllBuildingUpgrades.Scout
+        };
+
+        //Act
+        var exception = Record.Exception(() => controller.AddUpgrade(1, upgrade));
+
+        //Assert
+        Assert.Equal("You don't have enough gold!", exception.Message);
+    }
+    
+    [Fact]
+    public void UpgradeService_AddUpgrade_ErrorNoFood()
+    {
+        //Arrange
+        Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+        Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ErrorNoFood")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+        var controller = new UpgradeService(context, iRuleServiceMock.Object, iTimeServiceMock.Object);
+
+        context.Kingdoms.Add(new Kingdom()
+        {
+            Buildings = new List<Building>(),
+            Resources = new List<Resource>()
+            {
+                new Resource() {Amount = 1000, KingdomId = 1, ResourceId = 1, Type = ResourceType.Gold},
+                new Resource() {Amount = 1, KingdomId = 1, ResourceId = 2, Type = ResourceType.Food}},
+            BuildingUpgrade = new List<BuildingUpgrade>(),
+            KingdomId = 1,
+        });
+        context.SaveChanges();
+        var upgrade = new BuildingsUpgradesRequestDto()
+        {
+            UpgradeName = AllBuildingUpgrades.Scout
+        };
+
+        //Act
+        var exception = Record.Exception(() => controller.AddUpgrade(1, upgrade));
+
+        //Assert
+        Assert.Equal("You don't have enough food!", exception.Message);
+    }
+    
+    [Fact]
+    public void UpgradeService_AddUpgrade_ReturnUpgrade()
+    {
+        //Arrange
+        Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+        Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ReturnUpgrade")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+        var controller = new UpgradeService(context, iRuleServiceMock.Object, iTimeServiceMock.Object);
+
+        context.Kingdoms.Add(new Kingdom()
+        {
+            Buildings = new List<Building>(),
+            Resources = new List<Resource>()
+            {
+                new Resource() {Amount = 1000, KingdomId = 1, ResourceId = 1, Type = ResourceType.Gold},
+                new Resource() {Amount = 1000, KingdomId = 1, ResourceId = 2, Type = ResourceType.Food}},
+            BuildingUpgrade = new List<BuildingUpgrade>(),
+            KingdomId = 1,
+        });
+        context.SaveChanges();
+        
+        var upgrade = new BuildingsUpgradesRequestDto()
+        {
+            UpgradeName = AllBuildingUpgrades.Scout
+        };
+
+        //Act
+        var result = controller.AddUpgrade(1, upgrade);
+        
+        //Assert
+        Assert.IsType<BuildingsUpgradesResponseDto>(result);
+        Assert.Equal("Scout",result.Name);
+        Assert.Equal(1,result.KingdomId);
+    }
+    
+    [Fact]
+    public void CreateNewBuildingMarketplace_WithoutAcademy_ThrowsException()
+    {
+        var request = new BuildingRequestDTO
+        {
+            Type = "Marketplace"
+        };
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("BuildingTest11")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+
+        var kingdom = new Kingdom
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>()
+        };
+        context.Kingdoms.Add(kingdom);
+        context.SaveChanges();
+
+        Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+        Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
+
+        var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
+        var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
+
+        Assert.Equal("Academy required", exception.Message);
+    }
+    
+    [Fact]
+    public void CreateNewBuildingUniversity_WithoutAcademy_ThrowsException()
+    {
+        var request = new BuildingRequestDTO
+        {
+            Type = "University"
+        };
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("BuildingTest12")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+
+        var kingdom = new Kingdom
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>()
+        };
+        context.Kingdoms.Add(kingdom);
+        context.SaveChanges();
+
+        Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+        Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
+
+        var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
+        var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
+
+        Assert.Equal("Academy required", exception.Message);
     }
 }

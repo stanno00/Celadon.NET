@@ -47,7 +47,7 @@ namespace DotNetTribes.Services
                 }
 
                 // check if there is already blacksmith
-                if (kingdom!.Buildings.Where(b => b.Type == BuildingType.Blacksmith).ToList().Count > 1)
+                if (kingdom!.Buildings.Where(b => b.Type == BuildingType.Blacksmith).ToList().Count > 0)
                 {
                     throw new BuildingCreationException("You can have only 1 Blacksmith.");
                 }

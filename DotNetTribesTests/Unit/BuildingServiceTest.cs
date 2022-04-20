@@ -205,6 +205,7 @@ public class BuildingServiceTest
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
         var requestedBuilding = BuildingType.TownHall;
+
         ruleServiceMock.Setup(x => x.GetBuildingDetails(requestedBuilding, 1, 1)).Returns(new BuildingDetailsDTO
         {
             BuildingDuration = 60,
@@ -367,7 +368,7 @@ public class BuildingServiceTest
 
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
-
+        
         ruleServiceMock.Setup(x => x.GetBuildingDetails(BuildingType.Farm, 2, 1)).Returns(new BuildingDetailsDTO
         {
             BuildingPrice = 200,
@@ -471,5 +472,87 @@ public class BuildingServiceTest
         Assert.Equal(expectedResult.Hp, result.Hp);
         Assert.Equal(expectedResult.Id, result.Id);
         Assert.Equal(expectedResult.Type, result.Type);
+    }
+    
+    [Fact]
+    public void UpgradeBuilding_CreateNewBuilding_ReturnsErrorYouNeedMarket()
+    {
+        // Arrange
+        
+        Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+        Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("BuildingTest11")
+            .Options;
+        var context = new ApplicationContext(optionsBuilder);
+        var controller = new BuildingsService(context, iTimeServiceMock.Object,iRuleServiceMock.Object);
+
+        var kingdom = new Kingdom
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>(),
+            Resources = new List<Resource>(),
+        };
+
+        var buildingRequest = new BuildingRequestDTO()
+        {
+            Type = "Blacksmith"
+        };
+        
+        context.Kingdoms.Add(kingdom);
+        context.SaveChanges();
+
+        // Act
+        var exception = Record.Exception(() => controller.CreateNewBuilding(1,buildingRequest));
+            
+        //Assert
+        Assert.Equal("You need a Marketplace to be able to construct an Blacksmith.", exception.Message);
+    }
+    
+    [Fact]
+    public void UpgradeBuilding_CreateNewBuilding_ReturnsErrorYouCanHaveOnly1Blacksmith()
+    {
+        // Arrange
+        Mock<ITimeService> iTimeServiceMock = new Mock<ITimeService>();
+        Mock<IRulesService> iRuleServiceMock = new Mock<IRulesService>();
+
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("BuildingTest12")
+            .Options;
+        var context = new ApplicationContext(optionsBuilder);
+        var controller = new BuildingsService(context, iTimeServiceMock.Object,iRuleServiceMock.Object);
+
+        context.Kingdoms.Add(new Kingdom
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>(),
+            Resources = new List<Resource>(),
+        });
+        
+        context.Buildings.Add(new Building()
+        {
+            BuildingId = 2,
+            Type = BuildingType.Blacksmith,
+            KingdomId = 1
+        });
+        context.Buildings.Add(new Building()
+        {
+            BuildingId = 1,
+            Type = BuildingType.Marketplace,
+            KingdomId = 1
+        });
+        context.SaveChanges();
+
+        var buildingRequest = new BuildingRequestDTO()
+        {
+            Type = "Blacksmith"
+        };
+        
+        // Act
+        var exception = Record.Exception(() => controller.CreateNewBuilding(1,buildingRequest));
+            
+        //Assert
+        Assert.Equal("You can have only 1 Blacksmith.", exception.Message);
     }
 }

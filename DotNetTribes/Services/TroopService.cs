@@ -283,7 +283,7 @@ namespace DotNetTribes.Services
                 orderPrice = _rules.CostSpecialTroopRanger(1) * request.NumberOfTroops;
             }
 
-            if (specialTroop != BlackSmithTroops.Scout.ToString())
+            if (specialTroop == BlackSmithTroops.Scout.ToString())
             {
                 orderPrice = _rules.CostSpecialTroopScout(1) * request.NumberOfTroops;
             }

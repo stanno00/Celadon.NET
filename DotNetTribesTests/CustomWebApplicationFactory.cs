@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DotNetTribes;
+using DotNetTribes.Enums;
 using DotNetTribes.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -106,6 +107,78 @@ public class CustomWebApplicationFactory<TStartup>
                         KingdomY = 50
                     },
                     KingdomId = 1
+                });
+
+                db.Buildings.Add(new Building()
+                {
+                    Hp = 100,
+                    Level = 1,
+                    Type = BuildingType.Farm,
+                    BuildingId = 1,
+                    KingdomId = 1,
+                    Finished_at = 1649338811,
+                });
+
+                db.Buildings.Add(new Building()
+                {
+                    Hp = 100,
+                    Level = 1,
+                    Type = BuildingType.Mine,
+                    BuildingId = 2,
+                    KingdomId = 1,
+                    Finished_at = 1649338811,
+                });
+                db.Buildings.Add(new Building()
+                {
+                    Hp = 100,
+                    Level = 1,
+                    Type = BuildingType.Blacksmith,
+                    BuildingId = 3,
+                    KingdomId = 1,
+                    Finished_at = 1649338811,
+                });
+                db.Buildings.Add(new Building()
+                {
+                    Hp = 100,
+                    Level = 1,
+                    Type = BuildingType.TownHall,
+                    BuildingId = 4,
+                    KingdomId = 1,
+                    Finished_at = 1649338811,
+                });
+                db.Buildings.Add(new Building()
+                {
+                    Hp = 100,
+                    Level = 1,
+                    Type = BuildingType.Academy,
+                    BuildingId = 5,
+                    KingdomId = 1,
+                    Finished_at = 1649338811,
+                });
+
+                db.Resources.Add(new Resource()
+                {
+                    Amount = 100000,
+                    Generation = 10,
+                    KingdomId = 1,
+                    Type = ResourceType.Food,
+                    ResourceId = 1,
+                });
+                db.Resources.Add(new Resource()
+                {
+                    Amount = 100000,
+                    Generation = 10,
+                    KingdomId = 1,
+                    Type = ResourceType.Gold,
+                    ResourceId = 2,
+                });
+                
+                db.BuildingUpgrade.Add(new BuildingUpgrade()
+                {
+                    Name = AllBuildingUpgrades.Scout,
+                    KingdomId = 1,
+                    BuildingUpgradeId = 1,
+                    FinishedAt = 1649338811,
                 });
 
                 db.Users.Add(new User()

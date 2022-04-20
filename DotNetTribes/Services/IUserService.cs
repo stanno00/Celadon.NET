@@ -14,6 +14,7 @@ namespace DotNetTribes.Services
         bool KingdomNameIsTaken(string name);
         bool EmailIsTaken(string email);
         string SetKingdomNameIfMissing(string kingdomName, string userName);
+        ForgotPasswordResponseDto ForgottenPassword(string username, ForgotPasswordRequestDto userInformation);
         public void ChangePassword(string username, PasswordRequestDto passwordRequestDto);
     }
 }

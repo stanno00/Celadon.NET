@@ -205,6 +205,7 @@ public class BuildingServiceTest
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
 
         var requestedBuilding = BuildingType.TownHall;
+
         ruleServiceMock.Setup(x => x.GetBuildingDetails(requestedBuilding, 1, 1)).Returns(new BuildingDetailsDTO
         {
             BuildingDuration = 60,
@@ -367,7 +368,7 @@ public class BuildingServiceTest
 
         Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
         Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
-
+        
         ruleServiceMock.Setup(x => x.GetBuildingDetails(BuildingType.Farm, 2, 1)).Returns(new BuildingDetailsDTO
         {
             BuildingPrice = 200,

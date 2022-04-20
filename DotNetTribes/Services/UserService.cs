@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
+using System.Threading.Tasks;
 using DotNetTribes.DTOs;
 using DotNetTribes.DTOs.Password;
 using DotNetTribes.Enums;
 using DotNetTribes.Exceptions;
 using DotNetTribes.Models;
 using DotNetTribes.RegistrationExceptions;
+using FluentEmail.Core;
+using FluentEmail.Core.Defaults;
+using FluentEmail.Core.Interfaces;
+using FluentEmail.Smtp;
+using Microsoft.EntityFrameworkCore;
 
 namespace DotNetTribes.Services
 {
@@ -40,7 +49,7 @@ namespace DotNetTribes.Services
                 coordinatesX = random.Next(_rules.MapBoundariesX());
                 coordinatesY = random.Next(_rules.MapBoundariesY());
             } while (_applicationContext.Kingdoms.Any(k => k.KingdomX == coordinatesX && k.KingdomY == coordinatesY));
-            
+
             int[] coordinates = new int[2];
             coordinates[0] = coordinatesX;
             coordinates[1] = coordinatesY;
@@ -85,10 +94,11 @@ namespace DotNetTribes.Services
                             Amount = _rules.StartingFood(),
                             UpdatedAt = _timeService.GetCurrentSeconds(),
                             Generation = 0
-                        }, new Resource
+                        },
+                        new Resource
                         {
                             Type = ResourceType.Iron,
-                            Amount = 0, 
+                            Amount = 0,
                             UpdatedAt = _timeService.GetCurrentSeconds(),
                             Generation = 0
                         }
@@ -127,8 +137,8 @@ namespace DotNetTribes.Services
             {
                 errorMessages.Add("Email is required.");
             }
-            
-            if (userCredentials.SecurityQuestionType.ToString().Length == 0 )
+
+            if (userCredentials.SecurityQuestionType.ToString().Length == 0)
             {
                 errorMessages.Add("Security Question is required.");
             }
@@ -216,6 +226,95 @@ namespace DotNetTribes.Services
             return (FieldIsNullOrEmpty(kingdomName))
                 ? $"{userName}'s kingdom"
                 : kingdomName;
+        }
+
+        public ForgotPasswordResponseDto ForgottenPassword(string username, ForgotPasswordRequestDto userInformation)
+        {
+            var user = _applicationContext.Users.Include(u => u.SecurityQuestion)
+                .FirstOrDefault(u => u.Username == username);
+
+            if (user == null)
+            {
+                throw new LoginException("User with this name does not exist");
+            }
+
+            if (user.Email != userInformation.UserEmail)
+            {
+                throw new LoginException("Incorrect email");
+            }
+
+            var question = user.SecurityQuestion;
+            if (userInformation.AnswerSecretQuestion == null)
+            {
+                return new ForgotPasswordResponseDto()
+                {
+                    SecretQuestion = question.TheQuestion.ToString()
+                };
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(userInformation.AnswerSecretQuestion, question.Answer))
+            {
+                throw new LoginException("Answer to your secret question is not correct");
+            }
+
+            string newPassword = GenerateRandomPassword();
+
+            SendEmail(user.Email, user.Username, newPassword);
+
+            user.HashedPassword = HashPassword(newPassword);
+            _applicationContext.SaveChanges();
+
+            return new ForgotPasswordResponseDto()
+            {
+                GeneratedPassword = newPassword
+            };
+        }
+
+        private string GenerateRandomPassword()
+        {
+            return Guid.NewGuid().ToString("N").ToLower()
+                .Replace("1", "").Replace("o", "").Replace("0", "")
+                .Substring(0, 10);
+        }
+
+        private static async Task SendEmail(string userEmail, string username, string newPassword)
+        {
+            var sender = CreateSender();
+            var template = CreateTemplate(username, newPassword);
+
+            Email.DefaultSender = sender;
+            Email.DefaultRenderer = new ReplaceRenderer();
+
+            var email = await Email
+                .From("ViridiVulpesC@gmail.com")
+                .To(userEmail)
+                .Subject("Hello")
+                .UsingTemplate(template.ToString(), new { })
+                .SendAsync();
+        }
+
+        private static StringBuilder CreateTemplate(string username, string newPassword)
+        {
+            var template = new StringBuilder();
+            template.AppendLine($"Dear {username},");
+            template.AppendLine("<p> You can continue to conquer kingdoms. </p>");
+            template.AppendLine($"<p> Your new password is {newPassword}");
+            template.AppendLine("With love support team");
+            
+            return template;
+        }
+
+        private static ISender CreateSender()
+        {
+            var secretPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
+            return new SmtpSender(() => new SmtpClient("smtp.gmail.com")
+            {
+                UseDefaultCredentials = false,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                Port = 587,
+                Credentials = new NetworkCredential("ViridiVulpesC@gmail.com", secretPassword),
+            });
         }
 
         public void ChangePassword(string username, PasswordRequestDto passwordRequestDto)

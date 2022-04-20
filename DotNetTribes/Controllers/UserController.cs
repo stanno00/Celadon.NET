@@ -19,11 +19,20 @@ namespace DotNetTribes.Controllers
             _jwtService = jwtService;
         }
         
-        [HttpPost("register")]
+        [HttpPost("/register")]
         public ActionResult RegisterNewUser([FromBody] RegisterUserRequestDTO registerUserRequestDTO)
         {
             var newUser = _userService.RegisterUser(registerUserRequestDTO);
             return new CreatedResult("", newUser);
+        }
+
+        [HttpPut("/user/password/{username}")]
+        public ActionResult ForgotPassword([FromRoute] string username,
+            [FromBody] ForgotPasswordRequestDto userInformation)
+        {
+            var newPassword = _userService.ForgottenPassword(username, userInformation);
+
+            return new AcceptedResult("", newPassword);
         }
 
         [HttpPut("user")]
@@ -37,6 +46,7 @@ namespace DotNetTribes.Controllers
              {
                  Status = "Password changed"
              });
+
         }
     }
 }

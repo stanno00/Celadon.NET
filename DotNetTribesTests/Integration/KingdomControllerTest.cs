@@ -149,7 +149,7 @@ namespace DotNetTribesTests.Integration
         {
             using var client = new CustomWebApplicationFactory<Startup>().CreateClient();
             var jwtServiceTest = new JwtService();
-            var token = jwtServiceTest.CreateToken("Hrnik", "1");
+            var token = jwtServiceTest.CreateToken("Hrnik SecondTest", "2");
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = client.GetAsync("/kingdom/buildings").Result;

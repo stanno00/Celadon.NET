@@ -555,4 +555,64 @@ public class BuildingServiceTest
         //Assert
         Assert.Equal("You can have only 1 Blacksmith.", exception.Message);
     }
+    
+    [Fact]
+    public void CreateNewBuildingMarketplace_WithoutAcademy_ThrowsException()
+    {
+        var request = new BuildingRequestDTO
+        {
+            Type = "Marketplace"
+        };
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("BuildingTest13")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+
+        var kingdom = new Kingdom
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>()
+        };
+        context.Kingdoms.Add(kingdom);
+        context.SaveChanges();
+
+        Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+        Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
+
+        var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
+        var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
+
+        Assert.Equal("Academy required", exception.Message);
+    }
+    
+    [Fact]
+    public void CreateNewBuildingUniversity_WithoutAcademy_ThrowsException()
+    {
+        var request = new BuildingRequestDTO
+        {
+            Type = "University"
+        };
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("BuildingTest14")
+            .Options;
+
+        var context = new ApplicationContext(optionsBuilder);
+
+        var kingdom = new Kingdom
+        {
+            KingdomId = 1,
+            Buildings = new List<Building>()
+        };
+        context.Kingdoms.Add(kingdom);
+        context.SaveChanges();
+
+        Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+        Mock<IRulesService> ruleServiceMock = new Mock<IRulesService>();
+
+        var controller = new BuildingsService(context, timeServiceMock.Object, ruleServiceMock.Object);
+        var exception = Record.Exception(() => controller.CreateNewBuilding(1, request));
+
+        Assert.Equal("Academy required", exception.Message);
+    }
 }

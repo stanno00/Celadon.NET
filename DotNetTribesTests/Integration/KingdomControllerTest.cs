@@ -99,5 +99,7 @@ namespace DotNetTribesTests.Integration
             
             Assert.Equal("{\"buildings\":[]}", responseString);
         }
+        
+        
     }
 }

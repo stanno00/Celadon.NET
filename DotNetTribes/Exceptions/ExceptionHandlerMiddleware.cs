@@ -81,6 +81,9 @@ namespace DotNetTribes.Exceptions
                     case PasswordChangeException e:
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
+                    case KingdomNotFoundException e:
+                        response.StatusCode = (int) HttpStatusCode.NotFound;
+                        break;
                     
                     default:
                         // unhandled error

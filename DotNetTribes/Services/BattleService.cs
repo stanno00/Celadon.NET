@@ -17,7 +17,12 @@ namespace DotNetTribes.Services
         private readonly IKingdomService _kingdomService;
         private readonly IResourceService _resourceService;
 
-        public BattleService(ApplicationContext applicationContext, ITroopService troopService, IRulesService rulesService, ITimeService timeService, IKingdomService kingdomService, IResourceService resourceService)
+        public BattleService(ApplicationContext applicationContext, 
+            ITroopService troopService, 
+            IRulesService rulesService, 
+            ITimeService timeService, 
+            IKingdomService kingdomService, 
+            IResourceService resourceService)
         {
             _applicationContext = applicationContext;
             _troopService = troopService;
@@ -31,6 +36,11 @@ namespace DotNetTribes.Services
         // Checking if requested troops are available in the attacking kingdom and if so add them to a new list
         private IEnumerable<Troop> ValidatedTroopsForBattle(int kingdomId, TroopUpgradeRequestDTO troopsRequestedForBattleDto)
         {
+            if (!troopsRequestedForBattleDto.TroopIds.Any())
+            {
+                throw new TroopCreationException("Wrong troop ids");
+            }
+            
             var attackerReadyTroops = _troopService.GetReadyTroops(kingdomId);
             
             var attackerBattleTroops = new List<Troop>();
@@ -48,6 +58,11 @@ namespace DotNetTribes.Services
 
         public Battle InitializeBattle(int attackerKingdomId, int defenderKingdomId, TroopUpgradeRequestDTO troopsRequestedForBattleDto)
         {
+            if (_applicationContext.Kingdoms.FirstOrDefault(k => k.KingdomId == defenderKingdomId) == null)
+            {
+                throw new KingdomNotFoundException("Targeted kingdom does not exist!");
+            }
+            
             var attackerTroops = ValidatedTroopsForBattle(attackerKingdomId, troopsRequestedForBattleDto);
             // Getting kingdoms to calculate distance and time for attack
             var attackingKingdom = _applicationContext.Kingdoms.Single(k => k.KingdomId == attackerKingdomId);
@@ -91,25 +106,15 @@ namespace DotNetTribes.Services
                 // Getting both armies and their count
                 var defenderTroops = _troopService.GetReadyTroops(battle.DefenderId);
                 var defenderArmyCountBeforeBattle = defenderTroops.Count;
+
                 var attackerTroops = _applicationContext.Troops.Where(t => t.BattleId == battle.BattleId).ToList();
                 var attackerTroopsCountBeforeBattle = attackerTroops.Count;
+
                 var defenderFoodAmountBeforeBattle = _resourceService.GetResourceAmount(battle.DefenderId, ResourceType.Food);
                 var defenderGoldAmountBeforeBattle = _resourceService.GetResourceAmount(battle.DefenderId, ResourceType.Gold);
 
                 // Determine the battle winner and remove dead troops from either list and database
-                while (attackerTroops.Any() && defenderTroops.Any())
-                {
-                    var defeatedTroop = Fight(attackerTroops[0], defenderTroops[0]);
-                    if (defeatedTroop == attackerTroops[0])
-                    {
-                        attackerTroops.Remove(defeatedTroop);
-                    }
-
-                    defenderTroops.Remove(defeatedTroop);
-                    _applicationContext.Troops.Remove(defeatedTroop);
-                }
-
-                var winner = attackerTroops.Count == 0 ? battle.DefenderId : battle.AttackerId;
+                var winner = ResolveBattleAndGetWinner(attackerTroops, defenderTroops, battle);                
 
                 // Calculating troop losses
                 var attackerLostTroops = attackerTroopsCountBeforeBattle - attackerTroops.Count;
@@ -134,6 +139,23 @@ namespace DotNetTribes.Services
             return null;
         }
 
+        private int ResolveBattleAndGetWinner(List<Troop> attackerTroops, List<Troop> defenderTroops, Battle battle)
+        {
+            while (attackerTroops.Any() && defenderTroops.Any())
+            {
+                var defeatedTroop = Fight(attackerTroops[0], defenderTroops[0]);
+                if (defeatedTroop == attackerTroops[0])
+                {
+                    attackerTroops.Remove(defeatedTroop);
+                }
+
+                defenderTroops.Remove(defeatedTroop);
+                _applicationContext.Troops.Remove(defeatedTroop);
+            }
+
+            return attackerTroops.Count == 0 ? battle.DefenderId : battle.AttackerId;
+        }
+
         // Fight between 2 troops
         // Returning defeated troop so it can be removed from list and database
         private Troop Fight(Troop attackingTroop, Troop defendingTroop)
@@ -152,7 +174,7 @@ namespace DotNetTribes.Services
         }
 
         //Calculating damage done with each attack
-        private int DamageDone(Troop troopAttacking, Troop troopDefending)
+        public int DamageDone(Troop troopAttacking, Troop troopDefending)
         {
             var hitChance = new Random().Next(100);
             if (hitChance < 30)
@@ -164,13 +186,14 @@ namespace DotNetTribes.Services
             if (criticalChance > 85)
             {
                 var doubleDamage = _rulesService.TroopAttack(troopAttacking.Level, troopAttacking.KingdomId) * 2 
-                                   - _rulesService.TroopDefense(troopDefending.Level, troopAttacking.KingdomId);
+                                   - _rulesService.TroopDefense(troopDefending.Level, troopDefending.KingdomId);
                 return doubleDamage;
             }
 
             var damage = _rulesService.TroopAttack(troopAttacking.Level, troopAttacking.KingdomId) 
-                         - _rulesService.TroopDefense(troopDefending.Level, troopAttacking.KingdomId);
-            return damage;
+                         - _rulesService.TroopDefense(troopDefending.Level, troopDefending.KingdomId);
+
+            return damage < 0 ? 0 : damage;
         }
 
         private void StealResources(IEnumerable<Troop> attackerTroops, int kingdomId)
@@ -199,8 +222,6 @@ namespace DotNetTribes.Services
                 {
                     resource.Amount = 0;
                 }
-                
-                
             }
             _applicationContext.SaveChanges();
         }

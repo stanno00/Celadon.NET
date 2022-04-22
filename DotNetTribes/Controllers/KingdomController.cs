@@ -143,29 +143,23 @@ namespace DotNetTribes.Controllers
 
         [Authorize]
         [HttpPost("offer")]
-        public ActionResult<ResponseDTO> Offer([FromHeader] string authorization,
+        public ActionResult<Offer> Offer([FromHeader] string authorization,
             [FromBody] TradeRequestDTO tradeRequestDto)
         {
             int sellerKingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             Offer accepted = _resourceService.ValidateCreateTradeOffer(sellerKingdomId, tradeRequestDto);
 
-            return new ResponseDTO()
-            {
-                Status = "ok"
-            };
+            return new OkObjectResult(accepted);
         }
 
         [Authorize]
         [HttpPut("offer/{offerId}")]
-        public ActionResult<ResponseDTO> AcceptingOffer([FromHeader] string authorization, [FromRoute] int offerId)
+        public ActionResult<AcceptOfferResponseDTO> AcceptingOffer([FromHeader] string authorization, [FromRoute] int offerId)
         {
             int buyerKingdomId = _jwtService.GetKingdomIdFromJwt(authorization);
             AcceptOfferResponseDTO accepted = _resourceService.AcceptOffer(buyerKingdomId, offerId);
 
-            return new ResponseDTO
-            {
-                Status = "ok"
-            };
+            return new OkObjectResult(accepted);
         }
 
         [Authorize]

@@ -46,6 +46,9 @@ namespace DotNetTribes.Exceptions
                     case UsernameAlreadyTakenException e:
                         response.StatusCode = (int) HttpStatusCode.BadRequest;
                         break;
+                    case LoginException e:
+                        response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        break;
                     
                     case KingdomReceiveMinutesLessThanTwo e:
                         response.StatusCode = (int) HttpStatusCode.BadRequest;

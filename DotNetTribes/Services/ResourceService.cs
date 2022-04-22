@@ -133,7 +133,7 @@ namespace DotNetTribes.Services
             foreach (var troop in kingdomTroops)
             {
                 int foodNeeded = _rulesService.TroopFoodConsumption(troop.Level);
-                if (kingdomFood.Amount > foodNeeded)
+                if (kingdomFood.Amount >= foodNeeded)
                 {
                     kingdomFood.Amount -= foodNeeded;
                     troop.UpdatedAt = _timeService.GetCurrentSeconds();

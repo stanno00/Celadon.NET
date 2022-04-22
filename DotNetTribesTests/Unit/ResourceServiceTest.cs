@@ -571,4 +571,73 @@ public class ResourceServiceTest
         Assert.True(updatedOffer.ResourceReturned);
         
     }
+    
+        [Fact]
+    public void FeedTroopsWithInsufResources_KillsCorrectTroop()
+    {
+        var options = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseInMemoryDatabase("ResourceTestDB3")
+            .Options;
+
+        using var context = new ApplicationContext(options);
+
+        context.Kingdoms.Add(new Kingdom
+        {
+            KingdomId = 1,
+            Resources = new List<Resource>
+            {
+                new Resource
+                {
+                    KingdomId = 1,
+                    Amount = 4,
+                    Type = ResourceType.Food,
+                    UpdatedAt = 0
+                }
+            },
+            Troops = new List<Troop>
+            {
+                new Troop
+                {
+                    KingdomId = 1,
+                    TroopId = 1,
+                    Level = 2,
+                    ConsumingFood = true
+                },
+                new Troop
+                {
+                    KingdomId = 1,
+                    TroopId = 2,
+                    Level = 1,
+                    ConsumingFood = true
+                }
+            },
+            Buildings = new List<Building>
+            {
+                new Building
+                {
+                    KingdomId = 1,
+                    BuildingId = 1,
+                    Type = BuildingType.Farm,
+                    Level = 1,
+                    Finished_at = 0
+                }
+            }
+        });
+        context.SaveChanges();
+
+        Mock<ITimeService> timeServiceMock = new Mock<ITimeService>();
+        timeServiceMock.Setup(x => x.GetCurrentSeconds()).Returns(60);
+        timeServiceMock.Setup(x => x.MinutesSince(0)).Returns(1);
+
+        Mock<IRulesService> rulesServiceMock = new Mock<IRulesService>();
+        rulesServiceMock.Setup(x => x.TroopFoodConsumption(1)).Returns(2);
+        rulesServiceMock.Setup(x => x.TroopFoodConsumption(2)).Returns(4);
+        
+        var resourceService = new ResourceService(context, timeServiceMock.Object, rulesServiceMock.Object);
+
+        resourceService.UpdateKingdomResources(1);
+
+        Assert.Single(context.Troops.Where(t => t.KingdomId == 1).ToList());
+        Assert.Equal(2, context.Troops.FirstOrDefault(t => t.KingdomId == 1).Level);
+    }
 }
